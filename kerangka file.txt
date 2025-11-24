@@ -1,0 +1,178 @@
+alifa-institute-lms/
+├── app/
+│   ├── (auth)/
+│   │   ├── login/
+│   │   │   └── page.tsx                      ← Login: email + password, role-based redirect
+│   │   └── layout.tsx                        ← Auth layout (tanpa sidebar)
+│   │
+│   ├── (public)/
+│   │   └── page.tsx                          ← ✅ Landing Page: info ALIFA, tombol role-based
+│   │
+│   ├── (dashboard)/
+│   │   ├── layout.tsx                        ← ✅ Dashboard Layout: greeting role-based, back button, mobile bottom nav
+│   │   ├── page.tsx                          ← Dashboard Home: ringkasan per role
+│   │   │
+│   │   ├── akademik/
+│   │   │   ├── page.tsx                      ← Overview akademik
+│   │   │   │
+│   │   │   ├── program-studi/
+│   │   │   │   ├── page.tsx                  ← Daftar prodi
+│   │   │   │   └── tambah/page.tsx           ← Form tambah prodi
+│   │   │   │
+│   │   │   ├── kurikulum/
+│   │   │   │   ├── page.tsx                  ← Daftar kurikulum
+│   │   │   │   ├── [id]/
+│   │   │   │   │   ├── page.tsx              ← Detail kurikulum
+│   │   │   │   │   └── edit/page.tsx         ← Edit kurikulum
+│   │   │   │   └── tambah/page.tsx           ← Form tambah kurikulum
+│   │   │   │
+│   │   │   ├── skala-nilai/
+│   │   │   │   └── [kurikulumId]/
+│   │   │   │       └── page.tsx              ← Editor skala nilai (drag & drop rentang)
+│   │   │   │
+│   │   │   ├── mata-kuliah/
+│   │   │   │   ├── page.tsx                  ← Daftar mata kuliah (filter: kurikulum, semester)
+│   │   │   │   └── tambah/page.tsx           ← Form tambah mata kuliah
+│   │   │   │
+│   │   │   ├── kalender-akademik/
+│   │   │   │   └── page.tsx                  ← Daftar periode akademik + toggle aktif
+│   │   │   │
+│   │   │   ├── kelas/
+│   │   │   │   ├── page.tsx                  ← Daftar kelas (filter: periode, prodi)
+│   │   │   │   ├── [id]/
+│   │   │   │   │   ├── page.tsx              ← Detail kelas
+│   │   │   │   │   └── dosen/
+│   │   │   │   │       ├── page.tsx          ← ✅ Penugasan Dosen (sesuai request)
+│   │   │   │   │       └── tambah/page.tsx
+│   │   │   │   └── tambah/page.tsx           ← Form buat kelas
+│   │   │   │
+│   │   │   ├── mahasiswa/
+│   │   │   │   ├── page.tsx                  ← Daftar mahasiswa + filter
+│   │   │   │   ├── [id]/
+│   │   │   │   │   ├── page.tsx              ← Detail mahasiswa + dokumen
+│   │   │   │   │   ├── edit/page.tsx
+│   │   │   │   │   └── krs/page.tsx          ← KRS & enrollment
+│   │   │   │   └── tambah/page.tsx           ← Form tambah mahasiswa
+│   │   │   │
+│   │   │   └── dosen/
+│   │   │       ├── page.tsx                  ← Daftar dosen + filter
+│   │   │       ├── [id]/
+│   │   │       │   └── page.tsx              ← Detail dosen + riwayat mengajar
+│   │   │       └── tambah/page.tsx           ← Form tambah dosen
+│   │   │
+│   │   ├── keuangan/
+│   │   │   ├── page.tsx
+│   │   │   ├── bukti-transfer/
+│   │   │   │   └── page.tsx                  ← Upload & status bukti transfer
+│   │   │   └── verifikasi/
+│   │   │       └── page.tsx                  ← Antrian verifikasi staff keuangan
+│   │   │
+│   │   ├── forum/
+│   │   │   ├── page.tsx                      ← Daftar kategori forum
+│   │   │   ├── [category]/
+│   │   │   │   └── page.tsx                  ← Daftar thread per kategori
+│   │   │   └── thread/[id]/
+│   │   │       └── page.tsx                  ← Detail thread + komentar
+│   │   │
+│   │   ├── laporan/
+│   │   │   └── page.tsx                      ← Dashboard laporan & ekspor
+│   │   │
+│   │   ├── superadmin/
+│   │   │   └── page.tsx                      ← Dashboard superadmin: user management, audit log
+│   │   │
+│   │   └── pengaturan/
+│   │       └── page.tsx                      ← Pengaturan profil & notifikasi
+│   │
+│   └── api/
+│       ├── auth/
+│       │   └── route.ts                      ← Login API (email + password)
+│       │
+│       ├── akademik/
+│       │   ├── program-studi/route.ts
+│       │   ├── kurikulum/route.ts
+│       │   ├── skala-nilai/[kurikulumId]/route.ts
+│       │   ├── mata-kuliah/route.ts
+│       │   ├── kalender/route.ts
+│       │   ├── kelas/
+│       │   │   ├── route.ts
+│       │   │   └── [id]/dosen/route.ts       ← ✅ Penugasan Dosen API
+│       │   ├── mahasiswa/route.ts
+│       │   └── dosen/route.ts
+│       │
+│       ├── keuangan/
+│       │   ├── bukti-transfer/route.ts
+│       │   └── verifikasi/route.ts
+│       │
+│       └── forum/
+│           ├── categories/route.ts
+│           ├── threads/route.ts
+│           └── posts/route.ts
+│
+├── components/
+│   ├── layout/
+│   │   ├── DashboardLayout.tsx               ← ✅ Layout utama (greeting, back button, mobile nav)
+│   │   ├── MobileBottomNav.tsx
+│   │   ├── BackButton.tsx
+│   │   └── Header.tsx
+│   │
+│   ├── ui/                                   ← Shadcn UI (dikustom: Supabase theme, bahasa ID)
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── table.tsx
+│   │   ├── dropdown-menu.tsx
+│   │   ├── select.tsx
+│   │   └── ...
+│   │
+│   ├── akademik/
+│   │   ├── ProgramStudiTable.tsx
+│   │   ├── KurikulumTable.tsx
+│   │   ├── SkalaNilaiEditor.tsx              ← Drag & drop, validasi rentang
+│   │   ├── MataKuliahTable.tsx
+│   │   ├── KalenderView.tsx                  ← Timeline periode akademik
+│   │   ├── KelasTable.tsx
+│   │   ├── PenugasanDosenTable.tsx           ← ✅ Table penugasan dosen per kelas
+│   │   ├── TambahPenugasanForm.tsx           ← ✅ Form penugasan dosen
+│   │   ├── MahasiswaTable.tsx
+│   │   └── DosenTable.tsx
+│   │
+│   ├── forum/
+│   │   ├── ForumCategoryCard.tsx
+│   │   ├── ForumThreadList.tsx
+│   │   └── ForumPostEditor.tsx
+│   │
+│   └── progress/
+│       ├── AcademicProgressChart.tsx         ← Grafik IPK mahasiswa
+│       └── LecturerAssignmentProgress.tsx    ← Progress penugasan dosen
+│
+├── lib/
+│   ├── db.ts                                  ← Neon Postgres client
+│   ├── schema.ts                              ← ✅ Skema lengkap (sesuai blueprint)
+│   ├── seed-data.ts                           ← Sample data ALIFA (superadmin, staff, dosen, mhs)
+│   ├── init-complete.ts                       ← Script inisialisasi
+│   ├── auth.ts                                ← Middleware auth & role check
+│   └── utils.ts                               ← Formatter, validator, dll
+│
+├── types/
+│   ├── index.ts
+│   ├── user.ts                                ← UserRole enum & interfaces
+│   ├── akademik.ts                            ← StudyProgram, Curriculum, GradeScale, dll
+│   ├── forum.ts                               ← ForumCategory, Thread, Post
+│   └── progress.ts                            ← AcademicProgress, LecturerProgress
+│
+├── public/
+│   ├── favicon.ico
+│   ├── logo-alifa.svg
+│   └── images/
+│       ├── landing-hero.svg
+│       └── forum-illustration.svg
+│
+├── styles/
+│   ├── globals.css                            ← ✅ Supabase theme, dark mode, Roboto, mobile-first
+│   └── animations.css                         ← Framer Motion, hover subtle
+│
+├── next.config.js
+├── tailwind.config.js                         ← Supabase colors, darkMode: ["class"]
+├── postcss.config.js
+├── package.json
+├── tsconfig.json
+└── README.md

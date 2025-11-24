@@ -1,0 +1,263 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.pnp.loader.mjs
+/.yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnpm-store/
+
+# Testing
+/coverage
+*.lcov
+
+# Next.js
+/.next/
+/out/
+/next-env.d.ts
+.next-edge/
+
+# Production
+/build
+/dist
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.vercel
+.env.netlify
+!.env.example
+
+# Vercel
+.vercel
+.vercel_build_output
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+*.tsbuildinfo
+
+# Coverage directory used by tools like istanbul
+.coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env.development
+.env.production
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Turbo
+.turbo
+.turbo/runs
+
+# TernJS port file
+.tern-port
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs
+logs
+*.log
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+.npm
+.node_repl_history
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Prisma
+/prisma/migrations
+/prisma/*.db
+/prisma/*.db-journal
+/prisma/dev.db
+/prisma/dev.db-journal
+/prisma/test.db
+/prisma/test.db-journal
+!prisma/schema.prisma
+!prisma/migrations/migration_lock.toml
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+
+# Uploads and media (if storing locally)
+/public/uploads/
+/public/media/
+/uploads/
+/media/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+temp/
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Storybook
+.storybook/
+storybook-static/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+cypress/fixtures/example.json
+
+# Jest
+jest-coverage/
+
+# Playwright
+playwright-report/
+playwright/.cache/
+test-results/
+
+# ESLint
+.eslintcache
+
+# Stylelint
+.stylelintcache
+
+# Lockfiles (keep only one)
+# package-lock.json  # Uncomment if using npm
+# yarn.lock         # Uncomment if using yarn
+# pnpm-lock.yaml    # Uncomment if using pnpm
+
+# Build outputs from other frameworks
+/.svelte-kit
+/build
+/.nuxt
+/.output
+/.vuepress/dist
+/.temp
+/.cache
+
+# Local Netlify folder
+.netlify
+
+# Local development
+.local
