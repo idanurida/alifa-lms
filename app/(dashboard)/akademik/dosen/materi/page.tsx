@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BookOpen, Search, Filter, Download, Upload, Plus, FileText, Video, Link, Calendar } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -189,39 +188,34 @@ export default function MateriDosenPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* PERBAIKAN 1: Wrap Select dengan div untuk styling */}
-            <div className="w-full sm:w-64">
-              <Select value={kelasTerpilih} onValueChange={setKelasTerpilih}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih kelas..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Kelas</SelectItem>
-                  {kelasList.map((kelas) => (
-                    <SelectItem key={kelas.id} value={kelas.id.toString()}>
-                      {kelas.class_code} - {kelas.course_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* PERBAIKAN: Ganti dengan native select */}
+            <select 
+              value={kelasTerpilih}
+              onChange={(e) => setKelasTerpilih(e.target.value)}
+              className="flex h-10 w-full sm:w-64 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="">Pilih kelas...</option>
+              <option value="all">Semua Kelas</option>
+              {kelasList.map((kelas) => (
+                <option key={kelas.id} value={kelas.id.toString()}>
+                  {kelas.class_code} - {kelas.course_name}
+                </option>
+              ))}
+            </select>
 
             {kelasTerpilih && (
               <div className="flex gap-2 flex-wrap">
-                {/* PERBAIKAN 2: Wrap Select dengan div untuk styling */}
-                <div className="w-full sm:w-32">
-                  <Select value={tipeFilter} onValueChange={setTipeFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Tipe" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="semua">Semua Tipe</SelectItem>
-                      <SelectItem value="file">File</SelectItem>
-                      <SelectItem value="video">Video</SelectItem>
-                      <SelectItem value="link">Link</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* PERBAIKAN: Ganti dengan native select */}
+                <select 
+                  value={tipeFilter}
+                  onChange={(e) => setTipeFilter(e.target.value)}
+                  className="flex h-10 w-full sm:w-32 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="semua">Semua Tipe</option>
+                  <option value="file">File</option>
+                  <option value="video">Video</option>
+                  <option value="link">Link</option>
+                </select>
 
                 <Button onClick={() => setShowForm(true)}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -393,19 +387,13 @@ export default function MateriDosenPage() {
                     </div>
                     <div>
                       <label className="text-sm font-medium">Tipe Materi</label>
-                      {/* PERBAIKAN 3: Wrap Select dengan div */}
-                      <div>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Pilih tipe" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="file">File (PDF, PPT, DOC)</SelectItem>
-                            <SelectItem value="video">Video</SelectItem>
-                            <SelectItem value="link">Link Eksternal</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      {/* PERBAIKAN: Ganti dengan native select */}
+                      <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                        <option value="">Pilih tipe</option>
+                        <option value="file">File (PDF, PPT, DOC)</option>
+                        <option value="video">Video</option>
+                        <option value="link">Link Eksternal</option>
+                      </select>
                     </div>
                   </div>
                   <div className="space-y-4">
