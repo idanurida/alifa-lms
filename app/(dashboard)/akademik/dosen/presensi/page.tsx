@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Calendar, Search, Filter, Download, Upload, Plus, Users, Clock, CheckCircle, XCircle, MinusCircle } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -186,34 +185,33 @@ export default function PresensiDosenPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Kelas</label>
-              <Select value={kelasTerpilih} onValueChange={setKelasTerpilih}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih kelas..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {kelasList.map(kelas => (
-                    <SelectItem key={kelas.id} value={kelas.id.toString()}>
-                      {kelas.class_code} - {kelas.course_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select 
+                value={kelasTerpilih} 
+                onChange={(e) => setKelasTerpilih(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Pilih kelas...</option>
+                {kelasList.map(kelas => (
+                  <option key={kelas.id} value={kelas.id.toString()}>
+                    {kelas.class_code} - {kelas.course_name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
               <label className="text-sm font-medium mb-2 block">Pertemuan</label>
-              <Select value={pertemuanTerpilih} onValueChange={setPertemuanTerpilih}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih pertemuan" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(pert => (
-                    <SelectItem key={pert} value={pert.toString()}>
-                      Pertemuan {pert}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select 
+                value={pertemuanTerpilih} 
+                onChange={(e) => setPertemuanTerpilih(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(pert => (
+                  <option key={pert} value={pert.toString()}>
+                    Pertemuan {pert}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>

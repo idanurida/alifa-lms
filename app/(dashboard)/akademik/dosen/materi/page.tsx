@@ -188,7 +188,6 @@ export default function MateriDosenPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* PERBAIKAN: Ganti dengan native select */}
             <select 
               value={kelasTerpilih}
               onChange={(e) => setKelasTerpilih(e.target.value)}
@@ -205,7 +204,6 @@ export default function MateriDosenPage() {
 
             {kelasTerpilih && (
               <div className="flex gap-2 flex-wrap">
-                {/* PERBAIKAN: Ganti dengan native select */}
                 <select 
                   value={tipeFilter}
                   onChange={(e) => setTipeFilter(e.target.value)}
@@ -387,7 +385,6 @@ export default function MateriDosenPage() {
                     </div>
                     <div>
                       <label className="text-sm font-medium">Tipe Materi</label>
-                      {/* PERBAIKAN: Ganti dengan native select */}
                       <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                         <option value="">Pilih tipe</option>
                         <option value="file">File (PDF, PPT, DOC)</option>
