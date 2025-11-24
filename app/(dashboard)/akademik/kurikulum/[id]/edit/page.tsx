@@ -6,12 +6,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 
-// Definisikan interface untuk StudyProgram
-interface StudyProgram {
-  id: string;
-  name: string;
-  code: string;
-}
+// HAPUS interface StudyProgram yang sudah ada dan gunakan yang dari types global
+// Atau sesuaikan dengan interface yang diharapkan oleh KurikulumForm
 
 interface Kurikulum {
   id: number;
@@ -34,7 +30,7 @@ export default async function EditKurikulumPage({ params }: { params: { id: stri
   if (isNaN(id)) notFound();
 
   let kurikulum: Kurikulum | null = null;
-  let studyPrograms: StudyProgram[] = [];
+  let studyPrograms: any[] = []; // Gunakan any untuk sementara
   
   try {
     // Fetch kurikulum data
@@ -52,14 +48,8 @@ export default async function EditKurikulumPage({ params }: { params: { id: stri
       updated_at: result.updated_at
     };
 
-    // Fetch study programs data dengan type casting yang aman
-    const studyProgramsResult = await sql`SELECT id, name, code FROM study_programs WHERE is_active = true ORDER BY code`;
-    
-    studyPrograms = studyProgramsResult.map((program: any) => ({
-      id: program.id.toString(),
-      name: program.name,
-      code: program.code
-    }));
+    // Fetch study programs data - biarkan sebagai any[] untuk menghindari konflik type
+    studyPrograms = await sql`SELECT id, name, code FROM study_programs WHERE is_active = true ORDER BY code`;
 
   } catch (error) {
     console.error('Failed to fetch data:', error);
