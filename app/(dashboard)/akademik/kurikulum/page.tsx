@@ -25,7 +25,7 @@ export default async function KurikulumPage() {
       ORDER BY c.created_at DESC
     `;
     
-    // Transform data to match the expected interface
+    // Keep the original structure but ensure study_program_id is included
     data = result.map((item: any) => ({
       id: item.id,
       name: item.name,
@@ -33,6 +33,7 @@ export default async function KurikulumPage() {
       total_credits: item.total_credits,
       is_active: item.is_active,
       created_at: item.created_at,
+      study_program_id: item.study_program_id,
       study_program: {
         id: item.study_program_id,
         name: item.study_program_name,
