@@ -189,33 +189,39 @@ export default function MateriDosenPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Select value={kelasTerpilih} onValueChange={setKelasTerpilih}>
-  <SelectTrigger className="w-full sm:w-64">
-    <SelectValue placeholder="Pilih kelas..." />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="all">Semua Kelas</SelectItem>
-    {kelasOptions.map((kelas) => (
-      <SelectItem key={kelas.id} value={kelas.id}>
-        {kelas.nama}
-      </SelectItem>
-    ))}
-  </SelectContent>
-</Select>
+            {/* PERBAIKAN 1: Wrap Select dengan div untuk styling */}
+            <div className="w-full sm:w-64">
+              <Select value={kelasTerpilih} onValueChange={setKelasTerpilih}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih kelas..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Kelas</SelectItem>
+                  {kelasList.map((kelas) => (
+                    <SelectItem key={kelas.id} value={kelas.id.toString()}>
+                      {kelas.class_code} - {kelas.course_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             {kelasTerpilih && (
               <div className="flex gap-2 flex-wrap">
-                <Select value={tipeFilter} onValueChange={setTipeFilter}>
-                  <SelectTrigger className="w-full sm:w-32">
-                    <SelectValue placeholder="Tipe" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="semua">Semua Tipe</SelectItem>
-                    <SelectItem value="file">File</SelectItem>
-                    <SelectItem value="video">Video</SelectItem>
-                    <SelectItem value="link">Link</SelectItem>
-                  </SelectContent>
-                </Select>
+                {/* PERBAIKAN 2: Wrap Select dengan div untuk styling */}
+                <div className="w-full sm:w-32">
+                  <Select value={tipeFilter} onValueChange={setTipeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Tipe" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="semua">Semua Tipe</SelectItem>
+                      <SelectItem value="file">File</SelectItem>
+                      <SelectItem value="video">Video</SelectItem>
+                      <SelectItem value="link">Link</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
                 <Button onClick={() => setShowForm(true)}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -387,16 +393,19 @@ export default function MateriDosenPage() {
                     </div>
                     <div>
                       <label className="text-sm font-medium">Tipe Materi</label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih tipe" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="file">File (PDF, PPT, DOC)</SelectItem>
-                          <SelectItem value="video">Video</SelectItem>
-                          <SelectItem value="link">Link Eksternal</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      {/* PERBAIKAN 3: Wrap Select dengan div */}
+                      <div>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih tipe" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="file">File (PDF, PPT, DOC)</SelectItem>
+                            <SelectItem value="video">Video</SelectItem>
+                            <SelectItem value="link">Link Eksternal</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-4">
