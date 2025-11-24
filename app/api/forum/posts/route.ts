@@ -21,32 +21,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'ID thread tidak ditemukan' }, { status: 400 });
     }
 
-    // PERBAIKAN 1: Gunakan parameterized query dengan template literals
-    // PERBAIKAN 2: Gunakan username bukan name
-    export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const threadId = searchParams.get('thread_id');
-    const limit = searchParams.get('limit') || '20';
-    const offset = searchParams.get('offset') || '0';
-
-    if (!threadId) {
-      return NextResponse.json({ error: 'ID thread tidak ditemukan' }, { status: 400 });
-    }
-
-    // Cek apakah thread exists terlebih dahulu
-    const threadExists = await sql`
-      SELECT id FROM forum_threads WHERE id = ${parseInt(threadId)}
-    `;
-
-    if (threadExists.length === 0) {
-      return NextResponse.json({ 
-        error: 'Thread tidak ditemukan',
-        data: [] 
-      }, { status: 404 });
-    }
-
-    // Lanjutkan dengan query posts...
+    // PERBAIKAN: Gunakan parameterized query dengan template literals
+    // PERBAIKAN: Gunakan username bukan name
     const posts = await sql`
       SELECT 
         fp.id, 
@@ -56,40 +32,46 @@ export async function GET(req: NextRequest) {
         fp.is_first_post, 
         fp.created_at, 
         fp.updated_at,
-        u.username as user_name,
+        u.username as user_name,  // GUNAKAN username BUKAN name
         u.role as user_role
       FROM forum_posts fp
-      JOIN users u ON fp.user_id = u.id::integer
+      JOIN users u ON fp.user_id = u.id::integer  // HANDLE integer user_id
       WHERE fp.thread_id = ${parseInt(threadId)}
       ORDER BY fp.created_at ASC
       LIMIT ${parseInt(limit)} 
       OFFSET ${parseInt(offset)}
     `;
 
-    // Update view count
-    await sql`
-      UPDATE forum_threads 
-      SET view_count = view_count + 1 
-      WHERE id = ${parseInt(threadId)}
-    `;
+    // PERBAIKAN: Update view count jika thread ada
+    try {
+      await sql`
+        UPDATE forum_threads 
+        SET view_count = view_count + 1 
+        WHERE id = ${parseInt(threadId)}
+      `;
+    } catch (error) {
+      console.warn('Failed to update view count:', error);
+      // Continue without failing the request
+    }
 
-    return NextResponse.json({ 
-      data: posts,
-      thread: threadExists[0]
-    });
+    return NextResponse.json({ data: posts });
   } catch (error) {
     console.error('GET Forum Posts Error:', error);
-    return NextResponse.json({ 
-      error: 'Gagal mengambil post forum',
-      data: [] 
-    }, { status: 500 });
+    return NextResponse.json({ error: 'Gagal mengambil post forum' }, { status: 500 });
   }
 }
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !['mahasiswa', 'dosen', 'staff_akademik', 'super_admin'].includes(session.user.role as string)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
 
     const body = await req.json();
     const validatedData = postSchema.parse(body);
 
-    // PERBAIKAN 4: Handle integer user_id conversion
+    // PERBAIKAN: Handle integer user_id conversion
     const userId = parseInt(session.user.id);
 
     // Cek apakah thread ada dan tidak terkunci
@@ -106,14 +88,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Thread ini telah dikunci. Balasan tidak diperbolehkan.' }, { status: 400 });
     }
 
-    // PERBAIKAN 5: Insert post dengan user_id integer
+    // PERBAIKAN: Insert post dengan user_id integer
     const newPostResult = await sql`
       INSERT INTO forum_posts (
         thread_id, user_id, content, is_first_post
       )
       VALUES (
         ${validatedData.thread_id}, 
-        ${userId},  -- INTEGER user_id
+        ${userId},  // INTEGER user_id
         ${validatedData.content}, 
         false
       )
