@@ -24,23 +24,7 @@ export default async function KurikulumPage() {
       JOIN study_programs sp ON c.study_program_id = sp.id
       ORDER BY c.created_at DESC
     `;
-    
-    // Keep the original structure but ensure study_program_id is included
-    data = result.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      code: item.code,
-      total_credits: item.total_credits,
-      is_active: item.is_active,
-      created_at: item.created_at,
-      study_program_id: item.study_program_id,
-      study_program: {
-        id: item.study_program_id,
-        name: item.study_program_name,
-        code: item.study_program_code
-      }
-    }));
-
+    data = result;
   } catch (error) {
     console.error('Failed to fetch curricula:', error);
     return <div>Failed to load data.</div>;
@@ -68,7 +52,7 @@ export default async function KurikulumPage() {
           <CardTitle>Daftar Kurikulum</CardTitle>
         </CardHeader>
         <CardContent>
-          <KurikulumTable data={data} />
+          <KurikulumTable data={data as any} />
         </CardContent>
       </Card>
     </div>
