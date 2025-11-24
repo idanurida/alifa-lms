@@ -8,13 +8,25 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 
+interface Curriculum {
+  id: number;
+  name: string;
+  code: string;
+  total_credits: number;
+  is_active: boolean;
+  created_at: string;
+  study_program_id: number;
+  study_program_name: string;
+  study_program_code: string;
+}
+
 export default async function KurikulumPage() {
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
     return <div>Unauthorized</div>;
   }
 
-  let data = [];
+  let data: Curriculum[] = [];
   try {
     const result = await sql`
       SELECT 
@@ -24,7 +36,20 @@ export default async function KurikulumPage() {
       JOIN study_programs sp ON c.study_program_id = sp.id
       ORDER BY c.created_at DESC
     `;
-    data = result;
+    
+    // Type casting yang aman
+    data = result.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      code: item.code,
+      total_credits: item.total_credits,
+      is_active: item.is_active,
+      created_at: item.created_at,
+      study_program_id: item.study_program_id,
+      study_program_name: item.study_program_name,
+      study_program_code: item.study_program_code
+    }));
+
   } catch (error) {
     console.error('Failed to fetch curricula:', error);
     return <div>Failed to load data.</div>;
