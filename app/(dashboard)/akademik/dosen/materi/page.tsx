@@ -190,17 +190,18 @@ export default function MateriDosenPage() {
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
             <Select value={kelasTerpilih} onValueChange={setKelasTerpilih}>
-              <SelectTrigger className="w-full sm:w-64">
-                <SelectValue placeholder="Pilih kelas..." />
-              </SelectTrigger>
-              <SelectContent>
-                {kelasList.map(kelas => (
-                  <SelectItem key={kelas.id} value={kelas.id.toString()}>
-                    {kelas.class_code} - {kelas.course_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+  <SelectTrigger className="w-full sm:w-64">
+    <SelectValue placeholder="Pilih kelas..." />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="all">Semua Kelas</SelectItem>
+    {kelasOptions.map((kelas) => (
+      <SelectItem key={kelas.id} value={kelas.id}>
+        {kelas.nama}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
 
             {kelasTerpilih && (
               <div className="flex gap-2 flex-wrap">
