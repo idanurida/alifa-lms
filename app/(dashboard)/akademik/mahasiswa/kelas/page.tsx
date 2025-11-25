@@ -29,7 +29,10 @@ export default async function KelasMahasiswaPage() {
   const userId = session.user.id;
   const userRole = session.user.role;
 
-  let mahasiswa, kelas;
+  // PERBAIKAN KRITIS: INISIALISASI 'kelas' sebagai array kosong agar tidak undefined
+  let mahasiswa: any; // Biarkan any atau ganti dengan tipe Mahasiswa yang benar
+  let kelas: any[] = []; // INI SOLUSI UNTUK 'kelas is possibly undefined'
+
   try {
     if (userRole === 'mahasiswa') {
       // Ambil data mahasiswa berdasarkan user_id
@@ -167,7 +170,7 @@ export default async function KelasMahasiswaPage() {
   } catch (error) {
     console.error('Gagal memuat data kelas:', error);
     
-    // Fallback data untuk development
+    // Fallback data untuk development (ini juga berfungsi sebagai inisialisasi jika query gagal)
     kelas = [
       {
         id: 1,
@@ -204,7 +207,7 @@ export default async function KelasMahasiswaPage() {
     ];
   }
 
-  // PERBAIKAN: Filter kelas berdasarkan role
+  // Baris filter ini sekarang aman karena 'kelas' diinisialisasi sebagai array.
   const kelasAktif = userRole === 'mahasiswa' 
     ? kelas.filter((kls: any) => kls.enrollment_status === 'active')
     : kelas.filter((kls: any) => kls.is_active === true);
@@ -214,6 +217,7 @@ export default async function KelasMahasiswaPage() {
     : [];
 
   return (
+    // ... (sisa JSX Anda)
     <div className="space-y-6">
       <div className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">
