@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { Course, AcademicPeriod, Dosen } from '@/types/akademik';
+import { Course, AcademicPeriod } from '@/types/akademik';
 import { kelasSchema } from '@/lib/validations/akademik';
 import { z } from 'zod';
 
