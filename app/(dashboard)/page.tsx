@@ -1,4 +1,3 @@
-'use client'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -12,13 +11,12 @@ export default async function DashboardRootPage() {
 
   const role = session.user.role;
   
-  // Redirect berdasarkan role dengan route yang TERSEDIA
   const redirectPaths = {
     mahasiswa: '/mahasiswa/dashboard',
     dosen: '/dosen/dashboard',
     staff_akademik: '/akademik',
     staff_keuangan: '/keuangan',
-    super_admin: '/super-admin/dashboard' // Sekarang sudah ada
+    super_admin: '/super-admin/dashboard'
   };
 
   const redirectPath = redirectPaths[role as keyof typeof redirectPaths] || '/login';

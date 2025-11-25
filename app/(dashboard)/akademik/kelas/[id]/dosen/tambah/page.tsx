@@ -1,72 +1,116 @@
-// app/(dashboard)/akademik/kelas/[id]/dosen/tambah/page.tsx
-import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import TambahPenugasanForm from '@/components/akademik/TambahPenugasanForm';
+import TambahPenugasanForm from './TambahPenugasanForm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { sql } from '@/lib/db';
+import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
 
-export default async function TambahPenugasanDosenPage({ params }: { params: { id: string } }) {
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function TambahPenugasanDosenPage({ params }: PageProps) {
   const session = await getServerSession(authOptions);
-  if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
-    return <div>Unauthorized</div>;
+  
+  if (!session) {
+    redirect('/login');
   }
 
+  // Verify user has access to this class
   const classId = parseInt(params.id);
-  if (isNaN(classId)) notFound();
-
-  let kelas, availableLecturers, availableClasses;
+  
   try {
-    const [kelasResult] = await sql`
-      SELECT c.id, co.name as course_name, c.class_code, ap.name as period_name
-      FROM classes c
-      JOIN courses co ON c.course_id = co.id
-      JOIN academic_periods ap ON c.academic_period_id = ap.id
-      WHERE c.id = ${classId}
-    `;
-    kelas = kelasResult;
-    if (!kelas) notFound();
+    const kelas = await prisma.kelas.findUnique({
+      where: { id: classId },
+      include: {
+        programStudi: true,
+      },
+    });
 
-    availableLecturers = await sql`
-      SELECT l.id, l.name, l.nidn, l.expertise
-      FROM lecturers l
-      WHERE l.status = 'active'
-      AND l.id NOT IN (
-        SELECT lecturer_id FROM lecturer_assignments 
-        WHERE class_id = ${classId} AND is_active = true
-      )
-      ORDER BY l.name
-    `;
+    if (!kelas) {
+      redirect('/akademik/kelas');
+    }
 
-    // Ambil semua kelas untuk form (jika ingin menugaskan ke kelas lain sekaligus)
-    availableClasses = await sql`SELECT id, class_code, course_id FROM classes WHERE is_active = true ORDER BY class_code`;
+    // Get available lecturers
+    const availableLecturers = await prisma.dosen.findMany({
+      select: {
+        id: true,
+        nama: true,
+        nip: true,
+      },
+      orderBy: {
+        nama: 'asc',
+      },
+    });
 
-  } catch (error) {
-    console.error('Failed to fetch data for assignment form:', error);
-    notFound();
-  }
+    // Get available classes for reference
+    const availableClasses = await prisma.kelas.findMany({
+      where: {
+        programStudiId: kelas.programStudiId,
+      },
+      select: {
+        id: true,
+        nama: true,
+        programStudi: {
+          select: {
+            nama: true,
+          },
+        },
+      },
+      orderBy: {
+        nama: 'asc',
+      },
+    });
 
-  return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <p className="text-sm font-medium">Manajemen Kelas</p>
-        <p className="text-muted-foreground text-sm">
-          Tambah Penugasan Dosen - {kelas.course_name} ({kelas.class_code})
-        </p>
+    const handleFormSubmit = async (formData: any) => {
+      'use server';
+      
+      try {
+        // Create new teaching assignment
+        await prisma.penugasanDosen.create({
+          data: {
+            kelasId: classId,
+            dosenId: parseInt(formData.lecturerId),
+            tanggalMulai: new Date(formData.startDate),
+            tanggalSelesai: new Date(formData.endDate),
+            bebanMengajar: parseInt(formData.teachingLoad),
+            status: 'active',
+          },
+        });
+
+        redirect(`/akademik/kelas/${classId}/dosen`);
+      } catch (error) {
+        console.error('Error creating assignment:', error);
+        throw new Error('Gagal membuat penugasan');
+      }
+    };
+
+    return (
+      <div className="container mx-auto py-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Tambah Penugasan Dosen</h1>
+          <p className="text-muted-foreground">
+            Kelas: {kelas.nama} - {kelas.programStudi.nama}
+          </p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Form Penugasan Dosen</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TambahPenugasanForm
+              onSubmit={handleFormSubmit}
+              onCancel={() => redirect(`/akademik/kelas/${classId}/dosen`)}
+            />
+          </CardContent>
+        </Card>
       </div>
-
-      <Card className="glass-effect dark:glass-effect-dark">
-        <CardHeader>
-          <CardTitle>Tambah Penugasan Dosen</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TambahPenugasanForm 
-            classId={classId} 
-            availableLecturers={availableLecturers} 
-            availableClasses={availableClasses} 
-          />
-        </CardContent>
-      </Card>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('Error loading page data:', error);
+    redirect('/akademik/kelas');
+  }
 }

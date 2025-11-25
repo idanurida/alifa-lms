@@ -1,15 +1,19 @@
 ﻿/** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
-  staticPageGenerationTimeout: 120, // ← TAMBAH INI
+  // Tambah config ini untuk App Router issues
   experimental: {
-    serverComponentsExternalPackages: ['bcryptjs'], // ← OPSIONAL: jika pakai bcryptjs
+    serverComponentsExternalPackages: [],
   },
+  // Force clean builds
+  cleanDistDir: true,
+  // Tambah output standalone untuk deployment yang lebih stabil
+  output: 'standalone',
 }
 
 module.exports = nextConfig

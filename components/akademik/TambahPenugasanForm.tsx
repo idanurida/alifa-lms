@@ -20,9 +20,19 @@ export default function TambahPenugasanForm({ onSubmit, onCancel }: TambahPenuga
     teachingLoad: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit?.(formData);
+    setIsSubmitting(true);
+    
+    try {
+      await onSubmit?.(formData);
+    } catch (error) {
+      console.error('Form submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,26 +50,15 @@ export default function TambahPenugasanForm({ onSubmit, onCancel }: TambahPenuga
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="classId">Kelas</Label>
-            <Input
-              id="classId"
-              name="classId"
-              value={formData.classId}
-              onChange={handleChange}
-              placeholder="Pilih kelas"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="lecturerId">Dosen</Label>
+            <Label htmlFor="lecturerId">ID Dosen</Label>
             <Input
               id="lecturerId"
               name="lecturerId"
               value={formData.lecturerId}
               onChange={handleChange}
-              placeholder="Pilih dosen"
+              placeholder="Masukkan ID dosen"
               required
+              disabled={isSubmitting}
             />
           </div>
 
@@ -73,6 +72,7 @@ export default function TambahPenugasanForm({ onSubmit, onCancel }: TambahPenuga
                 value={formData.startDate}
                 onChange={handleChange}
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -85,6 +85,7 @@ export default function TambahPenugasanForm({ onSubmit, onCancel }: TambahPenuga
                 value={formData.endDate}
                 onChange={handleChange}
                 required
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -98,15 +99,23 @@ export default function TambahPenugasanForm({ onSubmit, onCancel }: TambahPenuga
               value={formData.teachingLoad}
               onChange={handleChange}
               placeholder="Jumlah SKS"
+              min="1"
+              max="24"
               required
+              disabled={isSubmitting}
             />
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="submit">
-              Simpan Penugasan
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Menyimpan...' : 'Simpan Penugasan'}
             </Button>
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onCancel}
+              disabled={isSubmitting}
+            >
               Batal
             </Button>
           </div>
