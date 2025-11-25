@@ -5,6 +5,8 @@ import MahasiswaForm from '@/components/forms/MahasiswaForm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
+// IMPORT TIPE YANG DIBUTUHKAN
+import { Curriculum, StudyProgram } from '@/types/akademik'; // Pastikan path ini benar!
 
 export default async function EditMahasiswaPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
@@ -15,16 +17,48 @@ export default async function EditMahasiswaPage({ params }: { params: { id: stri
   const id = parseInt(params.id);
   if (isNaN(id)) notFound();
 
-  let mhs, curricula;
+  let mhs: any; // Ganti dengan tipe Mahasiswa yang benar jika ada
+  let curricula: Curriculum[] = []; // Terapkan tipe eksplisit
+
   try {
     const [result] = await sql`SELECT * FROM students WHERE id = ${id}`;
     mhs = result;
     if (!mhs) notFound();
 
-    curricula = await sql`SELECT id, name, code FROM curricula WHERE is_active = true ORDER BY code`;
+    // 1. QUERY SQL CURRICULA: SELECT SEMUA FIELD WAJIB
+    // Field wajib Curriculum adalah: id, name, code, study_program_id, total_credits, is_active, created_at.
+    const resultCurricula: any[] = await sql`
+        SELECT 
+            id, name, code, study_program_id, 
+            total_credits, is_active, created_at 
+        FROM curricula 
+        WHERE is_active = true 
+        ORDER BY code
+    `;
+    
+    // 2. KONVERSI TIPE DATE KE STRING & TAMBAH EMBEDDED OBJECT
+    curricula = resultCurricula.map((c: any) => ({
+        ...c,
+        // Konversi Date ke string untuk field created_at
+        created_at: c.created_at ? c.created_at.toISOString() : '', 
+        
+        // Tambahkan embedded object 'study_program' (minimal placeholder) 
+        // agar sesuai dengan interface Curriculum.
+        // Asumsi StudyProgram hanya butuh id dan name untuk form.
+        study_program: { 
+            id: c.study_program_id, 
+            name: 'N/A', 
+            code: 'N/A', 
+            faculty: 'N/A', 
+            is_active: false, 
+            created_at: '' 
+        } as StudyProgram, 
+    })) as Curriculum[];
+
   } catch (error) {
     console.error('Failed to fetch data:', error);
-    notFound();
+    // Jika fetch data mahasiswa atau kurikulum gagal, redirect ke notFound
+    notFound(); 
   }
 
   return (
@@ -41,6 +75,7 @@ export default async function EditMahasiswaPage({ params }: { params: { id: stri
           <CardTitle>Edit Profil Mahasiswa</CardTitle>
         </CardHeader>
         <CardContent>
+          {/* curricula sekarang memiliki tipe Curriculum[] yang sesuai */}
           <MahasiswaForm initialData={mhs} curricula={curricula} />
         </CardContent>
       </Card>
