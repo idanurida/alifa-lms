@@ -13,12 +13,12 @@ interface LoginFormProps {
   defaultRole?: UserRole;
 }
 
-export default function LoginForm({ defaultRole = 'mahasiswa' }: LoginFormProps) {
+export default function LoginForm({ defaultRole: UserRole = 'mahasiswa' as UserRole }: LoginFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: defaultRole,
+    role: UserRole,
   });
   const [loading, setLoading] = useState(false);
 

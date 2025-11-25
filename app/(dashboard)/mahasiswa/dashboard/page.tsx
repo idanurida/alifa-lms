@@ -97,7 +97,7 @@ export default async function MahasiswaDashboardPage() {
         `;
 
         dashboardData = {
-          totalCredits: parseInt(creditsResult[0]) || 0,
+          totalCredits: parseInt(creditsResult[0]?.total_credits || "0") || 0,
           completedCredits: parseInt(creditsResult[0].completed_credits) || 0,
           gpa: parseFloat(gpaResult[0]?.avg_score) || 0,
           enrolledClasses: parseInt(classCount[0]?.count) || 0,

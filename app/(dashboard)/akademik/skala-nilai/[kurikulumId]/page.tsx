@@ -113,7 +113,7 @@ export default async function SkalaNilaiPage({ params }: { params: { kurikulumId
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total SKS</p>
-              <p className="font-semibold">{kurikulum || 144}</p>
+              <p className="font-semibold">{kurikulum.totalCredits || 144}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Status</p>

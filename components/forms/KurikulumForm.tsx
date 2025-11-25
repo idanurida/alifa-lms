@@ -132,11 +132,11 @@ export default function KurikulumForm({ initialData, studyPrograms }: KurikulumF
               name="totalCredits"
               type="number"
               min="0"
-              value={formData}
+              value={formData.name}
               onChange={handleChange}
               className="mt-1"
             />
-            {errors && <p className="text-sm text-destructive mt-1">{errors}</p>}
+            {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
           </div>
           <div className="flex items-center">
             <input

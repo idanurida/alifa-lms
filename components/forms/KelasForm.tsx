@@ -15,7 +15,7 @@ interface KelasFormProps {
   initialData?: any; // Class
   courses: Course[];
   academicPeriods: AcademicPeriod[];
-  lecturers: Dosen[];
+  lecturers: any[];
 }
 
 export default function KelasForm({ initialData, courses, academicPeriods, lecturers }: KelasFormProps) {

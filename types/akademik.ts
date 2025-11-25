@@ -1,224 +1,132 @@
-export interface Course {
+// Types untuk modul akademik - sesuai dengan struktur database PostgreSQL
+export interface StudyProgram {
   id: number;
   name: string;
   code: string;
+  faculty?: string;
+  is_active: boolean;
+  created_at: Date | string;
+}
+
+export interface Curriculum {
+  id: number;
+  name: string;
+  code: string;
+  study_program_id?: number;
+  study_program?: StudyProgram;
+  total_credits: number;
+  is_active: boolean;
+  created_at: Date | string;
+}
+
+export interface Course {
+  id: number;
+  code: string;
+  name: string;
   credits: number;
-  programStudiId: number;
-  programStudi?: {
-    name: string;
-    code: string;
-  };
+  curriculum_id?: number;
+  curriculum?: Curriculum;
+  semester?: number;
+  description?: string;
+  is_active: boolean;
+  created_at: Date | string;
 }
 
 export interface AcademicPeriod {
   id: number;
   name: string;
-  startDate: Date;
-  endDate: Date;
-  isActive: boolean;
+  code: string;
+  year: number;
+  semester: number;
+  start_date: Date | string;
+  end_date: Date | string;
+  uts_week?: number;
+  uas_week?: number;
+  is_active: boolean;
+  created_at: Date | string;
 }
 
-export interface Dosen {
+export interface Lecturer {
   id: number;
-  nama: string;
-  nip: string;
-  email: string;
+  nidn: string;
+  name?: string;
+  email?: string;
   phone?: string;
-  programStudiId?: number;
-  programStudi?: {
-    name: string;
-    code: string;
-  };
-}
-
-export interface StudyProgram {
-  id: number;
-  name: string;
-  code: string;
-  description?: string;
-  faculty: string;
-}
-
-export interface Kurikulum {
-  id: number;
-  code: string;
-  name: string;
-  programStudiId: number;
-  tahun: number;
-  isActive: boolean;
-  programStudi?: {
-    name: string;
-    code: string;
-    faculty: string;
-  };
-}
-
-export interface Curriculum {
-  id: number;
-  code: string;
-  name: string;
-  programStudiId: number;
-  tahun: number;
-  isActive: boolean;
-  programStudi?: {
-    name: string;
-    code: string;
-    faculty: string;
-  };
-}
-
-export interface Mahasiswa {
-  id: number;
-  nama: string;
-  nim: string;
-  email: string;
-  programStudiId: number;
-  angkatan: number;
-  programStudi?: {
-    name: string;
-    code: string;
-    faculty: string;
-  };
-}
-
-export interface Kelas {
-  id: number;
-  name: string;
-  code: string;
-  programStudiId: number;
-  tahunAjaran: string;
-  semester: number;
-  programStudi?: {
-    name: string;
-    code: string;
-  };
-}
-
-export interface AcademicProgram {
-  id: number;
-  name: string;
-  code: string;
-  faculty: string;
-}
-
-export interface MataKuliah {
-  id: number;
-  kode: string;
-  nama: string;
-  sks: number;
-  semester: number;
-  programStudiId: number;
-  programStudi?: {
-    name: string;
-    code: string;
-  };
-}
-
-export interface PenugasanDosen {
-  id: number;
-  dosenId: number;
-  kelasId: number;
-  mataKuliahId: number;
-  tanggalMulai: Date;
-  tanggalSelesai: Date;
+  expertise?: string;
   status: string;
-  dosen?: {
-    nama: string;
-    nip: string;
-  };
-  kelas?: {
-    name: string;
-    code: string;
-  };
-  mataKuliah?: {
-    nama: string;
-    kode: string;
-  };
+  user_id?: string;
+  created_at: Date | string;
 }
 
-export interface Nilai {
+export interface Student {
   id: number;
-  mahasiswaId: number;
-  mataKuliahId: number;
-  nilai: number;
-  grade: string;
-  semester: string;
-  tahunAjaran: string;
-  mahasiswa?: {
-    nama: string;
-    nim: string;
-  };
-  mataKuliah?: {
-    nama: string;
-    kode: string;
-  };
+  user_id?: number;
+  nim: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  curriculum_id?: number;
+  curriculum?: Curriculum;
+  study_program_id?: string;
+  year_entry: number;
+  status: string;
+  photo_url?: string;
+  total_credits: number;
+  current_semester: number;
+  created_at: Date | string;
 }
 
-export interface KRS {
+export interface Class {
   id: number;
-  mahasiswaId: number;
-  mataKuliahId: number;
-  semester: string;
-  tahunAjaran: string;
-  status: 'pending' | 'approved' | 'rejected';
-  mahasiswa?: {
-    nama: string;
-    nim: string;
-  };
-  mataKuliah?: {
-    nama: string;
-    kode: string;
-    sks: number;
-  };
+  course_id?: number;
+  course?: Course;
+  academic_period_id?: number;
+  academic_period?: AcademicPeriod;
+  class_code: string;
+  lecturer_id?: number;
+  lecturer?: Lecturer;
+  schedule: any;
+  max_students: number;
+  current_students: number;
+  is_active: boolean;
+  created_at: Date | string;
 }
 
-export interface SkalaNilai {
+export interface LecturerAssignment {
   id: number;
-  kurikulumId: number;
-  nilaiMin: number;
-  nilaiMax: number;
-  grade: string;
-  bobot: number;
-  kurikulum?: {
-    name: string;
-    code: string;
-  };
+  lecturer_id?: number;
+  lecturer?: Lecturer;
+  class_id?: number;
+  class?: Class;
+  assignment_type: string;
+  teaching_load: number;
+  start_date?: Date | string;
+  end_date?: Date | string;
+  is_active: boolean;
+  created_at: Date | string;
 }
 
-export interface Pembayaran {
-  id: number;
-  mahasiswaId: number;
-  jumlah: number;
-  tanggal: Date;
-  status: 'pending' | 'paid' | 'failed';
-  keterangan?: string;
-  mahasiswa?: {
-    nama: string;
-    nim: string;
-  };
+// Extended interfaces untuk kompatibilitas dengan komponen existing
+export interface CurriculumWithProgram extends Curriculum {
+  programStudi?: StudyProgram;
+  totalCredits?: number;
+  isActive?: boolean;
 }
 
-export interface ForumThread {
-  id: number;
-  title: string;
-  content: string;
-  authorId: number;
-  categoryId: number;
-  createdAt: Date;
-  updatedAt: Date;
-  author?: {
-    nama: string;
-    role: string;
-  };
-  category?: {
-    name: string;
-  };
-  replies?: number;
+export interface StudyProgramWithExtras extends StudyProgram {
+  isActive?: boolean;
 }
 
-export interface ForumCategory {
-  id: number;
-  name: string;
-  description: string;
-  threadCount: number;
+export interface ClassWithExtras extends Class {
+  course_code?: string;
+  course_name?: string;
 }
+
+export type UserRole = 'mahasiswa' | 'dosen' | 'admin' | 'superadmin';
+
+// Types untuk form creation
+export type CreateStudyProgram = Omit<StudyProgram, 'id' | 'created_at'>;
+export type CreateCurriculum = Omit<Curriculum, 'id' | 'created_at'>;
+export type CreateCourse = Omit<Course, 'id' | 'created_at'>;
+export type CreateAcademicPeriod = Omit<AcademicPeriod, 'id' | 'created_at'>;
+export type CreateLecturerAssignment = Omit<LecturerAssignment, 'id' | 'created_at'>;

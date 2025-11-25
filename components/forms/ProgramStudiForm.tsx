@@ -14,7 +14,7 @@ export default function ProgramStudiForm() {
         name: '',
         code: '',
         faculty: '',
-        is_active: true,
+        
     };
 
     const [formData, setFormData] = useState<Partial<StudyProgram>>(initialFormData);
@@ -22,11 +22,11 @@ export default function ProgramStudiForm() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
-        setFormData(prev => ({ ...prev, [id]: value }));
+        setFormData((prev: any) => ({ ...prev, [id]: value }));
     };
 
     const handleSwitchChange = (checked: boolean) => {
-        setFormData(prev => ({ ...prev, is_active: checked }));
+        setFormData((prev: any) => ({ ...prev, isActive: checked }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +40,8 @@ export default function ProgramStudiForm() {
             name: formData.name ?? '', 
             code: formData.code ?? '',
             faculty: formData.faculty ?? '',
-            is_active: formData.is_active ?? true,
+            is_active: formData.is_active !== undefined ? formData.is_active : true,
+            
         };
 
         console.log('Submitting Program Studi:', newProgram);
@@ -94,7 +95,7 @@ export default function ProgramStudiForm() {
                 </Label>
                 <Switch 
                     id="is_active" 
-                    checked={formData.is_active} 
+                    checked={true} 
                     onCheckedChange={handleSwitchChange} 
                 />
             </div>

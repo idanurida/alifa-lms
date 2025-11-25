@@ -1,100 +1,120 @@
-// components/akademik/PenugasanDosenTable.tsx
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { MoreHorizontal } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { LecturerAssignment } from '@/types/akademik';
+"use client"
+
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Pencil, Trash2 } from "lucide-react"
+import { LecturerAssignment } from "@/types/akademik"
 
 interface PenugasanDosenTableProps {
-  data: LecturerAssignment[];
+  assignments: LecturerAssignment[]
+  onEdit: (assignment: LecturerAssignment) => void
+  onDelete: (id: number) => void
 }
 
-export default function PenugasanDosenTable({ data }: PenugasanDosenTableProps) {
-  if (data.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>Belum ada penugasan dosen.</p>
-      </div>
-    );
+export default function PenugasanDosenTable({ assignments, onEdit, onDelete }: PenugasanDosenTableProps) {
+  const [currentAssignments, setCurrentAssignments] = useState<LecturerAssignment[]>(assignments)
+
+  useEffect(() => {
+    setCurrentAssignments(assignments)
+  }, [assignments])
+
+  const handleDelete = async (id: number) => {
+    if (confirm("Apakah Anda yakin ingin menghapus penugasan ini?")) {
+      onDelete(id)
+    }
   }
 
-  const getAssignmentTypeBadge = (type: string) => {
-    const config: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
-      main: { label: 'Utama', variant: 'default' },
-      assistant: { label: 'Asisten', variant: 'secondary' },
-      guest: { label: 'Tamu', variant: 'outline' },
-    };
-    return config[type] || config.guest;
-  };
-
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Dosen</TableHead>
-            <TableHead>Kelas</TableHead>
-            <TableHead className="w-[100px]">Peran</TableHead>
-            <TableHead className="text-right">SKS</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="w-[100px]">Aksi</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((ass) => {
-            const typeBadge = getAssignmentTypeBadge(ass.assignment_type);
-            return (
-              <TableRow key={ass.id} className="hover:bg-muted/30 transition-colors">
+    <Card>
+      <CardHeader>
+        <CardTitle>Daftar Penugasan Dosen</CardTitle>
+        <CardDescription>
+          Kelola penugasan mengajar dosen untuk setiap kelas
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Dosen</TableHead>
+              <TableHead>Kelas</TableHead>
+              <TableHead>Mata Kuliah</TableHead>
+              <TableHead>Jenis Penugasan</TableHead>
+              <TableHead>Beban Mengajar</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Aksi</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentAssignments.map((ass) => (
+              <TableRow key={ass.id}>
                 <TableCell>
-                  <div className="font-medium">{ass.lecturer.name}</div>
-                  <div className="text-xs text-muted-foreground">NIDN: {ass.lecturer.nidn}</div>
+                  <div className="space-y-1">
+                    {ass.lecturer && (
+                      <>
+                        <div className="font-medium">{ass.lecturer.name}</div>
+                        <div className="text-xs text-muted-foreground">NIDN: {ass.lecturer.nidn}</div>
+                      </>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
-                  <div className="font-mono">{ass.class.course_code} - {ass.class.class_code}</div>
-                  <div className="text-xs">{ass.class.course_name}</div>
+                  <div className="space-y-1">
+                    {ass.class && (
+                      <div className="font-mono">{ass.class.class_code}</div>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={typeBadge.variant}>{typeBadge.label}</Badge>
+                  <div className="space-y-1">
+                    {ass.class && ass.class.course && (
+                      <>
+                        <div className="font-mono">{ass.class.course.code}</div>
+                        <div className="text-xs">{ass.class.course.name}</div>
+                      </>
+                    )}
+                  </div>
                 </TableCell>
-                <TableCell className="text-right">{ass.teaching_load}</TableCell>
                 <TableCell>
-                  <Badge variant={ass.is_active ? 'default' : 'secondary'}>
-                    {ass.is_active ? 'Aktif' : 'Nonaktif'}
+                  <Badge variant="outline">{ass.assignment_type}</Badge>
+                </TableCell>
+                <TableCell>{ass.teaching_load} SKS</TableCell>
+                <TableCell>
+                  <Badge variant={ass.is_active ? "default" : "secondary"}>
+                    {ass.is_active ? "Aktif" : "Tidak Aktif"}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="dark:bg-card">
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">
-                        Hapus Penugasan
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <TableCell className="text-right">
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onEdit(ass)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(ass.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
-  );
+            ))}
+          </TableBody>
+        </Table>
+        {currentAssignments.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            Tidak ada data penugasan dosen
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
 }

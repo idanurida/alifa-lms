@@ -76,7 +76,7 @@ export default async function DetailKurikulumPage({ params }: { params: { id: st
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total SKS</p>
-              <p className="font-medium">{kurikulum}</p>
+              <p className="font-medium">{kurikulum.totalCredits || 0}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Status</p>
