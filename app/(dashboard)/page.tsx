@@ -1,4 +1,7 @@
-// app/(dashboard)/page.tsx - REDIRECT
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+
 export default async function DashboardRootPage() {
   const session = await getServerSession(authOptions);
   
@@ -10,7 +13,7 @@ export default async function DashboardRootPage() {
   
   switch (role) {
     case 'mahasiswa':
-      redirect('/mahasiswa/dashboard'); // ← PATH YANG SAMA
+      redirect('/mahasiswa/dashboard');
     case 'dosen':
       redirect('/akademik/dosen/dashboard');
     case 'staff_akademik':

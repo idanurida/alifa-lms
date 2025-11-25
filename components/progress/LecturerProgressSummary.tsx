@@ -1,9 +1,34 @@
-// components/progress/LecturerProgressSummary.tsx
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { GraduationCap, BookOpen, Clock, CheckCircle } from 'lucide-react';
-import { LecturerAssignmentProgress } from '@/types/progress';
+
+interface CompletionStatus {
+  syllabus: number;
+  materials: number;
+  evaluation: number;
+  attendance: number;
+  grades: number;
+}
+
+interface ClassProgress {
+  class_code: string;
+  course_name: string;
+  students_count: number;
+  completion_status: CompletionStatus;
+}
+
+interface TeachingLoad {
+  assigned: number;
+  completed: number;
+}
+
+interface LecturerAssignmentProgress {
+  classes: ClassProgress[];
+  teaching_load: TeachingLoad;
+}
 
 interface LecturerProgressSummaryProps {
   progress: LecturerAssignmentProgress;
@@ -11,7 +36,7 @@ interface LecturerProgressSummaryProps {
 
 export default function LecturerProgressSummary({ progress }: LecturerProgressSummaryProps) {
   // Hitung rata-rata progres untuk semua kelas
-  const calculateAverageProgress = (key: keyof LecturerAssignmentProgress['classes'][0]['completion_status']) => {
+  const calculateAverageProgress = (key: keyof CompletionStatus) => {
     if (progress.classes.length === 0) return 0;
     const total = progress.classes.reduce((sum, cls) => sum + cls.completion_status[key], 0);
     return total / progress.classes.length;

@@ -1,35 +1,39 @@
-// components/charts/AttendanceRateChart.tsx
-use client'
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+﻿'use client';
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-interface AttendanceRateData {
-  subject: string;
-  A: number;
-  B: number;
-  C: number;
-  D: number;
-  E: number;
+interface AttendanceData {
+  date: string;
+  present: number;
+  absent: number;
 }
 
 interface AttendanceRateChartProps {
-  data: AttendanceRateData[];
+  data: AttendanceData[];
 }
 
 export default function AttendanceRateChart({ data }: AttendanceRateChartProps) {
   return (
     <div className="w-full h-80">
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-          <PolarGrid stroke="#ccc" opacity={0.3} />
-          <PolarAngleAxis dataKey="subject" />
-          <PolarRadiusAxis angle={90} domain={[0, 100]} />
-          <Radar name="Hadir" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-          <Radar name="Izin" dataKey="B" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
-          <Radar name="Sakit" dataKey="C" stroke="#ffc658" fill="#ffc658" fillOpacity={0.6} />
-          <Radar name="Alpha" dataKey="D" stroke="#ff7300" fill="#ff7300" fillOpacity={0.6} />
-          <Radar name="Terlambat" dataKey="E" stroke="#ff6666" fill="#ff6666" fillOpacity={0.6} />
-          <Tooltip />
-        </RadarChart>
+        <BarChart
+          data={data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+          <XAxis dataKey="date" />
+          <YAxis domain={[0, 100]} />
+          <Tooltip 
+            formatter={(value) => [`${value}%`, 'Persentase']}
+          />
+          <Legend />
+          <Bar dataKey="present" name="Hadir" fill="#82ca9d" />
+          <Bar dataKey="absent" name="Tidak Hadir" fill="#ff7300" />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

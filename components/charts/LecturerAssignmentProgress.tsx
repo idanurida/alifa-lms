@@ -1,5 +1,4 @@
-// components/charts/LecturerAssignmentProgress.tsx
-use client'
+﻿'use client';
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface LecturerClassProgress {
