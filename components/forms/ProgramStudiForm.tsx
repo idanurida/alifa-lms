@@ -4,17 +4,20 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { Switch } from '@/components/ui/switch'; // Memastikan impor Switch sudah benar
 import { StudyProgram } from '@/types/akademik';
 
 export default function ProgramStudiForm() {
-    const [formData, setFormData] = useState<Partial<StudyProgram>>({
+    // Definisi StudyProgram (Mock untuk memastikan tipe StudyProgram ada)
+    // Jika tipe ini tidak ada di '@/types/akademik', ini akan menjadi masalah berikutnya.
+    const initialFormData: Partial<StudyProgram> = {
         name: '',
         code: '',
         faculty: '',
         is_active: true,
-    });
+    };
 
+    const [formData, setFormData] = useState<Partial<StudyProgram>>(initialFormData);
     const [idCounter, setIdCounter] = useState(0);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,12 +32,11 @@ export default function ProgramStudiForm() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Simulasikan penambahan ID dan tanggal
+        // Simulasikan penambahan ID dan tanggal, mengisi nilai default jika hilang
         const newProgram: StudyProgram = {
             ...formData,
             id: idCounter + 1, // Simulasikan ID baru
             created_at: new Date().toISOString(),
-            // Memastikan properti wajib ada, meskipun nilainya mock
             name: formData.name ?? '', 
             code: formData.code ?? '',
             faculty: formData.faculty ?? '',
@@ -44,11 +46,8 @@ export default function ProgramStudiForm() {
         console.log('Submitting Program Studi:', newProgram);
         setIdCounter(prev => prev + 1);
         
-        // Implementasi logika API call untuk menyimpan data
-        console.log(`Data Program Studi "${newProgram.name}" berhasil disimpan (Mock Submission)`);
-        
         // Reset form
-        setFormData({ name: '', code: '', faculty: '', is_active: true });
+        setFormData(initialFormData);
     };
 
     return (
