@@ -1,64 +1,110 @@
 'use client';
-import React from 'react';
-import { StudyProgram } from '@/types/akademik'; // Menggunakan tipe yang sudah diperbarui
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { StudyProgram } from '@/types/akademik';
 
-interface StudyProgramTableProps {
-  programs: StudyProgram[];
-  onEdit: (program: StudyProgram) => void;
-  onDelete: (id: number) => void;
-}
+// Ini adalah komponen form yang dibutuhkan oleh /tambah/page.tsx
+export default function ProgramStudiForm() {
+    const [formData, setFormData] = useState<Partial<StudyProgram>>({
+        name: '',
+        code: '',
+        faculty: '',
+        is_active: true,
+    });
 
-export default function StudyProgramTable({ programs, onEdit, onDelete }: StudyProgramTableProps) {
-  return (
-    <div className="rounded-md border overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">ID</TableHead>
-            <TableHead>Kode</TableHead>
-            <TableHead>Nama Program Studi</TableHead>
-            <TableHead>Fakultas</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Aksi</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {programs.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                Tidak ada data Program Studi.
-              </TableCell>
-            </TableRow>
-          ) : (
-            programs.map((program) => (
-              <TableRow key={program.id}>
-                <TableCell className="font-medium">{program.id}</TableCell>
-                <TableCell>{program.code}</TableCell>
-                <TableCell>{program.name}</TableCell>
-                <TableCell>{program.faculty}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                    program.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {program.is_active ? 'Aktif' : 'Non-Aktif'}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button variant="ghost" size="icon" onClick={() => onEdit(program)}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button variant="destructive" size="icon" onClick={() => onDelete(program.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
+    // Menggunakan ID bertipe string untuk kemudahan interaksi form
+    const [idCounter, setIdCounter] = useState(0);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handleSwitchChange = (checked: boolean) => {
+        setFormData(prev => ({ ...prev, is_active: checked }));
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        // Simulasikan penambahan ID dan tanggal
+        const newProgram: StudyProgram = {
+            ...formData,
+            id: idCounter + 1, // Simulasikan ID baru
+            created_at: new Date().toISOString(),
+            // Memastikan properti wajib ada, meskipun nilainya mock
+            name: formData.name ?? '', 
+            code: formData.code ?? '',
+            faculty: formData.faculty ?? '',
+            is_active: formData.is_active ?? true,
+        };
+
+        console.log('Submitting Program Studi:', newProgram);
+        setIdCounter(prev => prev + 1);
+        
+        // Implementasi logika API call untuk menyimpan data
+        alert(`Data Program Studi "${newProgram.name}" berhasil disimpan (Mock Submission)`);
+        
+        // Reset form
+        setFormData({ name: '', code: '', faculty: '', is_active: true });
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+                <Label htmlFor="code">Kode Program Studi</Label>
+                <Input 
+                    id="code" 
+                    placeholder="Contoh: SI" 
+                    value={formData.code || ''} 
+                    onChange={handleChange} 
+                    required 
+                />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="name">Nama Program Studi</Label>
+                <Input 
+                    id="name" 
+                    placeholder="Contoh: Sistem Informasi" 
+                    value={formData.name || ''} 
+                    onChange={handleChange} 
+                    required 
+                />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="faculty">Fakultas</Label>
+                <Input 
+                    id="faculty" 
+                    placeholder="Contoh: Fakultas Ilmu Komputer" 
+                    value={formData.faculty || ''} 
+                    onChange={handleChange} 
+                    required 
+                />
+            </div>
+
+            <div className="flex items-center justify-between space-x-4 pt-4">
+                <Label htmlFor="is_active" className="text-sm font-medium leading-none">
+                    Status Aktif
+                    <p className="text-xs text-muted-foreground mt-1">
+                        Jika diaktifkan, program studi dapat digunakan untuk enrollment.
+                    </p>
+                </Label>
+                <Switch 
+                    id="is_active" 
+                    checked={formData.is_active} 
+                    onCheckedChange={handleSwitchChange} 
+                />
+            </div>
+
+            <Button type="submit" className="w-full">
+                Simpan Program Studi
+            </Button>
+        </form>
+    );
 }
