@@ -11,18 +11,17 @@ export default async function DashboardRootPage() {
 
   const role = session.user.role;
   
-  switch (role) {
-    case 'mahasiswa':
-      redirect('/mahasiswa/dashboard');
-    case 'dosen':
-      redirect('/akademik/dosen/dashboard');
-    case 'staff_akademik':
-      redirect('/akademik/dashboard');
-    case 'staff_keuangan':
-      redirect('/keuangan/dashboard');
-    case 'super_admin':
-      redirect('/superadmin/dashboard');
-    default:
-      redirect('/login');
-  }
+  // Redirect berdasarkan role dengan route yang TERSEDIA
+  const redirectPaths = {
+    mahasiswa: '/mahasiswa/dashboard',
+    dosen: '/dosen/dashboard',
+    staff_akademik: '/akademik',
+    staff_keuangan: '/keuangan',
+    super_admin: '/super-admin/dashboard' // Sekarang sudah ada
+  };
+
+  const redirectPath = redirectPaths[role as keyof typeof redirectPaths] || '/login';
+  
+  console.log(`Redirecting ${role} user to: ${redirectPath}`);
+  redirect(redirectPath);
 }
