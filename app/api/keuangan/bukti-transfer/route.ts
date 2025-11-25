@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     const validatedData = paymentEvidenceSchema.parse(body);
 
     // Pastikan student_id sesuai dengan session user
-    if (validatedData.student_id !== session.user.id) {
+    if (validatedData.student_id.toString() !== session.user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
