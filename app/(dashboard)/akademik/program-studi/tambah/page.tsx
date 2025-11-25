@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ProgramStudiForm from '@/components/akademik/ProgramStudiForm'; // Mengimpor form yang baru dibuat
+// UPDATE: Mengganti jalur impor ke lokasi yang disarankan: components/forms/ProgramStudiForm
+import ProgramStudiForm from '../../../../../components/forms/ProgramStudiForm'; 
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -28,7 +29,6 @@ export default async function TambahProgramStudiPage() {
                     <CardTitle>Formulir Program Studi</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {/* Menggunakan ProgramStudiForm yang tidak memerlukan props */}
                     <ProgramStudiForm />
                 </CardContent>
             </Card>
