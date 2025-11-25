@@ -65,7 +65,7 @@ export async function GET(
     console.error('Error fetching dosen:', error);
     return NextResponse.json({ 
       error: 'Internal Server Error',
-      details: error.message 
+      details: (error as Error).message 
     }, { status: 500 });
   }
 }
