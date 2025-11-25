@@ -22,9 +22,9 @@ export default function KurikulumForm({ initialData, studyPrograms }: KurikulumF
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     code: initialData?.code || '',
-    study_program_id: initialData?.study_program_id || '',
-    total_credits: initialData? || 144,
-    is_active: initialData?.is_active ?? true,
+    programStudiId: initialData?.programStudiId || '',
+    totalCredits: initialData?.totalCredits || 144,
+    isActive: initialData?.isActive ?? true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -107,11 +107,11 @@ export default function KurikulumForm({ initialData, studyPrograms }: KurikulumF
             {errors.code && <p className="text-sm text-destructive mt-1">{errors.code}</p>}
           </div>
           <div>
-            <Label htmlFor="study_program_id">Program Studi *</Label>
+            <Label htmlFor="programStudiId">Program Studi *</Label>
             <select
-              id="study_program_id"
-              name="study_program_id"
-              value={formData.study_program_id}
+              id="programStudiId"
+              name="programStudiId"
+              value={formData.programStudiId}
               onChange={handleChange}
               required
               className="w-full p-2 border rounded mt-1 bg-background text-foreground"
@@ -123,13 +123,13 @@ export default function KurikulumForm({ initialData, studyPrograms }: KurikulumF
                 </option>
               ))}
             </select>
-            {errors.study_program_id && <p className="text-sm text-destructive mt-1">{errors.study_program_id}</p>}
+            {errors.programStudiId && <p className="text-sm text-destructive mt-1">{errors.programStudiId}</p>}
           </div>
           <div>
-            <Label htmlFor="total_credits">Total SKS</Label>
+            <Label htmlFor="totalCredits">Total SKS</Label>
             <Input
-              id="total_credits"
-              name="total_credits"
+              id="totalCredits"
+              name="totalCredits"
               type="number"
               min="0"
               value={formData}
@@ -140,14 +140,14 @@ export default function KurikulumForm({ initialData, studyPrograms }: KurikulumF
           </div>
           <div className="flex items-center">
             <input
-              id="is_active"
-              name="is_active"
+              id="isActive"
+              name="isActive"
               type="checkbox"
-              checked={formData.is_active}
+              checked={formData.isActive}
               onChange={handleChange}
               className="h-4 w-4"
             />
-            <Label htmlFor="is_active" className="ml-2">
+            <Label htmlFor="isActive" className="ml-2">
               Aktif
             </Label>
           </div>
