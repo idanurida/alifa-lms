@@ -95,7 +95,7 @@ export default async function ForumCategoryPage({ params }: { params: { category
           <p className="text-sm text-muted-foreground">{category.description}</p>
         </CardHeader>
         <CardContent>
-          <ForumThreadList threads={threads} categoryId={category.id} />
+          <ForumThreadList threads={threads} />
         </CardContent>
       </Card>
     </div>
