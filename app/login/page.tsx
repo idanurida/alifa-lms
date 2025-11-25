@@ -1,3 +1,5 @@
+﻿'use client'
+
 // app/login/page.tsx - VERSI DIPERBAIKI DENGAN THEME CONSISTENCY
 'use client';
 
@@ -315,7 +317,7 @@ export default function LoginPage() {
 
       {/* Footer */}
       <footer className="px-4 py-6 text-center text-sm text-muted-foreground bg-muted/30">
-        <p>© 2025 ALIFA Institute. All rights reserved.</p>
+        <p>Â© 2025 ALIFA Institute. All rights reserved.</p>
         <p className="text-xs mt-1">Demo Version - Password: password123</p>
       </footer>
     </div>

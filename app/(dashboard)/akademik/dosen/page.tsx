@@ -1,3 +1,5 @@
+﻿export const dynamic = 'force-dynamic'
+
 // app/(dashboard)/akademik/dosen/page.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,7 +34,7 @@ export default async function DosenPage() {
 
     let data = [];
     try {
-      console.log('🔍 Fetching lecturers data...');
+      console.log('ðŸ” Fetching lecturers data...');
       const result = await sql`
         SELECT 
           l.id, 
@@ -50,7 +52,7 @@ export default async function DosenPage() {
         ORDER BY l.name
       `;
       
-      console.log('✅ Data fetched:', result.length, 'records');
+      console.log('âœ… Data fetched:', result.length, 'records');
       
       data = result.map(row => ({
         id: row.id,
@@ -64,7 +66,7 @@ export default async function DosenPage() {
       }));
       
     } catch (error) {
-      console.error('❌ Failed to fetch lecturers:', error);
+      console.error('âŒ Failed to fetch lecturers:', error);
       // Fallback data untuk development
       data = [
         {
@@ -159,7 +161,7 @@ export default async function DosenPage() {
     );
 
   } catch (error) {
-    console.error('❌ Error in DosenPage:', error);
+    console.error('âŒ Error in DosenPage:', error);
     return (
       <div className="p-6 text-center">
         <h1 className="text-2xl font-bold text-red-600">Error</h1>

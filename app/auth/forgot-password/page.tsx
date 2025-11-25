@@ -1,3 +1,5 @@
+﻿'use client'
+
 // app/auth/forgot-password/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,9 +24,9 @@ export default function ForgotPasswordPage() {
 
       // if (!res.ok) throw new Error('Gagal mengirim permintaan reset password');
 
-      toast.success('✅ Link reset password telah dikirim ke email Anda.');
+      toast.success('âœ… Link reset password telah dikirim ke email Anda.');
     } catch (error: any) {
-      toast.error(`❌ ${(error as Error).message}`);
+      toast.error(`âŒ ${(error as Error).message}`);
     }
   };
 

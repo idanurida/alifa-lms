@@ -1,3 +1,5 @@
+﻿'use client'
+
 // app/auth/verify-email/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,9 +19,9 @@ export default function VerifyEmailPage() {
 
       // if (!res.ok) throw new Error('Gagal mengirim ulang email verifikasi');
 
-      toast.success('✅ Email verifikasi telah dikirim ulang.');
+      toast.success('âœ… Email verifikasi telah dikirim ulang.');
     } catch (error: any) {
-      toast.error(`❌ ${(error as Error).message}`);
+      toast.error(`âŒ ${(error as Error).message}`);
     }
   };
 

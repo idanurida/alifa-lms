@@ -1,3 +1,5 @@
+﻿'use client'
+
 // app/auth/reset-password/page.tsx
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,7 +17,7 @@ export default function ResetPasswordPage() {
     const token = new URLSearchParams(window.location.search).get('token'); // Ambil token dari URL jika ada
 
     if (password !== confirmPassword) {
-      toast.error('❌ Kata sandi tidak cocok.');
+      toast.error('âŒ Kata sandi tidak cocok.');
       return;
     }
 
@@ -29,11 +31,11 @@ export default function ResetPasswordPage() {
 
       // if (!res.ok) throw new Error('Gagal mereset kata sandi');
 
-      toast.success('✅ Kata sandi berhasil direset. Silakan login kembali.');
+      toast.success('âœ… Kata sandi berhasil direset. Silakan login kembali.');
       // Redirect ke login setelah sukses
       // router.push('/login');
     } catch (error: any) {
-      toast.error(`❌ ${(error as Error).message}`);
+      toast.error(`âŒ ${(error as Error).message}`);
     }
   };
 
@@ -56,7 +58,7 @@ export default function ResetPasswordPage() {
                     id="password"
                     name="password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     required
                     className="pl-10"
                   />
@@ -69,7 +71,7 @@ export default function ResetPasswordPage() {
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   required
                   className="mt-1"
                 />
