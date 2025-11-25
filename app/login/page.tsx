@@ -1,8 +1,6 @@
 ﻿'use client'
 
-// app/login/page.tsx - VERSI DIPERBAIKI DENGAN THEME CONSISTENCY
-'use client';
-
+import { Suspense } from 'react'
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -54,7 +52,7 @@ const TEST_USERS = {
   }
 };
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
@@ -128,7 +126,14 @@ export default function LoginPage() {
   }, []);
 
   if (!mounted) {
-    return null; // atau loading skeleton
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-supabase-green mx-auto"></div>
+          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -317,9 +322,24 @@ export default function LoginPage() {
 
       {/* Footer */}
       <footer className="px-4 py-6 text-center text-sm text-muted-foreground bg-muted/30">
-        <p>Â© 2025 ALIFA Institute. All rights reserved.</p>
+        <p>© 2025 ALIFA Institute. All rights reserved.</p>
         <p className="text-xs mt-1">Demo Version - Password: password123</p>
       </footer>
     </div>
   );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-supabase-green mx-auto"></div>
+          <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
+  )
 }

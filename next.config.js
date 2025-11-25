@@ -6,6 +6,10 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  staticPageGenerationTimeout: 120, // ← TAMBAH INI
+  experimental: {
+    serverComponentsExternalPackages: ['bcryptjs'], // ← OPSIONAL: jika pakai bcryptjs
+  },
 }
 
 module.exports = nextConfig
