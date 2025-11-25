@@ -1,4 +1,5 @@
 // prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,10 +9,59 @@ datasource db {
   url       = env("DATABASE_URL")
 }
 
+// Model untuk autentikasi dan pengguna sistem
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// --- MODEL AKADEMIK (Model yang Hilang dan Diperlukan) ---
+
+// Digunakan untuk programStudi di query Anda
+model ProgramStudi {
+  id    Int     @id @default(autoincrement())
+  nama  String  @unique
+  kelas Kelas[] // Relasi: Satu ProgramStudi memiliki banyak Kelas
+}
+
+// Digunakan untuk kelas di query Anda
+model Kelas {
+  id             Int          @id @default(autoincrement())
+  nama           String       @unique
+  programStudiId Int
+  
+  // Relasi
+  programStudi   ProgramStudi @relation(fields: [programStudiId], references: [id])
+  penugasan      PenugasanDosen[] // Relasi: Satu Kelas memiliki banyak PenugasanDosen
+}
+
+// Digunakan untuk availableLecturers (dosen) di query Anda
+model Dosen {
+  id         Int              @id @default(autoincrement())
+  nip        String           @unique
+  nama       String
+  
+  // Relasi
+  penugasan  PenugasanDosen[] // Relasi: Satu Dosen memiliki banyak PenugasanDosen
+}
+
+// Digunakan untuk PenugasanDosen di Server Action Anda
+model PenugasanDosen {
+  id             Int       @id @default(autoincrement())
+  kelasId        Int
+  dosenId        Int
+  tanggalMulai   DateTime
+  tanggalSelesai DateTime
+  bebanMengajar  Int
+  status         String // 'active', 'inactive'
+
+  // Relasi
+  kelas Kelas @relation(fields: [kelasId], references: [id])
+  dosen Dosen @relation(fields: [dosenId], references: [id])
+  
+  // Tambahan: Agar pasangan kelasId dan dosenId unik
+  @@unique([kelasId, dosenId]) 
 }

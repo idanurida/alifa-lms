@@ -3,7 +3,7 @@ import TambahPenugasanForm from './TambahPenugasanForm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma'; // Pastikan path ke prisma client singleton Anda benar
 
 interface PageProps {
   params: {
@@ -22,10 +22,11 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
   const classId = parseInt(params.id);
   
   try {
+    // Perbaikan Final: Menggunakan camelCase 'kelas' (Sesuai saran Error)
     const kelas = await prisma.kelas.findUnique({
       where: { id: classId },
       include: {
-        programStudi: true,
+        programStudi: true, // Asumsi model ini juga 'programStudi' (camelCase)
       },
     });
 
@@ -34,6 +35,7 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
     }
 
     // Get available lecturers
+    // Perbaikan Final: Menggunakan camelCase 'dosen'
     const availableLecturers = await prisma.dosen.findMany({
       select: {
         id: true,
@@ -46,6 +48,7 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
     });
 
     // Get available classes for reference
+    // Perbaikan Final: Menggunakan camelCase 'kelas'
     const availableClasses = await prisma.kelas.findMany({
       where: {
         programStudiId: kelas.programStudiId,
@@ -69,6 +72,7 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
       
       try {
         // Create new teaching assignment
+        // Perbaikan Final: Menggunakan camelCase 'penugasanDosen'
         await prisma.penugasanDosen.create({
           data: {
             kelasId: classId,
