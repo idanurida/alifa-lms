@@ -1,4 +1,3 @@
-selesaikan file:
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -613,7 +612,7 @@ function getRecentActivities(role: string) {
         time: "3 hari yang lalu",
         icon: Calendar
       },
-            {
+      {
         title: "Perubahan kurikulum",
         description: "Update kurikulum 2024",
         time: "1 minggu yang lalu",
