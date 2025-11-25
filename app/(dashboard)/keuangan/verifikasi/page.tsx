@@ -40,7 +40,7 @@ export default async function VerifikasiPage() {
         pe.verified_by,
         pe.verified_at,
         pe.notes,
-        pe.created_at,
+        pe.createdAt,
         s.name as student_name, 
         s.nim,
         s.email,
@@ -49,7 +49,7 @@ export default async function VerifikasiPage() {
       JOIN students s ON pe.student_id = s.id
       LEFT JOIN academic_periods ap ON pe.academic_period_id = ap.id
       WHERE pe.status = 'pending'
-      ORDER BY pe.created_at ASC
+      ORDER BY pe.createdAt ASC
     `;
     
     data = result;

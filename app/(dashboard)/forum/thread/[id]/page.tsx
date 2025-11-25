@@ -25,7 +25,7 @@ export default async function ForumThreadPage({ params }: { params: { id: string
     const [threadResult] = await sql`
       SELECT 
         ft.id, ft.category_id, ft.user_id, ft.title, ft.slug, ft.is_pinned, ft.is_locked,
-        ft.view_count, ft.created_at,
+        ft.view_count, ft.createdAt,
         u.name as user_name, u.role as user_role,
         fc.name as category_name, fc.slug as category_slug
       FROM forum_threads ft
@@ -42,12 +42,12 @@ export default async function ForumThreadPage({ params }: { params: { id: string
     // Ambil semua post dalam thread ini
     posts = await sql`
       SELECT 
-        fp.id, fp.thread_id, fp.user_id, fp.content, fp.is_first_post, fp.created_at, fp.updated_at,
+        fp.id, fp.thread_id, fp.user_id, fp.content, fp.is_first_post, fp.createdAt, fp.updatedAt,
         u.name as user_name, u.role as user_role
       FROM forum_posts fp
       JOIN users u ON fp.user_id = u.id
       WHERE fp.thread_id = ${threadId}
-      ORDER BY fp.created_at ASC
+      ORDER BY fp.createdAt ASC
     `;
   } catch (error) {
     console.error('Failed to fetch forum thread or posts:', error);
@@ -127,7 +127,7 @@ export default async function ForumThreadPage({ params }: { params: { id: string
                 <User size={14} />
                 <span>{thread.user_name}</span>
                 <span>•</span>
-                <span>{formatDate(thread.created_at)}</span>
+                <span>{formatDate(thread.createdAt)}</span>
               </div>
             </div>
             <div className="flex gap-2">
@@ -159,7 +159,7 @@ export default async function ForumThreadPage({ params }: { params: { id: string
                     {post.user_role}
                   </Badge>
                 </div>
-                <span className="text-xs text-muted-foreground">{formatDate(post.created_at)}</span>
+                <span className="text-xs text-muted-foreground">{formatDate(post.createdAt)}</span>
               </div>
             </CardHeader>
             <CardContent>

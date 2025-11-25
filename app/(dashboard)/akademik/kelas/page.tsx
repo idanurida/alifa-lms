@@ -26,7 +26,7 @@ export default async function KelasPage() {
   try {
     const result = await sql`
       SELECT 
-        c.id, c.course_id, c.academic_period_id, c.class_code, c.lecturer_id, c.schedule, c.max_students, c.is_active, c.created_at,
+        c.id, c.course_id, c.academic_period_id, c.class_code, c.lecturer_id, c.schedule, c.max_students, c.is_active, c.createdAt,
         co.name as course_name, co.code as course_code,
         ap.name as academic_period_name,
         l.name as lecturer_name

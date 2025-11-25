@@ -32,7 +32,7 @@ export default async function TambahMahasiswaPage() {
     const convertedCurricula = resultCurricula.map((c: any) => ({
         ...c,
         // Konversi Date ke string untuk field created_at
-        created_at: c.created_at ? c.created_at.toISOString() : '', 
+        created_at: c.createdAt ? c.createdAt.toISOString() : '', 
         
         // Tambahkan embedded object 'study_program' (placeholder) 
         // agar sesuai dengan interface Curriculum.

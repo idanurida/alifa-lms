@@ -40,7 +40,7 @@ export default async function EditMahasiswaPage({ params }: { params: { id: stri
     curricula = resultCurricula.map((c: any) => ({
         ...c,
         // Konversi Date ke string untuk field created_at
-        created_at: c.created_at ? c.created_at.toISOString() : '', 
+        created_at: c.createdAt ? c.createdAt.toISOString() : '', 
         
         // Tambahkan embedded object 'study_program' (minimal placeholder) 
         // agar sesuai dengan interface Curriculum.

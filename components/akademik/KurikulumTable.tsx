@@ -52,10 +52,10 @@ export default function KurikulumTable({ data }: KurikulumTableProps) {
               <TableCell className="font-medium">{kurikulum.name}</TableCell>
               <TableCell>
                 <span className="text-xs px-2 py-1 bg-muted rounded">
-                  {kurikulum.study_program.code} - {kurikulum.study_program.name}
+                  {kurikulum.programStudi?.code} - {kurikulum.programStudi?.name}
                 </span>
               </TableCell>
-              <TableCell className="text-right">{kurikulum.total_credits}</TableCell>
+              <TableCell className="text-right">{kurikulum}</TableCell>
               <TableCell>
                 <Badge variant={kurikulum.is_active ? 'default' : 'secondary'}>
                   {kurikulum.is_active ? 'Aktif' : 'Tidak Aktif'}

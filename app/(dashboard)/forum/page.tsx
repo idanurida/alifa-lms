@@ -39,7 +39,7 @@ export default async function ForumDashboardPage() {
         ca.id,
         ca.title,
         ca.content,
-        ca.created_at,
+        ca.createdAt,
         u.name as author_name,
         c.name as category_name,
         0 as reply_count,
@@ -47,7 +47,7 @@ export default async function ForumDashboardPage() {
       FROM course_announcements ca
       JOIN users u ON ca.author_id = u.id
       JOIN courses c ON ca.course_id = c.id
-      ORDER BY ca.created_at DESC
+      ORDER BY ca.createdAt DESC
       LIMIT 5
     `;
 
@@ -207,7 +207,7 @@ export default async function ForumDashboardPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        <span>{new Date(thread.created_at).toLocaleDateString('id-ID')}</span>
+                        <span>{new Date(thread.createdAt).toLocaleDateString('id-ID')}</span>
                       </div>
                     </div>
                   </div>

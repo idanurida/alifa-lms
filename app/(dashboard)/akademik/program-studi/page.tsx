@@ -48,7 +48,7 @@ export default async function ProgramStudiPage() {
         id: Number(sp.id), // FIX: Memastikan ID adalah number sesuai types/akademik.ts
         is_active: Boolean(sp.is_active), // Memastikan is_active adalah boolean
         // Mengkonversi objek Date dari DB ke string
-        created_at: sp.created_at ? new Date(sp.created_at).toISOString() : new Date().toISOString(), 
+        created_at: sp.createdAt ? new Date(sp.createdAt).toISOString() : new Date().toISOString(), 
     })) as StudyProgram[]; // Assertion agar TypeScript tahu tipe objek sudah StudyProgram
     
   } catch (error) {

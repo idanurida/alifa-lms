@@ -44,8 +44,8 @@ export default async function EditKurikulumPage({ params }: { params: { id: stri
       year: result.year,
       description: result.description,
       is_active: result.is_active,
-      created_at: result.created_at,
-      updated_at: result.updated_at
+      created_at: result.createdAt,
+      updated_at: result.updatedAt
     };
 
     // Fetch study programs data - biarkan sebagai any[] untuk menghindari konflik type

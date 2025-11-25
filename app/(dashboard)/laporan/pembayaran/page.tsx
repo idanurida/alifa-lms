@@ -25,7 +25,7 @@ export default async function LaporanPembayaranPage() {
       JOIN students s ON pe.student_id = s.id
       JOIN academic_periods ap ON pe.academic_period_id = ap.id
       LEFT JOIN lecturers l ON pe.verified_by = l.id
-      ORDER BY pe.created_at DESC
+      ORDER BY pe.createdAt DESC
     `;
     data = result;
   } catch (error) {

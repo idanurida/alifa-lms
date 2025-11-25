@@ -45,7 +45,7 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
     const [student] = await sql`
       SELECT 
         s.id, s.nim, s.name, s.email, s.phone, s.address, s.birth_date, s.entry_year,
-        s.status, s.created_at, s.updated_at,
+        s.status, s.createdAt, s.updatedAt,
         p.name as program_studi_name,
         u.name as created_by_name
       FROM students s
@@ -228,7 +228,7 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <p className="text-2xl font-bold text-supabase-green">
-                    {academicData?.total_credits || 0}
+                    {academicData? || 0}
                   </p>
                   <p className="text-sm text-muted-foreground">Total SKS</p>
                 </div>
@@ -354,12 +354,12 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
             <CardContent className="space-y-3">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Dibuat Pada</label>
-                <p className="text-sm">{formatDate(studentData.created_at)}</p>
+                <p className="text-sm">{formatDate(studentData.createdAt)}</p>
               </div>
-              {studentData.updated_at && (
+              {studentData.updatedAt && (
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Diupdate Pada</label>
-                  <p className="text-sm">{formatDate(studentData.updated_at)}</p>
+                  <p className="text-sm">{formatDate(studentData.updatedAt)}</p>
                 </div>
               )}
               {studentData.created_by_name && (

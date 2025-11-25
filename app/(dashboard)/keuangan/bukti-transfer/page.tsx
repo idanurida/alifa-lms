@@ -22,7 +22,7 @@ export default async function BuktiTransferPage() {
     let baseQuery = sql`
       SELECT 
         pe.id, pe.student_id, pe.academic_period_id, pe.amount, pe.evidence_path, pe.transfer_date,
-        pe.bank_name, pe.account_number, pe.account_name, pe.status, pe.verified_by, pe.verified_at, pe.notes, pe.created_at,
+        pe.bank_name, pe.account_number, pe.account_name, pe.status, pe.verified_by, pe.verified_at, pe.notes, pe.createdAt,
         s.name as student_name, s.nim,
         ap.name as academic_period_name
       FROM payment_evidences pe
@@ -44,7 +44,7 @@ export default async function BuktiTransferPage() {
         result = await sql`
           ${baseQuery}
           WHERE pe.student_id = ${student[0].id}
-          ORDER BY pe.created_at DESC
+          ORDER BY pe.createdAt DESC
         `;
         data = result;
       }
@@ -52,7 +52,7 @@ export default async function BuktiTransferPage() {
       // Untuk admin/staff, tampilkan semua data
       result = await sql`
         ${baseQuery}
-        ORDER BY pe.created_at DESC
+        ORDER BY pe.createdAt DESC
       `;
       data = result;
     }

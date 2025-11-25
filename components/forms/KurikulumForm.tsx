@@ -23,7 +23,7 @@ export default function KurikulumForm({ initialData, studyPrograms }: KurikulumF
     name: initialData?.name || '',
     code: initialData?.code || '',
     study_program_id: initialData?.study_program_id || '',
-    total_credits: initialData?.total_credits || 144,
+    total_credits: initialData? || 144,
     is_active: initialData?.is_active ?? true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -132,11 +132,11 @@ export default function KurikulumForm({ initialData, studyPrograms }: KurikulumF
               name="total_credits"
               type="number"
               min="0"
-              value={formData.total_credits}
+              value={formData}
               onChange={handleChange}
               className="mt-1"
             />
-            {errors.total_credits && <p className="text-sm text-destructive mt-1">{errors.total_credits}</p>}
+            {errors && <p className="text-sm text-destructive mt-1">{errors}</p>}
           </div>
           <div className="flex items-center">
             <input

@@ -30,7 +30,7 @@ export default async function TambahKurikulumPage() {
     const convertedPrograms = result.map((program) => ({
       ...program,
       // Konversi objek Date menjadi string ISO yang sesuai dengan tipe 'string'
-      created_at: program.created_at ? program.created_at.toISOString() : '', 
+      created_at: program.createdAt ? program.createdAt.toISOString() : '', 
     }));
 
     // Terapkan Type Assertion

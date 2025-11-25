@@ -36,9 +36,9 @@ export default async function SkalaNilaiPage({ params }: { params: { kurikulumId
         c.id, 
         c.name, 
         c.code, 
-        c.total_credits,
+        c,
         c.is_active,
-        c.created_at,
+        c.createdAt,
         sp.name as study_program_name,
         sp.id as study_program_id
       FROM curricula c
@@ -113,7 +113,7 @@ export default async function SkalaNilaiPage({ params }: { params: { kurikulumId
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total SKS</p>
-              <p className="font-semibold">{kurikulum.total_credits || 144}</p>
+              <p className="font-semibold">{kurikulum || 144}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Status</p>

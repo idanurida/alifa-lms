@@ -31,11 +31,11 @@ export default async function ForumCategoryPage({ params }: { params: { category
     // PERBAIKAN: Query threads dari table yang sesuai
     threads = await sql`
       SELECT 
-        ca.id, ca.title, ca.content as description, ca.created_at,
+        ca.id, ca.title, ca.content as description, ca.createdAt,
         ca.author_id, ca.view_count, 0 as reply_count, false as is_pinned, false as is_locked
       FROM course_announcements ca
       WHERE ca.course_id IN (SELECT course_id FROM classes WHERE lecturer_id = (SELECT id FROM lecturers WHERE user_id = ${session.user.id}))
-      ORDER BY ca.created_at DESC
+      ORDER BY ca.createdAt DESC
       LIMIT 10
     `;
 
@@ -43,7 +43,7 @@ export default async function ForumCategoryPage({ params }: { params: { category
     if (threads.length > 0) {
       const threadWithUsers = await sql`
         SELECT 
-          ca.id, ca.title, ca.content as description, ca.created_at,
+          ca.id, ca.title, ca.content as description, ca.createdAt,
           ca.author_id, ca.view_count, u.name as user_name
         FROM course_announcements ca
         JOIN users u ON ca.author_id = u.id

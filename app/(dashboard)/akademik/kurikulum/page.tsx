@@ -18,11 +18,11 @@ export default async function KurikulumPage() {
   try {
     const result = await sql`
       SELECT 
-        c.id, c.name, c.code, c.total_credits, c.is_active, c.created_at,
+        c.id, c.name, c.code, c, c.is_active, c.createdAt,
         sp.id as study_program_id, sp.name as study_program_name, sp.code as study_program_code
       FROM curricula c
       JOIN study_programs sp ON c.study_program_id = sp.id
-      ORDER BY c.created_at DESC
+      ORDER BY c.createdAt DESC
     `;
     data = result;
   } catch (error) {
