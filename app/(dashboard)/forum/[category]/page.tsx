@@ -17,7 +17,7 @@ export default async function ForumCategoryPage({ params }: { params: { category
 
   const categoryId = parseInt(params.category);
 
-  let category, threads = [];
+  let category: any; let threads: any[] = [];
   try {
     // PERBAIKAN: Gunakan table categories yang ada
     const [categoryResult] = await sql`
