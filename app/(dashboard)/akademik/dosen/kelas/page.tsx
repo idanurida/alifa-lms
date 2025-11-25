@@ -22,7 +22,7 @@ export default async function KelasDosenPage() {
     );
   }
 
-  let kelasDiajar = [];
+  let kelasDiajar: any[] = [];
 
   try {
     // PERBAIKAN: Query yang sesuai dengan struktur database sebenarnya

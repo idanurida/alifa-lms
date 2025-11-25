@@ -16,8 +16,8 @@ export default async function ForumDashboardPage() {
     return <div>Unauthorized</div>;
   }
 
-  let categories = [];
-  let recentThreads = [];
+  let categories: any[] = [];
+  let recentThreads: any[] = [];
 
   try {
     // PERBAIKAN: Query yang benar untuk categories

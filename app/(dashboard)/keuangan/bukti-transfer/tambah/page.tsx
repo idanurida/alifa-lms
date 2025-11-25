@@ -16,7 +16,7 @@ export default async function TambahBuktiTransferPage() {
     return <div>Unauthorized</div>;
   }
 
-  let academicPeriods = [];
+  let academicPeriods: any[] = [];
   try {
     const result = await sql`
       SELECT id, name, code FROM academic_periods WHERE is_active = true ORDER BY start_date DESC

@@ -22,7 +22,7 @@ export default async function VerifikasiPage() {
     );
   }
 
-  let data = [];
+  let data: any[] = [];
   try {
     // QUERY YANG SESUAI DENGAN STRUKTUR TABEL SEBENARNYA
     const result = await sql`

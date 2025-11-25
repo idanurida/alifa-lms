@@ -11,7 +11,7 @@ export default async function KalenderAkademikPage() {
     return <div>Unauthorized</div>;
   }
 
-  let data = [];
+  let data: any[] = [];
   try {
     const result = await sql`SELECT * FROM academic_periods ORDER BY year DESC, semester ASC`;
     data = result;

@@ -16,7 +16,7 @@ export default async function BuktiTransferPage() {
     return <div>Unauthorized</div>;
   }
 
-  let data = [];
+  let data: any[] = [];
   try {
     // PERBAIKAN: Gunakan template literal dengan parameterized query
     let baseQuery = sql`

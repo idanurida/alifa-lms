@@ -12,7 +12,7 @@ export default async function LaporanNilaiPage() {
     return <div>Unauthorized</div>;
   }
 
-  let data = [];
+  let data: any[] = [];
   // Contoh query untuk mendapatkan nilai akhir per mahasiswa per kelas
   // Query ini kompleks dan tergantung bagaimana nilai dihitung dari komponen-komponen
   try {

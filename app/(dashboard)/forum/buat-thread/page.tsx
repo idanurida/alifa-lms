@@ -17,7 +17,7 @@ export default async function BuatThreadPage({ searchParams }: { searchParams: {
     return <div>Unauthorized</div>;
   }
 
-  let categories = [];
+  let categories: any[] = [];
   try {
     const result = await sql`
       SELECT id, name, slug FROM forum_categories WHERE is_active = true ORDER BY name

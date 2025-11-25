@@ -14,7 +14,7 @@ export default async function KurikulumPage() {
     return <div>Unauthorized</div>;
   }
 
-  let data = [];
+  let data: any[] = [];
   try {
     const result = await sql`
       SELECT 

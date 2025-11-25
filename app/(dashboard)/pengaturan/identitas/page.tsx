@@ -14,7 +14,7 @@ export default async function PengaturanIdentitasPage() {
     return <div>Unauthorized</div>;
   }
 
-  let documents = [];
+  let documents: any[] = [];
   let identityInfo = null;
 
   try {

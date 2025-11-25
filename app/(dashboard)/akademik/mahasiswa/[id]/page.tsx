@@ -38,7 +38,7 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
 
   let studentData = null;
   let academicData = null;
-  let enrollmentData = [];
+  let enrollmentData: any[] = [];
 
   try {
     // Ambil data mahasiswa

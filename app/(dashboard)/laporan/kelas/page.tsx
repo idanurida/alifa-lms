@@ -12,7 +12,7 @@ export default async function LaporanKelasPage() {
     return <div>Unauthorized</div>;
   }
 
-  let data = [];
+  let data: any[] = [];
   try {
     const result = await sql`
       SELECT 
