@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { StudyProgram } from '@/types/akademik';
 
-// Ini adalah komponen form yang dibutuhkan oleh /tambah/page.tsx
 export default function ProgramStudiForm() {
     const [formData, setFormData] = useState<Partial<StudyProgram>>({
         name: '',
@@ -16,7 +15,6 @@ export default function ProgramStudiForm() {
         is_active: true,
     });
 
-    // Menggunakan ID bertipe string untuk kemudahan interaksi form
     const [idCounter, setIdCounter] = useState(0);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +45,7 @@ export default function ProgramStudiForm() {
         setIdCounter(prev => prev + 1);
         
         // Implementasi logika API call untuk menyimpan data
-        alert(`Data Program Studi "${newProgram.name}" berhasil disimpan (Mock Submission)`);
+        console.log(`Data Program Studi "${newProgram.name}" berhasil disimpan (Mock Submission)`);
         
         // Reset form
         setFormData({ name: '', code: '', faculty: '', is_active: true });
