@@ -1,9 +1,10 @@
-// app/(dashboard)/akademik/mata-kuliah/tambah/page.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import MataKuliahForm from '@/components/forms/MataKuliahForm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
+// IMPORT TIPE YANG DIBUTUHKAN DARI DEFINISI ANDA
+import { Curriculum, StudyProgram } from '@/types/akademik'; // Pastikan path ini benar!
 
 export default async function TambahMataKuliahPage() {
   const session = await getServerSession(authOptions);
@@ -11,12 +12,42 @@ export default async function TambahMataKuliahPage() {
     return <div>Unauthorized</div>;
   }
 
-  let curricula = [];
+  let curricula: Curriculum[] = []; // INISIALISASI DENGAN TIPE YANG BENAR
+
   try {
-    const result = await sql`SELECT id, name, code FROM curricula WHERE is_active = true ORDER BY code`;
-    curricula = result;
+    // 1. QUERY SQL CURRICULA: SELECT SEMUA FIELD WAJIB
+    // Field wajib Curriculum: id, name, code, study_program_id, total_credits, is_active, created_at.
+    const resultCurricula: any[] = await sql`
+        SELECT 
+            id, name, code, study_program_id, 
+            total_credits, is_active, created_at 
+        FROM curricula 
+        WHERE is_active = true 
+        ORDER BY code
+    `;
+    
+    // 2. KONVERSI TIPE DATE KE STRING & TAMBAH EMBEDDED OBJECT
+    const convertedCurricula = resultCurricula.map((c: any) => ({
+        ...c,
+        // Konversi Date ke string untuk field created_at
+        created_at: c.created_at ? c.created_at.toISOString() : '', 
+        
+        // Tambahkan embedded object 'study_program' (placeholder)
+        study_program: { 
+            id: c.study_program_id, 
+            name: 'N/A', 
+            code: 'N/A', 
+            faculty: 'N/A', 
+            is_active: false, 
+            created_at: '' 
+        } as StudyProgram, 
+    }));
+
+    // Terapkan Type Assertion
+    curricula = convertedCurricula as Curriculum[];
+
   } catch (error) {
-    console.error('Failed to fetch curricula:', error);
+    console.error('Gagal memuat data kurikulum:', error);
     return <div>Failed to load curricula.</div>;
   }
 

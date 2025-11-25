@@ -9,16 +9,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Search, Settings, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils'; // Asumsi cn (classnames helper) tersedia
+import { cn } from '@/lib/utils';
 
-// --- Interface untuk Mata Kuliah dari hasil JOIN query ---
+// Interface untuk Mata Kuliah dari hasil JOIN query
 interface MataKuliah {
     id: number;
     code: string;
     name: string;
     credits: number;
     semester: number;
-    description: string;
+    description: string; // Field ini harus ada di SELECT
     is_active: boolean;
     curriculum_name: string;
 }
@@ -37,7 +37,9 @@ export default async function MataKuliahPage() {
 
     let data: MataKuliah[] = [];
     try {
-        const result = await sql<MataKuliah[]>`
+        // PERBAIKAN: Menggunakan 'as MataKuliah[]' di akhir untuk Type Assertion yang benar.
+        // MEMASTIKAN c.description ikut di SELECT.
+        const result = await sql`
             SELECT 
                 c.id, 
                 c.code, 
@@ -50,7 +52,7 @@ export default async function MataKuliahPage() {
             FROM courses c
             JOIN curricula cur ON c.curriculum_id = cur.id
             ORDER BY c.semester, c.code
-        `;
+        ` as MataKuliah[];
         data = result;
     } catch (error) {
         console.error('Failed to fetch courses:', error);
@@ -94,6 +96,7 @@ export default async function MataKuliahPage() {
                                 // Catatan: Implementasi pencarian interaktif memerlukan Client Component
                             />
                         </div>
+                        {/* Note: Filter Semester and Kurikulum require Client Components or useSearchParams for Server Components */}
                         <Input placeholder="Filter Semester..." className="md:w-1/4" />
                         <Input placeholder="Filter Kurikulum..." className="md:w-1/4" />
                     </div>
@@ -149,9 +152,7 @@ export default async function MataKuliahPage() {
                                         <p className="text-sm">Silakan tambahkan mata kuliah baru untuk memulai.</p>
                                     </>
                                 )}
-                                {data.length === 0 && data.length > 0 && (
-                                    <p>Gagal memuat data. Periksa koneksi database atau query Anda.</p>
-                                )}
+                                {/* Hapus kondisi data.length === 0 && data.length > 0 karena mustahil */}
                             </div>
                         )}
                     </div>
