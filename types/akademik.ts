@@ -40,7 +40,7 @@ export interface AcademicPeriod {
   name: string;
   code: string;
   year: number;
-  semester: 1 | 2;
+  semester: 1 | 2; // Ganjil (1) atau Genap (2)
   start_date: string;
   end_date: string;
   uts_week: number;
@@ -54,7 +54,7 @@ export interface Course {
   id: number;
   code: string;
   name: string;
-  credits: number;
+  credits: number; // Gabungan sks_theory dan sks_practice
   curriculum_id: number;
   curriculum: Curriculum; // Embedded object
   semester: number;
