@@ -212,7 +212,7 @@ export async function DELETE(req: NextRequest) {
 
     const result = await sql`DELETE FROM classes WHERE id = ${parseInt(id)}`;
 
-    if (result.rowCount === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: 'Kelas tidak ditemukan' }, { status: 404 });
     }
 

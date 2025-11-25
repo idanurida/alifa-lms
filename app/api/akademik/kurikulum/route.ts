@@ -185,7 +185,7 @@ export async function DELETE(req: NextRequest) {
 
     const result = await sql`DELETE FROM curricula WHERE id = ${parseInt(id)}`;
 
-    if (result.rowCount === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: 'Kurikulum tidak ditemukan' }, { status: 404 });
     }
 

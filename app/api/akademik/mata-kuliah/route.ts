@@ -195,7 +195,7 @@ export async function DELETE(req: NextRequest) {
 
     const result = await sql`DELETE FROM courses WHERE id = ${parseInt(id)}`;
 
-    if (result.rowCount === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: 'Mata kuliah tidak ditemukan' }, { status: 404 });
     }
 
