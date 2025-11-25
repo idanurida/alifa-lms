@@ -228,7 +228,7 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <p className="text-2xl font-bold text-supabase-green">
-                    {academicData? || 0}
+                    {academicData?.total_credits || 0}
                   </p>
                   <p className="text-sm text-muted-foreground">Total SKS</p>
                 </div>
