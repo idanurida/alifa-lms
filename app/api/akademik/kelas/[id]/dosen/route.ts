@@ -18,14 +18,15 @@ const updateAssignmentSchema = z.object({
   is_active: z.boolean().optional(),
 });
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: idParam } = await params;
     const session = await getServerSession(authOptions);
     if (!session || !['super_admin', 'staff_akademik', 'dosen'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const classId = parseInt(params.id);
+    const classId = parseInt(idParam);
 
     // Validasi ID
     if (isNaN(classId)) {
@@ -51,26 +52,27 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       ORDER BY la.created_at DESC
     `;
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       data: result
     });
   } catch (error) {
     console.error('GET Lecturer Assignments Error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to fetch lecturer assignments' 
+    return NextResponse.json({
+      error: 'Failed to fetch lecturer assignments'
     }, { status: 500 });
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: idParam } = await params;
     const session = await getServerSession(authOptions);
     if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const classId = parseInt(params.id);
+    const classId = parseInt(idParam);
 
     // Validasi ID
     if (isNaN(classId)) {
@@ -78,7 +80,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     const body = await req.json();
-    
+
     // PERBAIKAN: Validasi dengan schema dari file validations
     const validatedData = penugasanDosenSchema.parse({
       ...body,
@@ -109,8 +111,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         AND is_active = true
     `;
     if (existingAssignment) {
-      return NextResponse.json({ 
-        error: 'Dosen sudah ditugaskan ke kelas ini' 
+      return NextResponse.json({
+        error: 'Dosen sudah ditugaskan ke kelas ini'
       }, { status: 400 });
     }
 
@@ -146,15 +148,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       `;
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: newAssignment,
       message: 'Penugasan dosen berhasil'
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
-        error: 'Validasi gagal', 
+      return NextResponse.json({
+        error: 'Validasi gagal',
         details: error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message
@@ -162,20 +164,21 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       }, { status: 400 });
     }
     console.error('POST Lecturer Assignment Error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to assign lecturer' 
+    return NextResponse.json({
+      error: 'Failed to assign lecturer'
     }, { status: 500 });
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: idParam } = await params;
     const session = await getServerSession(authOptions);
     if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const classId = parseInt(params.id);
+    const classId = parseInt(idParam);
 
     // Validasi ID
     if (isNaN(classId)) {
@@ -186,8 +189,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const assignmentId = searchParams.get('assignment_id');
 
     if (!assignmentId) {
-      return NextResponse.json({ 
-        error: 'ID penugasan tidak ditemukan' 
+      return NextResponse.json({
+        error: 'ID penugasan tidak ditemukan'
       }, { status: 400 });
     }
 
@@ -209,8 +212,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     `;
 
     if (!updatedAssignment) {
-      return NextResponse.json({ 
-        error: 'Penugasan dosen tidak ditemukan' 
+      return NextResponse.json({
+        error: 'Penugasan dosen tidak ditemukan'
       }, { status: 404 });
     }
 
@@ -223,15 +226,15 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       `;
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: updatedAssignment,
       message: 'Penugasan dosen berhasil diperbarui'
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
-        error: 'Validasi gagal', 
+      return NextResponse.json({
+        error: 'Validasi gagal',
         details: error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message
@@ -239,21 +242,22 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       }, { status: 400 });
     }
     console.error('PUT Lecturer Assignment Error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to update lecturer assignment' 
+    return NextResponse.json({
+      error: 'Failed to update lecturer assignment'
     }, { status: 500 });
   }
 }
 
 // DELETE method untuk menghapus penugasan
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id: idParam } = await params;
     const session = await getServerSession(authOptions);
     if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const classId = parseInt(params.id);
+    const classId = parseInt(idParam);
 
     // Validasi ID
     if (isNaN(classId)) {
@@ -264,8 +268,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     const assignmentId = searchParams.get('assignment_id');
 
     if (!assignmentId) {
-      return NextResponse.json({ 
-        error: 'ID penugasan tidak ditemukan' 
+      return NextResponse.json({
+        error: 'ID penugasan tidak ditemukan'
       }, { status: 400 });
     }
 
@@ -277,19 +281,19 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     `;
 
     if (!deletedAssignment) {
-      return NextResponse.json({ 
-        error: 'Penugasan dosen tidak ditemukan' 
+      return NextResponse.json({
+        error: 'Penugasan dosen tidak ditemukan'
       }, { status: 404 });
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Penugasan dosen berhasil dihapus'
     });
   } catch (error) {
     console.error('DELETE Lecturer Assignment Error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to delete lecturer assignment' 
+    return NextResponse.json({
+      error: 'Failed to delete lecturer assignment'
     }, { status: 500 });
   }
 }

@@ -9,20 +9,21 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 
-export default async function DetailKurikulumPage({ params }: { params: { id: string } }) {
+export default async function DetailKurikulumPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idParam } = await params;
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
     return <div>Unauthorized</div>;
   }
 
-  const id = parseInt(params.id);
+  const id = parseInt(idParam);
   if (isNaN(id)) notFound();
 
   let kurikulum;
   try {
     const [result] = await sql`
       SELECT 
-        c.id, c.name, c.code, c, c.is_active, c.createdAt,
+        c.id, c.name, c.code, c.is_active, c.created_at, c.total_credits,
         sp.name as study_program_name, sp.code as study_program_code, sp.faculty
       FROM curricula c
       JOIN study_programs sp ON c.study_program_id = sp.id
@@ -76,7 +77,7 @@ export default async function DetailKurikulumPage({ params }: { params: { id: st
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Total SKS</p>
-              <p className="font-medium">{kurikulum.totalCredits || 0}</p>
+              <p className="font-medium">{kurikulum.total_credits || 0}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Status</p>

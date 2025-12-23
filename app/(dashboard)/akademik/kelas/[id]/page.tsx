@@ -9,7 +9,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 
-export default async function DetailKelasPage({ params }: { params: { id: string } }) {
+export default async function DetailKelasPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idParam } = await params;
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik', 'dosen'].includes(session.user.role as string)) {
     // Untuk mahasiswa, cek apakah dia terdaftar di kelas ini
@@ -17,7 +18,7 @@ export default async function DetailKelasPage({ params }: { params: { id: string
       const [enrollment] = await sql`
         SELECT se.id FROM student_enrollments se
         JOIN classes c ON se.class_id = c.id
-        WHERE c.id = ${parseInt(params.id)} AND se.student_id = (SELECT id FROM students WHERE user_id = ${session.user.id})
+        WHERE c.id = ${parseInt(idParam)} AND se.student_id = (SELECT id FROM students WHERE user_id = ${session.user.id})
       `;
       if (!enrollment) {
         return <div>Unauthorized</div>;
@@ -27,14 +28,14 @@ export default async function DetailKelasPage({ params }: { params: { id: string
     }
   }
 
-  const id = parseInt(params.id);
+  const id = parseInt(idParam);
   if (isNaN(id)) notFound();
 
   let kelas;
   try {
     const [result] = await sql`
       SELECT 
-        c.id, c.course_id, c.academic_period_id, c.class_code, c.lecturer_id, c.schedule, c.max_students, c.is_active, c.createdAt,
+        c.id, c.course_id, c.academic_period_id, c.class_code, c.lecturer_id, c.schedule, c.max_students, c.is_active, c.created_at,
         co.name as course_name, co.code as course_code, co.credits as course_credits,
         ap.name as academic_period_name, ap.code as academic_period_code,
         l.name as lecturer_name, l.nidn as lecturer_nidn, l.expertise as lecturer_expertise

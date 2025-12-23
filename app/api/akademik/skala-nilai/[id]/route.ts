@@ -16,15 +16,16 @@ const updateGradeScaleSchema = z.object({
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session || !['super_admin', 'staff_akademik', 'dosen'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const gradeScaleId = parseInt(params.id);
+    const gradeScaleId = parseInt(id);
     if (isNaN(gradeScaleId)) {
       return NextResponse.json({ error: 'ID skala nilai tidak valid' }, { status: 400 });
     }
@@ -43,30 +44,31 @@ export async function GET(
       return NextResponse.json({ error: 'Skala nilai tidak ditemukan' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       data: gradeScale
     });
 
   } catch (error) {
     console.error('GET Grade Scale Error:', error);
-    return NextResponse.json({ 
-      error: 'Gagal mengambil data skala nilai' 
+    return NextResponse.json({
+      error: 'Gagal mengambil data skala nilai'
     }, { status: 500 });
   }
 }
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const gradeScaleId = parseInt(params.id);
+    const gradeScaleId = parseInt(id);
     if (isNaN(gradeScaleId)) {
       return NextResponse.json({ error: 'ID skala nilai tidak valid' }, { status: 400 });
     }
@@ -91,8 +93,8 @@ export async function PUT(
         AND id != ${gradeScaleId}
       `;
       if (duplicateGrade) {
-        return NextResponse.json({ 
-          error: `Huruf nilai ${validatedData.grade_char} sudah ada untuk kurikulum ini` 
+        return NextResponse.json({
+          error: `Huruf nilai ${validatedData.grade_char} sudah ada untuk kurikulum ini`
         }, { status: 400 });
       }
     }
@@ -110,16 +112,16 @@ export async function PUT(
       RETURNING *
     `;
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: updatedGradeScale,
       message: 'Skala nilai berhasil diperbarui'
     });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ 
-        error: 'Validasi gagal', 
+      return NextResponse.json({
+        error: 'Validasi gagal',
         details: error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message
@@ -127,23 +129,24 @@ export async function PUT(
       }, { status: 400 });
     }
     console.error('PUT Grade Scale Error:', error);
-    return NextResponse.json({ 
-      error: 'Gagal memperbarui skala nilai' 
+    return NextResponse.json({
+      error: 'Gagal memperbarui skala nilai'
     }, { status: 500 });
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const gradeScaleId = parseInt(params.id);
+    const gradeScaleId = parseInt(id);
     if (isNaN(gradeScaleId)) {
       return NextResponse.json({ error: 'ID skala nilai tidak valid' }, { status: 400 });
     }
@@ -163,15 +166,15 @@ export async function DELETE(
       RETURNING *
     `;
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Skala nilai berhasil dihapus'
     });
 
   } catch (error) {
     console.error('DELETE Grade Scale Error:', error);
-    return NextResponse.json({ 
-      error: 'Gagal menghapus skala nilai' 
+    return NextResponse.json({
+      error: 'Gagal menghapus skala nilai'
     }, { status: 500 });
   }
 }

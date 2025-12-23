@@ -6,21 +6,22 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma'; // Pastikan path ke prisma client singleton Anda benar
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function TambahPenugasanDosenPage({ params }: PageProps) {
+  const { id: idParam } = await params;
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
     redirect('/login');
   }
 
   // Verify user has access to this class
-  const classId = parseInt(params.id);
-  
+  const classId = parseInt(idParam);
+
   try {
     // Perbaikan Final: Menggunakan camelCase 'kelas' (Sesuai saran Error)
     const kelas = await prisma.kelas.findUnique({
@@ -69,7 +70,7 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
 
     const handleFormSubmit = async (formData: any) => {
       'use server';
-      
+
       try {
         // Create new teaching assignment
         // Perbaikan Final: Menggunakan camelCase 'penugasanDosen'

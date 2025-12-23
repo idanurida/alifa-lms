@@ -9,13 +9,14 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 
-export default async function ForumCategoryPage({ params }: { params: { category: string } }) {
+export default async function ForumCategoryPage({ params }: { params: Promise<{ category: string }> }) {
+  const { category: categoryParam } = await params;
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik', 'dosen', 'mahasiswa'].includes(session.user.role as string)) {
     return <div>Unauthorized</div>;
   }
 
-  const categoryId = parseInt(params.category);
+  const categoryId = parseInt(categoryParam);
 
   let category: any; let threads: any[] = [];
   try {
@@ -31,11 +32,10 @@ export default async function ForumCategoryPage({ params }: { params: { category
     // PERBAIKAN: Query threads dari table yang sesuai
     threads = await sql`
       SELECT 
-        ca.id, ca.title, ca.content as description, ca.createdAt,
-        ca.author_id, ca.view_count, 0 as reply_count, false as is_pinned, false as is_locked
+        ca.id, ca.title, ca.content as description, ca.created_at,
+        ca.author_id, 0 as reply_count, false as is_pinned, false as is_locked
       FROM course_announcements ca
-      WHERE ca.course_id IN (SELECT course_id FROM classes WHERE lecturer_id = (SELECT id FROM lecturers WHERE user_id = ${session.user.id}))
-      ORDER BY ca.createdAt DESC
+      ORDER BY ca.created_at DESC
       LIMIT 10
     `;
 
@@ -43,10 +43,10 @@ export default async function ForumCategoryPage({ params }: { params: { category
     if (threads.length > 0) {
       const threadWithUsers = await sql`
         SELECT 
-          ca.id, ca.title, ca.content as description, ca.createdAt,
-          ca.author_id, ca.view_count, u.name as user_name
+          ca.id, ca.title, ca.content as description, ca.created_at,
+          ca.author_id, p.name as user_name
         FROM course_announcements ca
-        JOIN users u ON ca.author_id = u.id
+        LEFT JOIN profiles p ON ca.author_id = p.user_id
         WHERE ca.id IN (${threads.map(t => t.id)})
       `;
       threads = threadWithUsers.map(thread => ({
@@ -95,7 +95,7 @@ export default async function ForumCategoryPage({ params }: { params: { category
           <p className="text-sm text-muted-foreground">{category.description}</p>
         </CardHeader>
         <CardContent>
-          <ForumThreadList threads={threads} categorySlug={params.category} />
+          <ForumThreadList threads={threads} categorySlug={categoryParam} />
         </CardContent>
       </Card>
     </div>

@@ -9,13 +9,14 @@ import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 import TambahSkalaNilaiForm from '@/components/akademik/TambahSkalaNilaiForm';
 
-export default async function TambahSkalaNilaiPage({ 
-  params 
-}: { 
-  params: { kurikulumId: string } 
+export default async function TambahSkalaNilaiPage({
+  params
+}: {
+  params: Promise<{ kurikulumId: string }>
 }) {
+  const { kurikulumId: kurikulumIdParam } = await params;
   const session = await getServerSession(authOptions);
-  
+
   if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -29,7 +30,7 @@ export default async function TambahSkalaNilaiPage({
     );
   }
 
-  const kurikulumId = parseInt(params.kurikulumId);
+  const kurikulumId = parseInt(kurikulumIdParam);
   if (isNaN(kurikulumId)) notFound();
 
   let kurikulum;
@@ -60,7 +61,7 @@ export default async function TambahSkalaNilaiPage({
         </div>
       </div>
 
-      <TambahSkalaNilaiForm 
+      <TambahSkalaNilaiForm
         kurikulumId={kurikulumId}
         kurikulumName={kurikulum.name}
       />

@@ -9,7 +9,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 
-export default async function SkalaNilaiPage({ params }: { params: { kurikulumId: string } }) {
+export default async function SkalaNilaiPage({ params }: { params: Promise<{ kurikulumId: string }> }) {
+  const { kurikulumId: kurikulumIdParam } = await params;
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik', 'dosen'].includes(session.user.role as string)) {
     return (
@@ -24,11 +25,11 @@ export default async function SkalaNilaiPage({ params }: { params: { kurikulumId
     );
   }
 
-  const kurikulumId = parseInt(params.kurikulumId);
+  const kurikulumId = parseInt(kurikulumIdParam);
   if (isNaN(kurikulumId)) notFound();
 
   let kurikulum, gradeScales;
-  
+
   try {
     // Ambil data kurikulum dengan join study_programs
     const [curriculumResult] = await sql`
@@ -36,16 +37,15 @@ export default async function SkalaNilaiPage({ params }: { params: { kurikulumId
         c.id, 
         c.name, 
         c.code, 
-        c,
         c.is_active,
-        c.createdAt,
-        sp.name as study_program_name,
+        c.created_at,
+    sp.name as study_program_name,
         sp.id as study_program_id
       FROM curricula c
       LEFT JOIN study_programs sp ON c.study_program_id = sp.id
       WHERE c.id = ${kurikulumId}
     `;
-    
+
     kurikulum = curriculumResult;
     if (!kurikulum) notFound();
 
@@ -113,7 +113,7 @@ export default async function SkalaNilaiPage({ params }: { params: { kurikulumId
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total SKS</p>
-              <p className="font-semibold">{kurikulum.totalCredits || 144}</p>
+              <p className="font-semibold">{kurikulum.total_credits || 144}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Status</p>

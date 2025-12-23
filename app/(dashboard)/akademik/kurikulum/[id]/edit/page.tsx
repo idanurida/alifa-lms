@@ -20,23 +20,24 @@ interface Kurikulum {
   updated_at?: string;
 }
 
-export default async function EditKurikulumPage({ params }: { params: { id: string } }) {
+export default async function EditKurikulumPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idParam } = await params;
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
     return <div>Unauthorized</div>;
   }
 
-  const id = parseInt(params.id);
+  const id = parseInt(idParam);
   if (isNaN(id)) notFound();
 
   let kurikulum: Kurikulum | null = null;
   let studyPrograms: any[] = []; // Gunakan any untuk sementara
-  
+
   try {
     // Fetch kurikulum data
     const [result] = await sql`SELECT * FROM curricula WHERE id = ${id}`;
     if (!result) notFound();
-    
+
     kurikulum = {
       id: result.id,
       name: result.name,
@@ -44,8 +45,8 @@ export default async function EditKurikulumPage({ params }: { params: { id: stri
       year: result.year,
       description: result.description,
       is_active: result.is_active,
-      created_at: result.createdAt,
-      updated_at: result.updatedAt
+      created_at: result.created_at,
+      updated_at: result.updated_at
     };
 
     // Fetch study programs data - biarkan sebagai any[] untuk menghindari konflik type

@@ -22,9 +22,10 @@ interface Lecturer {
   is_active: boolean;
 }
 
-export default async function DetailDosenPage({ params }: { params: { id: string } }) {
+export default async function DetailDosenPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idParam } = await params;
   const session = await getServerSession(authOptions);
-  
+
   // Authorization logic
   if (!session) {
     return (
@@ -36,8 +37,8 @@ export default async function DetailDosenPage({ params }: { params: { id: string
       </div>
     );
   }
-  
-  const id = parseInt(params.id);
+
+  const id = parseInt(idParam);
   if (isNaN(id)) notFound();
 
   let dosen: Lecturer;
@@ -50,12 +51,12 @@ export default async function DetailDosenPage({ params }: { params: { id: string
       JOIN users u ON l.user_id = u.id
       WHERE l.id = ${id}
     `;
-    
+
     // PERBAIKAN: Handle array result dengan benar
     if (!result || result.length === 0) {
       notFound();
     }
-    
+
     dosen = result[0] as Lecturer;
   } catch (error) {
     console.error('Failed to fetch lecturer:', error);
@@ -101,9 +102,9 @@ export default async function DetailDosenPage({ params }: { params: { id: string
       'non-aktif': { variant: "secondary", className: "bg-red-500 hover:bg-red-600 text-white" },
       'cuti': { variant: "outline", className: "bg-yellow-500 hover:bg-yellow-600 text-white" }
     };
-    
+
     const config = statusConfig[status] || { variant: "outline", className: "" };
-    
+
     return (
       <Badge variant={config.variant} className={`capitalize ${config.className}`}>
         {status}
@@ -122,12 +123,12 @@ export default async function DetailDosenPage({ params }: { params: { id: string
             Informasi lengkap profil dosen
           </p>
         </div>
-        
+
         {/* Tombol Edit hanya untuk Super Admin */}
         {session.user.role === 'super_admin' && (
           <Link href={`/akademik/dosen/edit/${dosen.id}`}>
             <Button variant="secondary" className="flex items-center gap-2">
-              <Pencil className="h-4 w-4" /> 
+              <Pencil className="h-4 w-4" />
               Edit Profil
             </Button>
           </Link>
@@ -139,13 +140,13 @@ export default async function DetailDosenPage({ params }: { params: { id: string
         <Card className="lg:col-span-1 shadow-lg bg-card border-border">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-xl font-semibold text-card-foreground flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" /> 
+              <User className="h-5 w-5 text-primary" />
               Informasi Utama
             </CardTitle>
-            <Badge 
-              variant={dosen.is_active ? "default" : "secondary"} 
-              className={dosen.is_active 
-                ? "bg-green-500 hover:bg-green-600 text-white" 
+            <Badge
+              variant={dosen.is_active ? "default" : "secondary"}
+              className={dosen.is_active
+                ? "bg-green-500 hover:bg-green-600 text-white"
                 : "bg-red-500 hover:bg-red-600 text-white"
               }
             >
@@ -181,7 +182,7 @@ export default async function DetailDosenPage({ params }: { params: { id: string
                 <p className="text-foreground font-medium break-all">{dosen.email}</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4">
               <Phone className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1">
@@ -193,7 +194,7 @@ export default async function DetailDosenPage({ params }: { params: { id: string
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4">
               <GraduationCap className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
               <div className="flex-1">

@@ -10,13 +10,14 @@ import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 
-export default async function ForumThreadPage({ params }: { params: { id: string } }) {
+export default async function ForumThreadPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik', 'dosen', 'mahasiswa'].includes(session.user.role as string)) {
     return <div>Unauthorized</div>;
   }
 
-  const threadId = parseInt(params.id);
+  const threadId = parseInt(id);
   if (isNaN(threadId)) notFound();
 
   let thread, posts = [];
@@ -24,13 +25,13 @@ export default async function ForumThreadPage({ params }: { params: { id: string
     // Ambil detail thread
     const [threadResult] = await sql`
       SELECT 
-        ft.id, ft.category_id, ft.user_id, ft.title, ft.slug, ft.is_pinned, ft.is_locked,
-        ft.view_count, ft.createdAt,
-        u.name as user_name, u.role as user_role,
-        fc.name as category_name, fc.slug as category_slug
+        ft.id, ft.user_id, ft.title, ft.is_pinned, ft.is_locked,
+        ft.view_count, ft.created_at,
+        p.name as user_name, u.role as user_role,
+        ft.category as category_name
       FROM forum_threads ft
       JOIN users u ON ft.user_id = u.id
-      JOIN forum_categories fc ON ft.category_id = fc.id
+      LEFT JOIN profiles p ON u.id = p.user_id
       WHERE ft.id = ${threadId}
     `;
     thread = threadResult;
@@ -42,12 +43,13 @@ export default async function ForumThreadPage({ params }: { params: { id: string
     // Ambil semua post dalam thread ini
     posts = await sql`
       SELECT 
-        fp.id, fp.thread_id, fp.user_id, fp.content, fp.is_first_post, fp.createdAt, fp.updatedAt,
-        u.name as user_name, u.role as user_role
+        fp.id, fp.thread_id, fp.user_id, fp.content, fp.is_first_post, fp.created_at, fp.updated_at,
+        p.name as user_name, u.role as user_role
       FROM forum_posts fp
       JOIN users u ON fp.user_id = u.id
+      LEFT JOIN profiles p ON u.id = p.user_id
       WHERE fp.thread_id = ${threadId}
-      ORDER BY fp.createdAt ASC
+      ORDER BY fp.created_at ASC
     `;
   } catch (error) {
     console.error('Failed to fetch forum thread or posts:', error);
@@ -127,7 +129,7 @@ export default async function ForumThreadPage({ params }: { params: { id: string
                 <User size={14} />
                 <span>{thread.user_name}</span>
                 <span>•</span>
-                <span>{formatDate(thread.createdAt)}</span>
+                <span>{formatDate(thread.created_at)}</span>
               </div>
             </div>
             <div className="flex gap-2">
@@ -159,7 +161,7 @@ export default async function ForumThreadPage({ params }: { params: { id: string
                     {post.user_role}
                   </Badge>
                 </div>
-                <span className="text-xs text-muted-foreground">{formatDate(post.createdAt)}</span>
+                <span className="text-xs text-muted-foreground">{formatDate(post.created_at)}</span>
               </div>
             </CardHeader>
             <CardContent>

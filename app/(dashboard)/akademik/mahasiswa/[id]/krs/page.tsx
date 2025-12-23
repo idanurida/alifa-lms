@@ -6,13 +6,14 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 
-export default async function KRSPage({ params }: { params: { id: string } }) {
+export default async function KRSPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_akademik', 'dosen'].includes(session.user.role as string)) {
     // Mahasiswa hanya bisa melihat KRS sendiri
     if (session?.user.role === 'mahasiswa') {
       const [studentCheck] = await sql`
-        SELECT id FROM students WHERE id = ${parseInt(params.id)} AND user_id = ${session.user.id}
+        SELECT id FROM students WHERE id = ${parseInt(id)} AND user_id = ${session.user.id}
       `;
       if (!studentCheck) {
         return <div>Unauthorized</div>;
@@ -22,7 +23,7 @@ export default async function KRSPage({ params }: { params: { id: string } }) {
     }
   }
 
-  const studentId = parseInt(params.id);
+  const studentId = parseInt(id);
   if (isNaN(studentId)) notFound();
 
   let student, enrollments;

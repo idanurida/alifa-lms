@@ -2,12 +2,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  GraduationCap, 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
+import {
+  GraduationCap,
+  User,
+  Mail,
+  Phone,
+  MapPin,
   Calendar,
   BookOpen,
   BarChart3,
@@ -26,15 +26,14 @@ interface PageProps {
   };
 }
 
-export default async function DetailMahasiswaPage({ params }: PageProps) {
+export default async function DetailMahasiswaPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
-  
+
   // Cek authorization - hanya staff akademik dan super admin yang bisa akses
   if (!session || !['super_admin', 'staff_akademik'].includes(session.user.role as string)) {
     redirect('/login');
   }
-
-  const { id } = params;
 
   let studentData = null;
   let academicData = null;
@@ -44,13 +43,15 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
     // Ambil data mahasiswa
     const [student] = await sql`
       SELECT 
-        s.id, s.nim, s.name, s.email, s.phone, s.address, s.birth_date, s.entry_year,
-        s.status, s.createdAt, s.updatedAt,
-        p.name as program_studi_name,
-        u.name as created_by_name
+        s.id, s.nim, s.name, s.email, s.phone, s.year_entry,
+        s.status, s.created_at,
+        ps.name as program_studi_name,
+        p_creator.name as created_by_name,
+        p_student.address
       FROM students s
-      LEFT JOIN program_studi p ON s.program_studi_id = p.id
-      LEFT JOIN users u ON s.created_by = u.id
+      LEFT JOIN study_programs ps ON s.study_program_id = ps.id
+      LEFT JOIN profiles p_creator ON s.created_by = p_creator.user_id
+      LEFT JOIN profiles p_student ON s.user_id = p_student.user_id
       WHERE s.id = ${id}
     `;
 
@@ -186,12 +187,12 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
                   <label className="text-sm font-medium text-muted-foreground">Tanggal Lahir</label>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} className="text-muted-foreground" />
-                    <p>{studentData.birth_date ? formatDate(studentData.birth_date) : '-'}</p>
+                    <p>-</p>
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Tahun Masuk</label>
-                  <p className="font-semibold">{studentData.entry_year}</p>
+                  <p className="font-semibold">{studentData.year_entry}</p>
                 </div>
                 <div className="md:col-span-2">
                   <label className="text-sm font-medium text-muted-foreground">Alamat</label>
@@ -289,10 +290,10 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
                       <div className="text-right">
                         <Badge variant={
                           enrollment.status === 'completed' ? 'default' :
-                          enrollment.status === 'active' ? 'secondary' : 'outline'
+                            enrollment.status === 'active' ? 'secondary' : 'outline'
                         }>
                           {enrollment.status === 'completed' ? 'Selesai' :
-                           enrollment.status === 'active' ? 'Aktif' : enrollment.status}
+                            enrollment.status === 'active' ? 'Aktif' : enrollment.status}
                         </Badge>
                         {enrollment.final_score && (
                           <p className="text-sm font-semibold mt-1">
@@ -322,7 +323,7 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
                   {getStatusBadge(studentData.status)}
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Button variant="outline" className="w-full justify-start" asChild>
                   <Link href={`/akademik/mahasiswa/${id}/nilai`}>
@@ -354,14 +355,8 @@ export default async function DetailMahasiswaPage({ params }: PageProps) {
             <CardContent className="space-y-3">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Dibuat Pada</label>
-                <p className="text-sm">{formatDate(studentData.createdAt)}</p>
+                <p className="text-sm">{formatDate(studentData.created_at)}</p>
               </div>
-              {studentData.updatedAt && (
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Diupdate Pada</label>
-                  <p className="text-sm">{formatDate(studentData.updatedAt)}</p>
-                </div>
-              )}
               {studentData.created_by_name && (
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Dibuat Oleh</label>

@@ -5,17 +5,18 @@ import { sql } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: idParam } = await params;
     const session = await getServerSession(authOptions);
-    
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
-    
+    const id = parseInt(idParam);
+
     // SOLUSI: Convert UUID ke integer untuk JOIN, atau handle tanpa JOIN
     const result = await sql`
       SELECT 
@@ -63,9 +64,9 @@ export async function GET(
 
   } catch (error) {
     console.error('Error fetching dosen:', error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Internal Server Error',
-      details: (error as Error).message 
+      details: (error as Error).message
     }, { status: 500 });
   }
 }
