@@ -98,7 +98,7 @@ export default async function DetailDosenPage({ params }: { params: Promise<{ id
   // Helper function untuk status badge
   const getStatusBadge = (status: string) => {
     const statusConfig: { [key: string]: { variant: "default" | "secondary" | "outline" | "destructive", className: string } } = {
-      'aktif': { variant: "default", className: "bg-green-500 hover:bg-green-600 text-white" },
+      'aktif': { variant: "default", className: "bg-sky-500 hover:bg-sky-600 text-white" },
       'non-aktif': { variant: "secondary", className: "bg-red-500 hover:bg-red-600 text-white" },
       'cuti': { variant: "outline", className: "bg-yellow-500 hover:bg-yellow-600 text-white" }
     };
@@ -146,7 +146,7 @@ export default async function DetailDosenPage({ params }: { params: Promise<{ id
             <Badge
               variant={dosen.is_active ? "default" : "secondary"}
               className={dosen.is_active
-                ? "bg-green-500 hover:bg-green-600 text-white"
+                ? "bg-sky-500 hover:bg-sky-600 text-white"
                 : "bg-red-500 hover:bg-red-600 text-white"
               }
             >

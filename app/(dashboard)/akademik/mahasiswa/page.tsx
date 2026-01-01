@@ -64,6 +64,7 @@ export default function ManajemenMahasiswaPage() {
   const [pengajuanKRS, setPengajuanKRS] = useState<KRSSubmission[]>([]);
   const [sedangMemuat, setSedangMemuat] = useState(true);
   const [filterProgramStudi, setFilterProgramStudi] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
 
   useEffect(() => {
     if (session?.user.role === 'staff_akademik' || session?.user.role === 'super_admin') {
@@ -183,6 +184,8 @@ export default function ManajemenMahasiswaPage() {
     mhs.email.toLowerCase().includes(pencarian.toLowerCase())
   ).filter(mhs =>
     filterProgramStudi ? mhs.program_studi === filterProgramStudi : true
+  ).filter(mhs =>
+    filterStatus ? mhs.status === filterStatus : true
   );
 
   const programStudi = Array.from(new Set(mahasiswa.map(mhs => mhs.program_studi)));
@@ -222,6 +225,10 @@ export default function ManajemenMahasiswaPage() {
         return <Badge variant="secondary">Non-Aktif</Badge>;
       case 'graduated':
         return <Badge variant="outline">Lulus</Badge>;
+      case 'dropped_out':
+        return <Badge variant="destructive">Keluar</Badge>;
+      case 'leave':
+        return <Badge className="bg-yellow-500 text-white hover:bg-yellow-600">Cuti</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -230,7 +237,7 @@ export default function ManajemenMahasiswaPage() {
   const dapatkanBadgeStatusKRS = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge variant="default" className="bg-green-100 text-green-800">
+        return <Badge variant="default" className="bg-sky-100 text-sky-800">
           <CheckCircle className="h-3 w-3 mr-1" />Disetujui
         </Badge>;
       case 'rejected':
@@ -297,7 +304,7 @@ export default function ManajemenMahasiswaPage() {
                 <p className="text-sm font-medium text-muted-foreground">KRS Disetujui</p>
                 <p className="text-2xl font-bold">{pengajuanDisetujui.length}</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <CheckCircle className="h-8 w-8 text-sky-500" />
             </div>
           </CardContent>
         </Card>
@@ -359,6 +366,19 @@ export default function ManajemenMahasiswaPage() {
                     {programStudi.map(prodi => (
                       <option key={prodi} value={prodi}>{prodi}</option>
                     ))}
+                  </select>
+
+                  <select
+                    className="px-3 py-2 border rounded-md text-sm"
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                  >
+                    <option value="">Semua Status</option>
+                    <option value="active">Aktif</option>
+                    <option value="inactive">Non-Aktif</option>
+                    <option value="graduated">Lulus</option>
+                    <option value="dropped_out">Dikeluarkan</option>
+                    <option value="leave">Cuti</option>
                   </select>
                   <Button asChild>
                     <Link href="/akademik/mahasiswa/tambah">
@@ -480,7 +500,7 @@ export default function ManajemenMahasiswaPage() {
                           <Button
                             size="sm"
                             onClick={() => prosesKRS(krs.id, 'approved')}
-                            className="bg-green-600 hover:bg-green-700"
+                            className="bg-sky-600 hover:bg-sky-700"
                           >
                             <CheckCircle className="h-4 w-4 mr-1" />
                             Setujui
@@ -530,7 +550,7 @@ export default function ManajemenMahasiswaPage() {
                 <div className="space-y-4">
                   {pengajuanKRS.map((krs) => (
                     <Card key={krs.id} className={
-                      krs.status === 'approved' ? 'bg-green-50 border-green-200' :
+                      krs.status === 'approved' ? 'bg-sky-50 border-sky-200' :
                         krs.status === 'rejected' ? 'bg-red-50 border-red-200' :
                           'bg-yellow-50 border-yellow-200'
                     }>

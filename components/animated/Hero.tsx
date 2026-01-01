@@ -41,7 +41,7 @@ export function AnimatedHero({ title, subtitle, ctaText, onCtaClick }: AnimatedH
           <Button 
             size="lg" 
             onClick={onCtaClick}
-            className="bg-supabase-green hover:bg-supabase-green/90"
+            className="bg-primary hover:bg-primary/90"
           >
             {ctaText}
           </Button>

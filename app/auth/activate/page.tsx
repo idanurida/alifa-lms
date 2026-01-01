@@ -94,7 +94,7 @@ function ActivateContent() {
             {/* Background patterns */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500 blur-[120px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600 blur-[120px] rounded-full"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-sky-600 blur-[120px] rounded-full"></div>
             </div>
 
             <motion.div
@@ -116,11 +116,11 @@ function ActivateContent() {
                 </div>
 
                 <Card className="bg-[#1e293ba6] border-white/10 backdrop-blur-md shadow-2xl relative overflow-hidden group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-sky-500 opacity-50 group-hover:opacity-100 transition-opacity"></div>
 
                     <CardHeader>
                         <CardTitle className="text-white text-xl flex items-center gap-2">
-                            {step === 1 ? <ShieldCheck className="h-5 w-5 text-blue-400" /> : <User className="h-5 w-5 text-indigo-400" />}
+                            {step === 1 ? <ShieldCheck className="h-5 w-5 text-blue-400" /> : <User className="h-5 w-5 text-sky-400" />}
                             {step === 1 ? 'Verifikasi Identitas' : 'Pengaturan Akun'}
                         </CardTitle>
                         <CardDescription className="text-blue-100/50">
@@ -168,11 +168,11 @@ function ActivateContent() {
                                         <div className="space-y-2">
                                             <Label htmlFor="username" className="text-blue-100/70 text-xs font-semibold uppercase tracking-wider">Username</Label>
                                             <div className="relative">
-                                                <User className="absolute left-3 top-3 h-4 w-4 text-indigo-400" />
+                                                <User className="absolute left-3 top-3 h-4 w-4 text-sky-400" />
                                                 <Input
                                                     id="username"
                                                     placeholder="JhonDoe123"
-                                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/20 pl-10 h-10 transition-all focus:ring-2 focus:ring-indigo-500/50"
+                                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/20 pl-10 h-10 transition-all focus:ring-2 focus:ring-sky-500/50"
                                                     value={formData.username}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
                                                 />
@@ -181,12 +181,12 @@ function ActivateContent() {
                                         <div className="space-y-2">
                                             <Label htmlFor="email" className="text-blue-100/70 text-xs font-semibold uppercase tracking-wider">Email</Label>
                                             <div className="relative">
-                                                <Mail className="absolute left-3 top-3 h-4 w-4 text-indigo-400" />
+                                                <Mail className="absolute left-3 top-3 h-4 w-4 text-sky-400" />
                                                 <Input
                                                     id="email"
                                                     type="email"
                                                     placeholder="mahasiswa@email.com"
-                                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/20 pl-10 h-10 transition-all focus:ring-2 focus:ring-indigo-500/50"
+                                                    className="bg-white/5 border-white/10 text-white placeholder:text-white/20 pl-10 h-10 transition-all focus:ring-2 focus:ring-sky-500/50"
                                                     value={formData.email}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                                                 />
@@ -197,11 +197,11 @@ function ActivateContent() {
                                     <div className="space-y-2">
                                         <Label htmlFor="password" className="text-blue-100/70 text-xs font-semibold uppercase tracking-wider">Password</Label>
                                         <div className="relative">
-                                            <Key className="absolute left-3 top-3 h-4 w-4 text-indigo-400" />
+                                            <Key className="absolute left-3 top-3 h-4 w-4 text-sky-400" />
                                             <Input
                                                 id="password"
                                                 type="password"
-                                                className="bg-white/5 border-white/10 text-white pl-10 h-10 transition-all focus:ring-2 focus:ring-indigo-500/50"
+                                                className="bg-white/5 border-white/10 text-white pl-10 h-10 transition-all focus:ring-2 focus:ring-sky-500/50"
                                                 value={formData.password}
                                                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                                             />
@@ -211,11 +211,11 @@ function ActivateContent() {
                                     <div className="space-y-2">
                                         <Label htmlFor="confirmPassword" className="text-blue-100/70 text-xs font-semibold uppercase tracking-wider">Konfirmasi Password</Label>
                                         <div className="relative">
-                                            <Key className="absolute left-3 top-3 h-4 w-4 text-indigo-400" />
+                                            <Key className="absolute left-3 top-3 h-4 w-4 text-sky-400" />
                                             <Input
                                                 id="confirmPassword"
                                                 type="password"
-                                                className="bg-white/5 border-white/10 text-white pl-10 h-10 transition-all focus:ring-2 focus:ring-indigo-500/50"
+                                                className="bg-white/5 border-white/10 text-white pl-10 h-10 transition-all focus:ring-2 focus:ring-sky-500/50"
                                                 value={formData.confirmPassword}
                                                 onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                                             />
@@ -230,7 +230,7 @@ function ActivateContent() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 className={`mt-6 p-4 rounded-xl flex items-center gap-3 border ${message.type === 'success'
-                                    ? 'bg-green-500/10 border-green-500/20 text-green-400'
+                                    ? 'bg-sky-500/10 border-sky-500/20 text-sky-400'
                                     : 'bg-red-500/10 border-red-500/20 text-red-400'
                                     }`}
                             >
@@ -263,9 +263,9 @@ function ActivateContent() {
                         ) : (
                             <Button
                                 className={`flex-1 ${message?.type === 'success'
-                                    ? 'bg-green-600 hover:bg-green-500'
-                                    : 'bg-indigo-600 hover:bg-indigo-500'
-                                    } text-white shadow-lg shadow-indigo-500/20 h-11 transition-all`}
+                                    ? 'bg-sky-600 hover:bg-sky-500'
+                                    : 'bg-sky-600 hover:bg-sky-500'
+                                    } text-white shadow-lg shadow-sky-500/20 h-11 transition-all`}
                                 onClick={handleSubmit}
                                 disabled={isSubmitting}
                             >

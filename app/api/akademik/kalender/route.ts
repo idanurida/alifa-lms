@@ -1,36 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-
-// Mock data untuk academic periods
-const mockAcademicPeriods = [
-  {
-    id: 1,
-    name: 'Semester Ganjil 2024/2025',
-    code: '20241',
-    year: 2024,
-    semester: 1,
-    start_date: '2024-09-02',
-    end_date: '2025-01-31',
-    uts_week: 8,
-    uas_week: 16,
-    is_active: true,
-    created_at: '2024-01-01T00:00:00Z'
-  },
-  {
-    id: 2,
-    name: 'Semester Genap 2023/2024',
-    code: '20232',
-    year: 2023,
-    semester: 2,
-    start_date: '2024-02-05',
-    end_date: '2024-06-28',
-    uts_week: 8,
-    uas_week: 16,
-    is_active: false,
-    created_at: '2023-12-01T00:00:00Z'
-  }
-];
+import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   try {
@@ -44,30 +15,20 @@ export async function GET(req: NextRequest) {
     const year = searchParams.get('year');
     const semester = searchParams.get('semester');
 
-    let filteredData = mockAcademicPeriods;
+    const where: any = {};
+    if (isActive !== null) where.is_active = isActive === 'true';
+    if (year) where.year = parseInt(year);
+    if (semester) where.semester = parseInt(semester);
 
-    if (isActive !== null) {
-      const active = isActive === 'true';
-      filteredData = filteredData.filter(period => period.is_active === active);
-    }
-
-    if (year) {
-      const yearNum = parseInt(year);
-      filteredData = filteredData.filter(period => period.year === yearNum);
-    }
-
-    if (semester) {
-      const semesterNum = parseInt(semester);
-      filteredData = filteredData.filter(period => period.semester === semesterNum);
-    }
-
-    filteredData = filteredData.sort((a, b) => {
-      if (a.year !== b.year) return b.year - a.year;
-      if (a.semester !== b.semester) return b.semester - a.semester;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    const periods = await prisma.academicPeriod.findMany({
+      where,
+      orderBy: [
+        { year: 'desc' },
+        { semester: 'desc' }
+      ]
     });
 
-    return NextResponse.json({ data: filteredData });
+    return NextResponse.json({ data: periods });
   } catch (error) {
     console.error('GET Academic Periods Error:', error);
     return NextResponse.json({ error: 'Gagal mengambil data periode akademik' }, { status: 500 });
@@ -82,41 +43,44 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    
+
     // Validasi sederhana
     if (!body.name || !body.code || !body.year || !body.semester || !body.start_date || !body.end_date) {
       return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
     }
 
-    if (new Date(body.start_date) >= new Date(body.end_date)) {
+    const startDate = new Date(body.start_date);
+    const endDate = new Date(body.end_date);
+
+    if (startDate >= endDate) {
       return NextResponse.json({ error: 'Tanggal mulai harus sebelum tanggal selesai' }, { status: 400 });
     }
 
     // Cek apakah code sudah ada
-    const existing = mockAcademicPeriods.find(period => period.code === body.code);
+    const existing = await prisma.academicPeriod.findUnique({
+      where: { code: body.code }
+    });
+
     if (existing) {
       return NextResponse.json({ error: 'Kode periode akademik sudah digunakan' }, { status: 400 });
     }
 
-    const newPeriod = {
-      id: Math.max(...mockAcademicPeriods.map(p => p.id)) + 1,
-      name: body.name,
-      code: body.code,
-      year: parseInt(body.year),
-      semester: parseInt(body.semester),
-      start_date: body.start_date,
-      end_date: body.end_date,
-      uts_week: body.uts_week || 8,
-      uas_week: body.uas_week || 16,
-      is_active: body.is_active || false,
-      created_at: new Date().toISOString()
-    };
+    const newPeriod = await prisma.academicPeriod.create({
+      data: {
+        name: body.name,
+        code: body.code,
+        year: parseInt(body.year),
+        semester: parseInt(body.semester),
+        start_date: startDate,
+        end_date: endDate,
+        uts_week: body.uts_week ? parseInt(body.uts_week) : 8,
+        uas_week: body.uas_week ? parseInt(body.uas_week) : 16,
+        is_active: body.is_active || false,
+      }
+    });
 
-    // Dalam implementasi nyata, ini akan menyimpan ke database
-    // mockAcademicPeriods.push(newPeriod);
-
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: newPeriod,
       message: 'Periode akademik berhasil ditambahkan'
     });
@@ -143,32 +107,33 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const periodId = parseInt(id);
 
-    // Cari periode yang akan diupdate
-    const periodIndex = mockAcademicPeriods.findIndex(period => period.id === periodId);
-    if (periodIndex === -1) {
-      return NextResponse.json({ error: 'Periode akademik tidak ditemukan' }, { status: 404 });
-    }
-
-    // Validasi code unik
+    // Validasi code unik jika diubah
     if (body.code) {
-      const existing = mockAcademicPeriods.find(period => period.code === body.code && period.id !== periodId);
+      const existing = await prisma.academicPeriod.findFirst({
+        where: { code: body.code, NOT: { id: periodId } }
+      });
       if (existing) {
         return NextResponse.json({ error: 'Kode periode akademik sudah digunakan' }, { status: 400 });
       }
     }
 
-    // Update data
-    const updatedPeriod = {
-      ...mockAcademicPeriods[periodIndex],
-      ...body,
-      id: periodId // Pastikan ID tidak berubah
-    };
+    // Persiapkan data update
+    const updateData: any = { ...body };
+    delete updateData.id;
+    if (updateData.start_date) updateData.start_date = new Date(updateData.start_date);
+    if (updateData.end_date) updateData.end_date = new Date(updateData.end_date);
+    if (updateData.year) updateData.year = parseInt(updateData.year);
+    if (updateData.semester) updateData.semester = parseInt(updateData.semester);
+    if (updateData.uts_week) updateData.uts_week = parseInt(updateData.uts_week);
+    if (updateData.uas_week) updateData.uas_week = parseInt(updateData.uas_week);
 
-    // Dalam implementasi nyata, ini akan update ke database
-    // mockAcademicPeriods[periodIndex] = updatedPeriod;
+    const updatedPeriod = await prisma.academicPeriod.update({
+      where: { id: periodId },
+      data: updateData
+    });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: updatedPeriod,
       message: 'Periode akademik berhasil diperbarui'
     });
@@ -193,21 +158,24 @@ export async function DELETE(req: NextRequest) {
     }
 
     const periodId = parseInt(id);
-    const periodIndex = mockAcademicPeriods.findIndex(period => period.id === periodId);
+    const period = await prisma.academicPeriod.findUnique({
+      where: { id: periodId }
+    });
 
-    if (periodIndex === -1) {
+    if (!period) {
       return NextResponse.json({ error: 'Periode akademik tidak ditemukan' }, { status: 404 });
     }
 
     // Cek apakah periode aktif
-    if (mockAcademicPeriods[periodIndex].is_active) {
+    if (period.is_active) {
       return NextResponse.json({ error: 'Tidak dapat menghapus periode akademik yang sedang aktif' }, { status: 400 });
     }
 
-    // Dalam implementasi nyata, ini akan menghapus dari database
-    // mockAcademicPeriods.splice(periodIndex, 1);
+    await prisma.academicPeriod.delete({
+      where: { id: periodId }
+    });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'Periode akademik berhasil dihapus'
     });

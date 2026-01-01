@@ -328,6 +328,20 @@ export async function createCompleteSchema() {
       )
     `;
 
+    // 19. KRS (baru)
+    await sql`
+      CREATE TABLE IF NOT EXISTS krs_submissions (
+        id SERIAL PRIMARY KEY,
+        mahasiswa_id INTEGER REFERENCES students(id),
+        semester VARCHAR(50) NOT NULL,
+        courses JSONB NOT NULL,
+        total_credits INTEGER NOT NULL,
+        status VARCHAR(50) DEFAULT 'pending',
+        notes TEXT,
+        submitted_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     console.log('✅ Complete schema created/updated!');
   } catch (error) {
     console.error('❌ Schema creation error:', error);

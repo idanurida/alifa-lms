@@ -36,7 +36,7 @@ export default async function BuktiTransferPage() {
     if (session.user.role === 'mahasiswa') {
       // Dapatkan student_id dari user yang login
       const student = await sql`
-        SELECT id FROM students WHERE user_id = ${session.user.id}
+        SELECT id FROM students WHERE user_id = ${parseInt(session.user.id as string)}
       `;
 
       if (student.length === 0) {

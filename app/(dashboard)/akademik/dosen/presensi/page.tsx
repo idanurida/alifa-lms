@@ -110,17 +110,17 @@ export default function PresensiDosenPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'hadir': return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'hadir': return <CheckCircle className="h-4 w-4 text-sky-600" />;
       case 'izin': return <MinusCircle className="h-4 w-4 text-yellow-600" />;
       case 'sakit': return <MinusCircle className="h-4 w-4 text-orange-600" />;
       case 'alpha': return <XCircle className="h-4 w-4 text-red-600" />;
-      default: return <MinusCircle className="h-4 w-4 text-gray-400" />;
+      default: return <MinusCircle className="h-4 w-4 text-slate-400 dark:text-slate-500" />;
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'hadir': return <Badge variant="default" className="bg-green-100 text-green-800">Hadir</Badge>;
+      case 'hadir': return <Badge variant="default" className="bg-sky-100 text-sky-800">Hadir</Badge>;
       case 'izin': return <Badge variant="outline" className="text-yellow-600">Izin</Badge>;
       case 'sakit': return <Badge variant="outline" className="text-orange-600">Sakit</Badge>;
       case 'alpha': return <Badge variant="destructive">Alpha</Badge>;
@@ -247,9 +247,9 @@ export default function PresensiDosenPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Hadir</p>
-                    <p className="text-2xl font-bold text-green-600">{statistik.hadir}</p>
+                    <p className="text-2xl font-bold text-sky-600">{statistik.hadir}</p>
                   </div>
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <CheckCircle className="h-8 w-8 text-sky-600" />
                 </div>
               </CardContent>
             </Card>

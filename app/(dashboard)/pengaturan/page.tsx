@@ -17,28 +17,33 @@ export default async function PengaturanDashboardPage() {
     // Ambil data profil berdasarkan role
     if (session.user.role === 'mahasiswa') {
       const [result] = await sql`
-        SELECT s.id, s.user_id, s.nim, s.name, s.email, s.phone, s.status, s.year_entry,
-               c.name as curriculum_name, c.code as curriculum_code
+        SELECT s.id, s.user_id, s.nim, s.name, s.email, s.phone, s.status, s.year_entry
         FROM students s
-        JOIN curricula c ON s.curriculum_id = c.id
-        WHERE s.user_id = ${session.user.id}
+        WHERE s.user_id = ${parseInt(session.user.id as string)}
       `;
       userProfile = result;
     } else if (session.user.role === 'dosen') {
       const [result] = await sql`
         SELECT l.id, l.user_id, l.nidn, l.name, l.email, l.phone, l.expertise, l.status
         FROM lecturers l
-        WHERE l.user_id = ${session.user.id}
+        WHERE l.user_id = ${parseInt(session.user.id as string)}
       `;
       userProfile = result;
     } else {
-      // Untuk admin/staff, ambil dari profiles
-      const [result] = await sql`
-        SELECT p.id, p.user_id, p.name, p.phone, p.address
-        FROM profiles p
-        WHERE p.user_id = ${session.user.id}
-      `;
-      userProfile = result;
+      // Untuk admin/staff, ambil dari profiles (asumsi table user/profiles jika ada, atau users langsung)
+      // Note: Di schema tidak ada table 'profiles', tapi mungkin diinisialisasi lain.
+      // Kita gunakan table users saja jika profiles tidak ada, tapi code asli pakai profiles.
+      // Kita pertahankan dulu tap cast ID.
+      try {
+        const [result] = await sql`
+          SELECT * FROM users WHERE id = ${parseInt(session.user.id as string)}
+        `;
+        userProfile = result;
+      } catch (e) {
+        // Fallback if profiles table is actually intended but schema differs
+        console.log('Error fetching admin profile, using session data');
+        userProfile = session.user;
+      }
     }
   } catch (error) {
     console.error('Failed to fetch user profile:', error);
@@ -82,10 +87,10 @@ export default async function PengaturanDashboardPage() {
                     <p className="text-sm text-muted-foreground flex items-center gap-1"><GraduationCap size={14} /> NIM</p>
                     <p className="font-mono font-medium">{userProfile?.nim}</p>
                   </div>
-                  <div>
+                  {/* <div>
                     <p className="text-sm text-muted-foreground flex items-center gap-1"><GraduationCap size={14} /> Kurikulum</p>
-                    <p>{userProfile?.curriculum_name} ({userProfile?.curriculum_code})</p>
-                  </div>
+                    <p>{userProfile?.curriculum_name || '-'} ({userProfile?.curriculum_code || '-'})</p>
+                  </div> */}
                   <div>
                     <p className="text-sm text-muted-foreground">Tahun Masuk</p>
                     <p>{userProfile?.year_entry}</p>

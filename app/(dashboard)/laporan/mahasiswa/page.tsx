@@ -18,10 +18,9 @@ export default async function LaporanMahasiswaPage() {
       SELECT 
         s.nim, s.name, s.email, s.phone, s.status, s.year_entry,
         sp.name as study_program_name, sp.code as study_program_code,
-        c.name as curriculum_name
+        'Kurikulum Default' as curriculum_name
       FROM students s
-      JOIN study_programs sp ON s.study_program_id = sp.id
-      JOIN curricula c ON s.curriculum_id = c.id
+      LEFT JOIN study_programs sp ON s.study_program_num_id = sp.id
       ORDER BY s.nim
     `;
     data = result;

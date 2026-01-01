@@ -1,7 +1,7 @@
 // lib/auth.ts
 import NextAuth, { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { sql } from './db';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
 declare module 'next-auth' {
@@ -48,28 +48,19 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        // Backdoor telah dihapus
+
         try {
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Database timeout')), 10000)
-          );
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email }
+          });
 
-          const userPromise = sql`
-            SELECT 
-              u.id, u.email, u.username, u.role, u.password_hash, u.is_active
-            FROM users u
-            WHERE u.email = ${credentials.email}
-          `;
+          console.log('📊 Database result:', user);
 
-          const users = await Promise.race([userPromise, timeoutPromise]) as any[];
-
-          console.log('📊 Database result:', users);
-
-          if (!users || users.length === 0) {
+          if (!user) {
             console.error('User tidak ditemukan di database');
             return null;
           }
-
-          const user = users[0];
           console.log('👤 User found:', {
             id: user.id,
             email: user.email,
@@ -99,7 +90,10 @@ export const authOptions: NextAuthOptions = {
 
           // Update last_login dengan error handling
           try {
-            await sql`UPDATE users SET last_login = NOW() WHERE id = ${user.id}`;
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { last_login: new Date() }
+            });
           } catch (error) {
             console.warn('⚠️ Failed to update last_login:', error);
           }
@@ -108,19 +102,21 @@ export const authOptions: NextAuthOptions = {
           let profileData: any = {};
           try {
             if (user.role === 'mahasiswa') {
-              const students = await sql`
-                SELECT name, nim FROM students WHERE user_id = ${user.id}
-              `;
-              if (students && students.length > 0) {
-                profileData = { ...profileData, ...students[0] };
+              const student = await prisma.student.findFirst({
+                where: { user_id: user.id },
+                select: { name: true, nim: true }
+              });
+              if (student) {
+                profileData = { ...profileData, ...student };
               }
             } else if (user.role === 'dosen') {
-              const lecturers = await sql`
-                SELECT name, email, nidn, expertise FROM lecturers WHERE user_id = ${user.id}
-              `;
-              console.log('📊 Lecturers data:', lecturers);
-              if (lecturers && lecturers.length > 0) {
-                profileData = { ...profileData, ...lecturers[0] };
+              const lecturer = await prisma.lecturer.findFirst({
+                where: { user_id: user.id },
+                select: { name: true, email: true, nidn: true, expertise: true }
+              });
+              console.log('📊 Lecturer data:', lecturer);
+              if (lecturer) {
+                profileData = { ...profileData, ...lecturer };
               }
             } else {
               profileData = { name: user.username };
@@ -161,7 +157,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log('🔄 JWT callback - user:', user);
+        console.log('🔄 JWT callback - Received User:', JSON.stringify(user, null, 2));
         token.id = user.id;
         token.role = user.role;
         token.name = user.name;
@@ -174,8 +170,8 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      console.log('🔄 Session callback - Token content:', JSON.stringify(token, null, 2));
       if (token && session.user) {
-        console.log('🔄 Session callback - token:', token);
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.name = token.name as string;
@@ -191,6 +187,17 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/login',
     error: '/login',
+  },
+  cookies: {
+    sessionToken: {
+      name: process.env.SESSION_NAME || 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
   },
   debug: process.env.NODE_ENV === 'development',
 };

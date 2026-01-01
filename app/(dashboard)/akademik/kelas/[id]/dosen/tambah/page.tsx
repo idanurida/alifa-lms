@@ -23,48 +23,34 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
   const classId = parseInt(idParam);
 
   try {
-    // Perbaikan Final: Menggunakan camelCase 'kelas' (Sesuai saran Error)
-    const kelas = await prisma.kelas.findUnique({
+    const classData = await prisma.class.findUnique({
       where: { id: classId },
       include: {
-        programStudi: true, // Asumsi model ini juga 'programStudi' (camelCase)
+        course: {
+          include: {
+            curriculum: {
+              include: {
+                study_program: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    if (!kelas) {
+    if (!classData) {
       redirect('/akademik/kelas');
     }
 
     // Get available lecturers
-    // Perbaikan Final: Menggunakan camelCase 'dosen'
-    const availableLecturers = await prisma.dosen.findMany({
+    const availableLecturers = await prisma.lecturer.findMany({
       select: {
         id: true,
-        nama: true,
-        nip: true,
+        name: true,
+        nidn: true,
       },
       orderBy: {
-        nama: 'asc',
-      },
-    });
-
-    // Get available classes for reference
-    // Perbaikan Final: Menggunakan camelCase 'kelas'
-    const availableClasses = await prisma.kelas.findMany({
-      where: {
-        programStudiId: kelas.programStudiId,
-      },
-      select: {
-        id: true,
-        nama: true,
-        programStudi: {
-          select: {
-            nama: true,
-          },
-        },
-      },
-      orderBy: {
-        nama: 'asc',
+        name: 'asc',
       },
     });
 
@@ -73,15 +59,15 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
 
       try {
         // Create new teaching assignment
-        // Perbaikan Final: Menggunakan camelCase 'penugasanDosen'
-        await prisma.penugasanDosen.create({
+        await prisma.lecturerAssignment.create({
           data: {
-            kelasId: classId,
-            dosenId: parseInt(formData.lecturerId),
-            tanggalMulai: new Date(formData.startDate),
-            tanggalSelesai: new Date(formData.endDate),
-            bebanMengajar: parseInt(formData.teachingLoad),
-            status: 'active',
+            class_id: classId,
+            lecturer_id: parseInt(formData.lecturerId),
+            start_date: new Date(formData.startDate),
+            end_date: new Date(formData.endDate),
+            teaching_load: parseInt(formData.teachingLoad),
+            assignment_type: 'mengajar', // Default or from form if available
+            is_active: true,
           },
         });
 
@@ -97,7 +83,7 @@ export default async function TambahPenugasanDosenPage({ params }: PageProps) {
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Tambah Penugasan Dosen</h1>
           <p className="text-muted-foreground">
-            Kelas: {kelas.nama} - {kelas.programStudi.nama}
+            Kelas: {classData.class_code} - {classData.course.name} ({classData.course.curriculum?.study_program.name})
           </p>
         </div>
 

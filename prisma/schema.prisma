@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,45 +8,53 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
-  username      String    @unique
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  username      String        @unique
   password_hash String
-  role          String    // 'super_admin', 'staff_akademik', 'staff_keuangan', 'dosen', 'mahasiswa'
-  is_active     Boolean   @default(true)
+  role          String
+  is_active     Boolean       @default(true)
   last_login    DateTime?
-  created_at    DateTime  @default(now())
-  updated_at    DateTime? @updatedAt
+  created_at    DateTime      @default(now())
+  updated_at    DateTime?     @updatedAt
+  posts         ForumPost[]
+  threads       ForumThread[]
+  lecturer      Lecturer?
+  student       Student?
 
-  student  Student?
-  lecturer Lecturer?
-  threads  ForumThread[]
-  posts    ForumPost[]
+  @@map("users")
 }
 
 model StudyProgram {
-  id         Int        @id @default(autoincrement())
-  name       String
-  code       String     @unique
-  faculty    String?
-  is_active  Boolean    @default(true)
-  created_at DateTime   @default(now())
-  curricula  Curriculum[]
-  students   Student[]
+  id           Int          @id @default(autoincrement())
+  name         String
+  code         String       @unique
+  faculty      String?
+  degree_level String?
+  is_active    Boolean      @default(true)
+  created_at   DateTime     @default(now())
+  curricula    Curriculum[]
+  lecturers    Lecturer[]
+  students     Student[]
+
+  @@map("study_programs")
 }
 
 model Curriculum {
-  id               Int            @id @default(autoincrement())
-  name             String
-  code             String         @unique
-  study_program_id Int
-  total_credits    Int            @default(144)
-  is_active        Boolean        @default(true)
-  created_at       DateTime       @default(now())
-  
-  study_program    StudyProgram   @relation(fields: [study_program_id], references: [id])
-  grade_scales     GradeScale[]
-  courses          Course[]
+  id                 Int          @id @default(autoincrement())
+  name               String
+  code               String       @unique
+  study_program_id   Int
+  total_credits      Int          @default(144)
+  is_active          Boolean      @default(true)
+  created_at         DateTime     @default(now())
+  visual_schema_url  String?
+  reference_file_url String?
+  courses            Course[]
+  study_program      StudyProgram @relation(fields: [study_program_id], references: [id])
+  grade_scales       GradeScale[]
+
+  @@map("curricula")
 }
 
 model GradeScale {
@@ -60,166 +66,183 @@ model GradeScale {
   max_score     Int?
   description   String?
   created_at    DateTime   @default(now())
-
   curriculum    Curriculum @relation(fields: [curriculum_id], references: [id])
+
+  @@map("grade_scales")
 }
 
 model AcademicPeriod {
-  id         Int       @id @default(autoincrement())
-  name       String
-  code       String    @unique
-  year       Int
-  semester   Int
-  start_date DateTime  @db.Date
-  end_date   DateTime  @db.Date
-  uts_week   Int?
-  uas_week   Int?
-  is_active  Boolean   @default(false)
-  created_at DateTime  @default(now())
-
+  id                Int               @id @default(autoincrement())
+  name              String
+  code              String            @unique
+  year              Int
+  semester          Int
+  start_date        DateTime          @db.Date
+  end_date          DateTime          @db.Date
+  uts_week          Int?
+  uas_week          Int?
+  is_active         Boolean           @default(false)
+  created_at        DateTime          @default(now())
   classes           Class[]
-  payment_evidences PaymentEvidence[]
   invoices          Invoice[]
+  payment_evidences PaymentEvidence[]
+
+  @@map("academic_periods")
 }
 
 model Student {
-  id               Int      @id @default(autoincrement())
-  user_id          Int?     @unique
-  email            String?
-  name             String?
-  nim              String   @unique
-  phone            String?
-  photo_url        String?
-  status           String   @default("active")
-  year_entry       Int
-  study_program_id String?  @db.Uuid // Matches lib/schema.ts
-  created_at       DateTime @default(now())
-
-  user              User?              @relation(fields: [user_id], references: [id])
-  enrollments       StudentEnrollment[]
-  payment_evidences PaymentEvidence[]
-  invoices          Invoice[]
-  documents         StudentDocument[]
-  study_program_ref StudyProgram?      @relation(fields: [study_program_num_id], references: [id])
+  id                   Int                 @id @default(autoincrement())
+  user_id              Int?                @unique
+  email                String?
+  name                 String?
+  nim                  String              @unique
+  phone                String?
+  photo_url            String?
+  status               String              @default("active")
+  year_entry           Int
+  study_program_id     String?             @db.Uuid
+  created_at           DateTime            @default(now())
   study_program_num_id Int?
+  current_semester     Int                 @default(1)
+  total_credits        Int                 @default(0)
+  invoices             Invoice[]
+  krs_submissions      KrsSubmission[]
+  payment_evidences    PaymentEvidence[]
+  documents            StudentDocument[]
+  enrollments          StudentEnrollment[]
+  study_program_ref    StudyProgram?       @relation(fields: [study_program_num_id], references: [id])
+  user                 User?               @relation(fields: [user_id], references: [id])
+
+  @@map("students")
 }
 
 model Lecturer {
-  id         Int      @id @default(autoincrement())
-  user_id    Int?     @unique
-  email      String?
-  name       String?
-  phone      String?
-  photo_url  String?
-  nidn       String   @unique
-  expertise  String?
-  status     String   @default("active")
-  created_at DateTime @default(now())
+  id                 Int                  @id @default(autoincrement())
+  user_id            Int?                 @unique
+  email              String?
+  name               String?
+  phone              String?
+  photo_url          String?
+  nidn               String               @unique
+  expertise          String?
+  status             String               @default("active")
+  created_at         DateTime             @default(now())
+  study_program_id   Int?
+  classes            Class[]
+  assignments        LecturerAssignment[]
+  lecturer_documents LecturerDocument[]   @relation("LecturerDocs")
+  verified_lec_docs  LecturerDocument[]   @relation("VerifierDocs")
+  study_program      StudyProgram?        @relation(fields: [study_program_id], references: [id])
+  user               User?                @relation(fields: [user_id], references: [id])
+  verified_payments  PaymentEvidence[]
+  verified_std_docs  StudentDocument[]
 
-  user              User?                @relation(fields: [user_id], references: [id])
-  classes           Class[]
-  assignments       LecturerAssignment[]
-  verified_payments PaymentEvidence[]
-  verified_std_docs StudentDocument[]
-  verified_lec_docs LecturerDocument[] @relation("VerifierDocs")
-  lecturer_documents LecturerDocument[] @relation("LecturerDocs")
+  @@map("lecturers")
 }
 
 model Course {
-  id            Int       @id @default(autoincrement())
-  code          String    @unique
-  name          String
-  credits       Int
-  curriculum_id Int?
-  semester      Int?
-  description   String?
-  is_active     Boolean   @default(true)
-  created_at    DateTime  @default(now())
+  id                Int         @id @default(autoincrement())
+  code              String
+  name              String
+  credits           Int
+  curriculum_id     Int?
+  theory_credits    Int?        @default(0)
+  practical_credits Int?        @default(0)
+  semester          Int?
+  prerequisites     String?
+  description       String?
+  is_active         Boolean     @default(true)
+  created_at        DateTime    @default(now())
+  classes           Class[]
+  curriculum        Curriculum? @relation(fields: [curriculum_id], references: [id])
 
-  curriculum    Curriculum? @relation(fields: [curriculum_id], references: [id])
-  classes       Class[]
+  @@unique([code, curriculum_id])
+  @@map("courses")
 }
 
 model Class {
-  id                 Int      @id @default(autoincrement())
+  id                 Int                   @id @default(autoincrement())
   course_id          Int
   academic_period_id Int
   class_code         String
   lecturer_id        Int?
   schedule           Json
-  max_students       Int      @default(40)
-  is_active          Boolean  @default(true)
-  created_at         DateTime @default(now())
-
-  course          Course                @relation(fields: [course_id], references: [id])
-  academic_period AcademicPeriod        @relation(fields: [academic_period_id], references: [id])
-  lecturer        Lecturer?             @relation(fields: [lecturer_id], references: [id])
-  enrollments     StudentEnrollment[]
-  assignments     LecturerAssignment[]
-  eval_components EvaluationComponent[]
-  materials       LearningMaterial[]
-  attendances     Attendance[]
+  max_students       Int                   @default(40)
+  is_active          Boolean               @default(true)
+  created_at         DateTime              @default(now())
+  attendances        Attendance[]
+  academic_period    AcademicPeriod        @relation(fields: [academic_period_id], references: [id])
+  course             Course                @relation(fields: [course_id], references: [id])
+  lecturer           Lecturer?             @relation(fields: [lecturer_id], references: [id])
+  eval_components    EvaluationComponent[]
+  materials          LearningMaterial[]
+  assignments        LecturerAssignment[]
+  enrollments        StudentEnrollment[]
 
   @@unique([course_id, academic_period_id, class_code])
+  @@map("classes")
 }
 
 model LecturerAssignment {
-  id              Int      @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   lecturer_id     Int
   class_id        Int
   assignment_type String
-  teaching_load   Int      @default(0)
+  teaching_load   Int       @default(0)
   start_date      DateTime? @db.Date
   end_date        DateTime? @db.Date
-  is_active       Boolean  @default(true)
-  created_at      DateTime @default(now())
+  is_active       Boolean   @default(true)
+  created_at      DateTime  @default(now())
+  class           Class     @relation(fields: [class_id], references: [id])
+  lecturer        Lecturer  @relation(fields: [lecturer_id], references: [id])
 
-  lecturer Lecturer @relation(fields: [lecturer_id], references: [id])
-  class    Class    @relation(fields: [class_id], references: [id])
+  @@map("lecturer_assignments")
 }
 
 model StudentEnrollment {
-  id              Int      @id @default(autoincrement())
+  id              Int               @id @default(autoincrement())
   student_id      Int
   class_id        Int
-  enrollment_date DateTime @default(now())
-  status          String   @default("registered")
-  final_score     Decimal? @db.Decimal(5, 2)
+  enrollment_date DateTime          @default(now())
+  status          String            @default("registered")
+  final_score     Decimal?          @db.Decimal(5, 2)
   final_grade     String?
-
-  student    Student             @relation(fields: [student_id], references: [id])
-  class      Class               @relation(fields: [class_id], references: [id])
-  activities StudentActivity[]
+  activities      StudentActivity[]
+  class           Class             @relation(fields: [class_id], references: [id])
+  student         Student           @relation(fields: [student_id], references: [id])
 
   @@unique([student_id, class_id])
+  @@map("student_enrollments")
 }
 
 model EvaluationComponent {
-  id             Int      @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   class_id       Int
   component_type String
   component_name String
-  weight         Decimal  @db.Decimal(5, 2)
-  max_score      Decimal  @default(100) @db.Decimal(5, 2)
+  weight         Decimal   @db.Decimal(5, 2)
+  max_score      Decimal   @default(100) @db.Decimal(5, 2)
   deadline       DateTime? @db.Date
   description    String?
-  is_published   Boolean  @default(false)
-  created_at     DateTime @default(now())
+  is_published   Boolean   @default(false)
+  created_at     DateTime  @default(now())
+  class          Class     @relation(fields: [class_id], references: [id])
 
-  class Class @relation(fields: [class_id], references: [id])
+  @@map("evaluation_components")
 }
 
 model StudentActivity {
-  id            Int      @id @default(autoincrement())
+  id            Int               @id @default(autoincrement())
   enrollment_id Int
   activity_type String
-  activity_date DateTime @db.Date
-  score         Decimal? @db.Decimal(5, 2)
-  max_score     Decimal  @default(100) @db.Decimal(5, 2)
+  activity_date DateTime          @db.Date
+  score         Decimal?          @db.Decimal(5, 2)
+  max_score     Decimal           @default(100) @db.Decimal(5, 2)
   notes         String?
-  created_at    DateTime @default(now())
+  created_at    DateTime          @default(now())
+  enrollment    StudentEnrollment @relation(fields: [enrollment_id], references: [id])
 
-  enrollment StudentEnrollment @relation(fields: [enrollment_id], references: [id])
+  @@map("student_activities")
 }
 
 model LearningMaterial {
@@ -232,127 +255,149 @@ model LearningMaterial {
   week_number   Int?
   is_published  Boolean  @default(false)
   created_at    DateTime @default(now())
+  class         Class    @relation(fields: [class_id], references: [id])
 
-  class Class @relation(fields: [class_id], references: [id])
+  @@map("learning_materials")
 }
 
 model Attendance {
-  id             Int      @id @default(autoincrement())
-  class_id       Int
-  meeting_number Int
-  meeting_date   DateTime @db.Date
+  id              Int      @id @default(autoincrement())
+  class_id        Int
+  meeting_number  Int
+  meeting_date    DateTime @db.Date
   attendance_data Json
-  created_at     DateTime @default(now())
-
-  class Class @relation(fields: [class_id], references: [id])
+  created_at      DateTime @default(now())
+  class           Class    @relation(fields: [class_id], references: [id])
 
   @@unique([class_id, meeting_number])
+  @@map("attendances")
 }
 
 model PaymentEvidence {
-  id                 Int      @id @default(autoincrement())
+  id                 Int            @id @default(autoincrement())
   student_id         Int
   academic_period_id Int
-  amount             Decimal  @db.Decimal(10, 2)
+  amount             Decimal        @db.Decimal(10, 2)
   evidence_path      String
-  transfer_date      DateTime @db.Date
+  transfer_date      DateTime       @db.Date
   bank_name          String?
   account_number     String?
   account_name       String?
-  status             String   @default("pending")
+  status             String         @default("pending")
   verified_by        Int?
   verified_at        DateTime?
   notes              String?
-  created_at         DateTime @default(now())
+  created_at         DateTime       @default(now())
+  academic_period    AcademicPeriod @relation(fields: [academic_period_id], references: [id])
+  student            Student        @relation(fields: [student_id], references: [id])
+  verifier           Lecturer?      @relation(fields: [verified_by], references: [id])
 
-  student         Student         @relation(fields: [student_id], references: [id])
-  academic_period AcademicPeriod  @relation(fields: [academic_period_id], references: [id])
-  verifier        Lecturer?       @relation(fields: [verified_by], references: [id])
+  @@map("payment_evidences")
 }
 
 model Invoice {
-  id                 Int      @id @default(autoincrement())
+  id                 Int            @id @default(autoincrement())
   student_id         Int
   academic_period_id Int
-  amount             Decimal  @db.Decimal(10, 2)
-  due_date           DateTime @db.Date
-  status             String   @default("unpaid")
-  created_at         DateTime @default(now())
+  amount             Decimal        @db.Decimal(10, 2)
+  due_date           DateTime       @db.Date
+  status             String         @default("unpaid")
+  created_at         DateTime       @default(now())
+  academic_period    AcademicPeriod @relation(fields: [academic_period_id], references: [id])
+  student            Student        @relation(fields: [student_id], references: [id])
 
-  student         Student        @relation(fields: [student_id], references: [id])
-  academic_period AcademicPeriod @relation(fields: [academic_period_id], references: [id])
+  @@map("invoices")
 }
 
 model StudentDocument {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   student_id    Int
   document_type String
   file_path     String
   file_name     String?
   file_size     Int?
-  status        String   @default("pending")
+  status        String    @default("pending")
   verified_by   Int?
   verified_at   DateTime?
-  uploaded_at   DateTime @default(now())
+  uploaded_at   DateTime  @default(now())
+  student       Student   @relation(fields: [student_id], references: [id])
+  verifier      Lecturer? @relation(fields: [verified_by], references: [id])
 
-  student  Student   @relation(fields: [student_id], references: [id])
-  verifier Lecturer? @relation(fields: [verified_by], references: [id])
+  @@map("student_documents")
 }
 
 model LecturerDocument {
-  id              Int      @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   lecturer_id     Int
   document_type   String
   file_path       String
   file_name       String?
-  status          String   @default("pending")
+  status          String    @default("pending")
   expiration_date DateTime? @db.Date
-  verified        Boolean  @default(false)
-  uploaded_at     DateTime @default(now())
+  verified        Boolean   @default(false)
+  uploaded_at     DateTime  @default(now())
+  verified_by     Int?
+  lecturer        Lecturer  @relation("LecturerDocs", fields: [lecturer_id], references: [id])
+  verifier        Lecturer? @relation("VerifierDocs", fields: [verified_by], references: [id])
 
-  lecturer Lecturer @relation("LecturerDocs", fields: [lecturer_id], references: [id])
-  verifier Lecturer? @relation("VerifierDocs", fields: [verified_by], references: [id])
-  verified_by Int?
+  @@map("lecturer_documents")
 }
 
 model ForumCategory {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
-  slug        String   @unique
+  slug        String        @unique
   description String?
   icon        String?
-  sort_order  Int      @default(0)
-  is_active   Boolean  @default(true)
-  created_at  DateTime @default(now())
-  
-  threads ForumThread[]
+  sort_order  Int           @default(0)
+  is_active   Boolean       @default(true)
+  created_at  DateTime      @default(now())
+  threads     ForumThread[]
+
+  @@map("forum_categories")
 }
 
 model ForumThread {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   category_id Int
   user_id     Int
   title       String
-  slug        String   @unique
-  is_pinned   Boolean  @default(false)
-  is_locked   Boolean  @default(false)
-  view_count  Int      @default(0)
-  created_at  DateTime @default(now())
+  slug        String        @unique
+  is_pinned   Boolean       @default(false)
+  is_locked   Boolean       @default(false)
+  view_count  Int           @default(0)
+  created_at  DateTime      @default(now())
+  posts       ForumPost[]
+  category    ForumCategory @relation(fields: [category_id], references: [id])
+  author      User          @relation(fields: [user_id], references: [id])
 
-  category ForumCategory @relation(fields: [category_id], references: [id])
-  author   User          @relation(fields: [user_id], references: [id])
-  posts    ForumPost[]
+  @@map("forum_threads")
 }
 
 model ForumPost {
-  id            Int      @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   thread_id     Int
   user_id       Int
   content       String
-  is_first_post Boolean  @default(false)
-  created_at    DateTime @default(now())
-  updated_at    DateTime? @updatedAt
+  is_first_post Boolean     @default(false)
+  created_at    DateTime    @default(now())
+  updated_at    DateTime?   @updatedAt
+  thread        ForumThread @relation(fields: [thread_id], references: [id])
+  author        User        @relation(fields: [user_id], references: [id])
 
-  thread ForumThread @relation(fields: [thread_id], references: [id])
-  author User        @relation(fields: [user_id], references: [id])
+  @@map("forum_posts")
+}
+
+model KrsSubmission {
+  id            Int      @id @default(autoincrement())
+  mahasiswa_id  Int
+  semester      String
+  courses       Json
+  total_credits Int
+  status        String   @default("pending")
+  notes         String?
+  submitted_at  DateTime @default(now())
+  student       Student  @relation(fields: [mahasiswa_id], references: [id])
+
+  @@map("krs_submissions")
 }

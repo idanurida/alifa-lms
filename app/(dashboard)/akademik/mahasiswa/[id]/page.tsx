@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { sql } from '@/lib/db';
+import { prisma } from '@/lib/prisma';
 
 interface PageProps {
   params: {
@@ -40,68 +40,103 @@ export default async function DetailMahasiswaPage({ params }: { params: Promise<
   let enrollmentData: any[] = [];
 
   try {
-    // Ambil data mahasiswa
-    const [student] = await sql`
-      SELECT 
-        s.id, s.nim, s.name, s.email, s.phone, s.year_entry,
-        s.status, s.created_at,
-        ps.name as program_studi_name,
-        p_creator.name as created_by_name,
-        p_student.address
-      FROM students s
-      LEFT JOIN study_programs ps ON s.study_program_id = ps.id
-      LEFT JOIN profiles p_creator ON s.created_by = p_creator.user_id
-      LEFT JOIN profiles p_student ON s.user_id = p_student.user_id
-      WHERE s.id = ${id}
-    `;
+    // Parse ID from params
+    const studentId = parseInt(id);
+    if (isNaN(studentId)) {
+      notFound();
+    }
+
+    // Ambil data mahasiswa dengan Prisma Relation
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+      include: {
+        study_program_ref: true,
+        user: true,
+      }
+    });
 
     if (!student) {
       notFound();
     }
 
-    studentData = student;
+    studentData = {
+      ...student,
+      program_studi_name: student.study_program_ref?.name,
+      address: null, // Address belum ada di schema Student
+      created_by_name: null // Created By belum ada di schema Student
+    };
 
-    // Ambil data akademik (IPK, total SKS, dll)
-    const [academic] = await sql`
-      SELECT 
-        COUNT(DISTINCT se.id) as total_courses,
-        SUM(CASE WHEN se.status = 'completed' THEN c.credits ELSE 0 END) as completed_credits,
-        SUM(c.credits) as total_credits,
-        AVG(CASE WHEN se.final_score IS NOT NULL THEN se.final_score END) as gpa
-      FROM student_enrollments se
-      JOIN classes cl ON se.class_id = cl.id
-      JOIN courses c ON cl.course_id = c.id
-      WHERE se.student_id = ${id}
-    `;
+    // Ambil detail enrollments untuk hitung IPK & SKS
+    const enrollments = await prisma.studentEnrollment.findMany({
+      where: { student_id: studentId },
+      include: {
+        class: {
+          include: {
+            course: true,
+            academic_period: true,
+            lecturer: true,
+          }
+        }
+      },
+      orderBy: [
+        { class: { academic_period: { year: 'desc' } } },
+        { class: { academic_period: { semester: 'desc' } } },
+        { class: { course: { name: 'asc' } } }
+      ]
+    });
 
-    academicData = academic;
+    // Hitung statistik manual dari data enrollments (lebih akurat daripada raw SQL yang kompleks)
+    let totalSKS = 0;
+    let totalSKSLulus = 0;
+    let totalBobot = 0;
 
-    // Ambil data enrollment aktif
-    const enrollments = await sql`
-      SELECT 
-        se.id, se.status, se.final_score, se.final_grade,
-        c.code as course_code, c.name as course_name, c.credits,
-        cl.name as class_name, cl.semester,
-        d.name as lecturer_name,
-        ap.name as academic_period
-      FROM student_enrollments se
-      JOIN classes cl ON se.class_id = cl.id
-      JOIN courses c ON cl.course_id = c.id
-      LEFT JOIN lecturers d ON cl.lecturer_id = d.id
-      LEFT JOIN academic_periods ap ON cl.academic_period_id = ap.id
-      WHERE se.student_id = ${id}
-      ORDER BY ap.year DESC, ap.semester DESC, c.name ASC
-    `;
+    enrollments.forEach(en => {
+      const sks = en.class.course.credits || 0;
+      totalSKS += sks;
 
-    enrollmentData = enrollments;
+      if (en.status === 'completed') {
+        totalSKSLulus += sks;
+      }
+
+      if (en.final_score) {
+        // Asumsi final_score adalah IP (0-4) atau perlu konversi? 
+        // Schema Decimal(5,2). Jika nilai 0-100, perlu konversi ke 4.0 scale.
+        // Di sini kita tampilkan raw avg score jika belum ada tabel konversi.
+        totalBobot += Number(en.final_score);
+      }
+    });
+
+    const gpa = enrollments.length > 0 ? totalBobot / enrollments.length : 0; // Simple Average for now if no SKS weighting logic defined
+
+    academicData = {
+      total_courses: enrollments.length,
+      completed_credits: totalSKSLulus,
+      total_credits: totalSKS,
+      gpa: gpa // Placeholder logic, sesuaikan dengan aturan bisnis nanti
+    };
+
+    enrollmentData = enrollments.map(en => ({
+      id: en.id,
+      status: en.status,
+      final_score: en.final_score,
+      final_grade: en.final_grade,
+      course_code: en.class.course.code,
+      course_name: en.class.course.name,
+      credits: en.class.course.credits,
+      class_name: en.class.class_code, // Class code sebagai nama kelas
+      semester: en.class.academic_period.semester,
+      lecturer_name: en.class.lecturer?.name,
+      academic_period: en.class.academic_period.name
+    }));
 
   } catch (error) {
     console.error('Failed to fetch student data:', error);
     notFound();
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
+  const formatDate = (date: string | Date | null) => {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString('id-ID', {
       day: '2-digit',
       month: 'long',
       year: 'numeric'
@@ -111,7 +146,7 @@ export default async function DetailMahasiswaPage({ params }: { params: Promise<
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="default" className="bg-green-500">Aktif</Badge>;
+        return <Badge variant="default" className="bg-sky-500">Aktif</Badge>;
       case 'graduated':
         return <Badge variant="default" className="bg-blue-500">Lulus</Badge>;
       case 'dropout':
@@ -216,25 +251,25 @@ export default async function DetailMahasiswaPage({ params }: { params: Promise<
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <p className="text-2xl font-bold text-supabase-green">
+                  <p className="text-2xl font-bold text-primary">
                     {academicData?.gpa ? academicData.gpa.toFixed(2) : '0.00'}
                   </p>
                   <p className="text-sm text-muted-foreground">IPK</p>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <p className="text-2xl font-bold text-supabase-green">
+                  <p className="text-2xl font-bold text-primary">
                     {academicData?.completed_credits || 0}
                   </p>
                   <p className="text-sm text-muted-foreground">SKS Lulus</p>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <p className="text-2xl font-bold text-supabase-green">
+                  <p className="text-2xl font-bold text-primary">
                     {academicData?.total_credits || 0}
                   </p>
                   <p className="text-sm text-muted-foreground">Total SKS</p>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <p className="text-2xl font-bold text-supabase-green">
+                  <p className="text-2xl font-bold text-primary">
                     {academicData?.total_courses || 0}
                   </p>
                   <p className="text-sm text-muted-foreground">Total Mata Kuliah</p>
@@ -347,24 +382,6 @@ export default async function DetailMahasiswaPage({ params }: { params: Promise<
             </CardContent>
           </Card>
 
-          {/* Informasi Sistem */}
-          <Card className="glass-effect dark:glass-effect-dark">
-            <CardHeader>
-              <CardTitle>Informasi Sistem</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Dibuat Pada</label>
-                <p className="text-sm">{formatDate(studentData.created_at)}</p>
-              </div>
-              {studentData.created_by_name && (
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Dibuat Oleh</label>
-                  <p className="text-sm">{studentData.created_by_name}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

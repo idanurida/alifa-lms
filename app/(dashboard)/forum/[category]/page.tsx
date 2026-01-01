@@ -20,42 +20,36 @@ export default async function ForumCategoryPage({ params }: { params: Promise<{ 
 
   let category: any; let threads: any[] = [];
   try {
-    // PERBAIKAN: Gunakan table categories yang ada
+    // PERBAIKAN: Gunakan table forum_categories yang ada
     const [categoryResult] = await sql`
       SELECT id, name, description, is_active
-      FROM categories
+      FROM public.forum_categories
       WHERE id = ${categoryId} AND is_active = true
     `;
     category = categoryResult;
     if (!category) notFound();
 
-    // PERBAIKAN: Query threads dari table yang sesuai
+    // PERBAIKAN: Query threads dari table yang sesuai dengan join author
     threads = await sql`
       SELECT 
-        ca.id, ca.title, ca.content as description, ca.created_at,
-        ca.author_id, 0 as reply_count, false as is_pinned, false as is_locked
-      FROM course_announcements ca
-      ORDER BY ca.created_at DESC
-      LIMIT 10
+        ft.id, 
+        ft.title, 
+        fp.content as description, 
+        ft.created_at,
+        ft.user_id as author_id, 
+        COALESCE(s.name, l.name, u.username) as user_name,
+        (SELECT COUNT(*) FROM public.forum_posts WHERE thread_id = ft.id) - 1 as reply_count,
+        ft.is_pinned, 
+        ft.is_locked
+      FROM public.forum_threads ft
+      JOIN public.forum_posts fp ON ft.id = fp.thread_id AND fp.is_first_post = true
+      JOIN public.users u ON ft.user_id = u.id
+      LEFT JOIN public.students s ON u.id = s.user_id
+      LEFT JOIN public.lecturers l ON u.id = l.user_id
+      WHERE ft.category_id = ${categoryId}
+      ORDER BY ft.is_pinned DESC, ft.created_at DESC
+      LIMIT 20
     `;
-
-    // PERBAIKAN: Tambahkan nama user ke threads dengan kolom yang benar
-    if (threads.length > 0) {
-      const threadWithUsers = await sql`
-        SELECT 
-          ca.id, ca.title, ca.content as description, ca.created_at,
-          ca.author_id, p.name as user_name
-        FROM course_announcements ca
-        LEFT JOIN profiles p ON ca.author_id = p.user_id
-        WHERE ca.id IN (${threads.map(t => t.id)})
-      `;
-      threads = threadWithUsers.map(thread => ({
-        ...thread,
-        reply_count: 0,
-        is_pinned: false,
-        is_locked: false
-      }));
-    }
 
   } catch (error) {
     console.error('Failed to fetch forum category or threads:', error);

@@ -33,19 +33,19 @@ const Toaster = ({ ...props }: ToasterProps) => {
             "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground group-[.toast]:text-xs group-[.toast]:font-medium",
           cancelButton:
             "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground group-[.toast]:text-xs group-[.toast]:font-medium",
-          success: "group-[.toaster]:border-green-200 group-[.toaster]:bg-green-50 group-[.toast]:text-green-900",
+          success: "group-[.toaster]:border-sky-200 group-[.toaster]:bg-sky-50 group-[.toast]:text-sky-900",
           error: "group-[.toaster]:border-red-200 group-[.toaster]:bg-red-50 group-[.toast]:text-red-900",
           warning: "group-[.toaster]:border-yellow-200 group-[.toaster]:bg-yellow-50 group-[.toast]:text-yellow-900",
           info: "group-[.toaster]:border-blue-200 group-[.toaster]:bg-blue-50 group-[.toast]:text-blue-900",
-          loading: "group-[.toaster]:border-gray-200 group-[.toaster]:bg-gray-50 group-[.toast]:text-gray-900",
+          loading: "group-[.toaster]:border-slate-200 dark:border-slate-700 group-[.toaster]:bg-slate-50 dark:bg-slate-800 group-[.toast]:text-slate-900 dark:text-white",
         },
       }}
       icons={{
-        success: <CheckCircle2 className="h-4 w-4 text-green-600" />,
+        success: <CheckCircle2 className="h-4 w-4 text-sky-600" />,
         error: <XCircle className="h-4 w-4 text-red-600" />,
         warning: <AlertTriangle className="h-4 w-4 text-yellow-600" />,
         info: <Info className="h-4 w-4 text-blue-600" />,
-        loading: <Loader2 className="h-4 w-4 animate-spin text-gray-600" />,
+        loading: <Loader2 className="h-4 w-4 animate-spin text-slate-600 dark:text-slate-400" />,
       }}
       {...props}
     />

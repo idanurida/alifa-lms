@@ -1,22 +1,23 @@
 // app/(dashboard)/akademik/mahasiswa/krs/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  BookOpen, 
-  FileText, 
-  Plus, 
-  Trash2, 
+import {
+  BookOpen,
+  FileText,
+  Plus,
+  Trash2,
   Search,
   Clock,
   CheckCircle,
   XCircle,
   AlertCircle,
-  Loader2
+  Loader2,
+  Printer
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -53,36 +54,20 @@ interface KRSSubmission {
 export default function KRSMahasiswaPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [mataKuliahTersedia, setMataKuliahTersedia] = useState<MataKuliah[]>([]);
   const [mataKuliahTerpilih, setMataKuliahTerpilih] = useState<KRSItem[]>([]);
   const [riwayatKRS, setRiwayatKRS] = useState<KRSSubmission[]>([]);
   const [pencarian, setPencarian] = useState('');
   const [sedangMemuat, setSedangMemuat] = useState(true);
   const [sedangMengajukan, setSedangMengajukan] = useState(false);
-  const [semesterSekarang, setSemesterSekarang] = useState('2024-1');
+  const [semesterSekarang] = useState('2024-1');
   const [infoMahasiswa, setInfoMahasiswa] = useState<any>(null);
 
-  // Redirect jika bukan mahasiswa
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session || session.user.role !== 'mahasiswa') {
-      router.push('/tidak-diizinkan');
-    }
-  }, [session, status, router]);
-
-  // Load data saat component mount
-  useEffect(() => {
-    if (session?.user.role === 'mahasiswa') {
-      muatDataKRS();
-    }
-  }, [session]);
-
-  const muatDataKRS = async () => {
+  const muatDataKRS = useCallback(async () => {
     try {
       setSedangMemuat(true);
-      
+
       // Load data dari API
       const [responseMataKuliah, responseKRS, responseMahasiswa] = await Promise.all([
         fetch('/api/akademik/mata-kuliah/tersedia'),
@@ -94,22 +79,29 @@ export default function KRSMahasiswaPage() {
         const dataMataKuliah = await responseMataKuliah.json();
         setMataKuliahTersedia(dataMataKuliah.data || []);
       } else {
-        console.error('Gagal memuat mata kuliah:', await responseMataKuliah.text());
+        const errorText = await responseMataKuliah.text();
+        console.error('Gagal memuat mata kuliah:', errorText);
       }
 
+      let dataKRS: any = { data: [] };
       if (responseKRS.ok) {
-        const dataKRS = await responseKRS.json();
+        dataKRS = await responseKRS.json();
         setRiwayatKRS(dataKRS.data || []);
+        console.log('Riwayat KRS berhasil dimuat:', dataKRS.data.length, 'item(s)');
       } else {
-        console.error('Gagal memuat riwayat KRS:', await responseKRS.text());
+        const errorText = await responseKRS.text();
+        console.error('Gagal memuat riwayat KRS:', errorText);
       }
 
       if (responseMahasiswa.ok) {
         const dataMahasiswa = await responseMahasiswa.json();
         setInfoMahasiswa(dataMahasiswa.data);
+        console.log('Profil Mahasiswa berhasil dimuat:', dataMahasiswa.data);
       } else {
-        console.error('Gagal memuat profil mahasiswa:', await responseMahasiswa.text());
+        const errorText = await responseMahasiswa.text();
+        console.error('Gagal memuat profil mahasiswa:', errorText);
       }
+      console.log('KRS Data loaded:', { mk: responseMataKuliah.ok, krs: responseKRS.ok, prof: responseMahasiswa.ok });
 
     } catch (error) {
       console.error('Gagal memuat data KRS:', error);
@@ -119,7 +111,23 @@ export default function KRSMahasiswaPage() {
     } finally {
       setSedangMemuat(false);
     }
-  };
+  }, []);
+
+  // Redirect jika bukan mahasiswa
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session || session.user.role !== 'mahasiswa') {
+      router.push('/tidak-diizinkan');
+    }
+  }, [session, status, router]);
+
+  // Load data saat component mount
+  useEffect(() => {
+    if (session?.user.role === 'mahasiswa') {
+      muatDataKRS();
+    }
+  }, [session, muatDataKRS]);
 
   // Fallback data untuk development
   const dapatkanMataKuliahFallback = (): MataKuliah[] => [
@@ -194,15 +202,15 @@ export default function KRSMahasiswaPage() {
   ];
 
   const mataKuliahTersaring = mataKuliahTersedia.filter(mk =>
-    mk.is_active && (
-      mk.nama.toLowerCase().includes(pencarian.toLowerCase()) ||
-      mk.kode.toLowerCase().includes(pencarian.toLowerCase())
+    mk?.is_active && (
+      (mk.nama || '').toLowerCase().includes(pencarian.toLowerCase()) ||
+      (mk.kode || '').toLowerCase().includes(pencarian.toLowerCase())
     )
   );
 
   const tambahMataKuliah = (mataKuliah: MataKuliah) => {
     if (!mataKuliah.is_active) return;
-    
+
     const sudahDitambahkan = mataKuliahTerpilih.find(item => item.mata_kuliah_id === mataKuliah.id);
     if (sudahDitambahkan) {
       alert('Mata kuliah sudah dipilih!');
@@ -246,7 +254,7 @@ export default function KRSMahasiswaPage() {
 
     try {
       setSedangMengajukan(true);
-      
+
       const response = await fetch('/api/akademik/krs', {
         method: 'POST',
         headers: {
@@ -278,7 +286,7 @@ export default function KRSMahasiswaPage() {
   const dapatkanBadgeStatus = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+        return <Badge variant="default" className="bg-[#0ea5e9]/10 text-[#0ea5e9] border-[#0ea5e9]/20 font-bold">
           <CheckCircle className="h-3 w-3 mr-1" />Disetujui
         </Badge>;
       case 'rejected':
@@ -292,7 +300,7 @@ export default function KRSMahasiswaPage() {
     }
   };
 
-  const memilikiPengajuanTertunda = riwayatKRS.some(sub => 
+  const memilikiPengajuanTertunda = riwayatKRS.some(sub =>
     sub.status === 'pending' && sub.semester === semesterSekarang
   );
 
@@ -310,12 +318,20 @@ export default function KRSMahasiswaPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Kartu Rencana Studi (KRS)</h1>
-        <p className="text-muted-foreground">
-          Pilih mata kuliah untuk semester {semesterSekarang}
-          {infoMahasiswa && ` - ${infoMahasiswa.name} (${infoMahasiswa.nim})`}
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Kartu Rencana Studi (KRS)</h1>
+          <p className="text-muted-foreground font-medium">
+            Pilih mata kuliah untuk semester {semesterSekarang}
+            {infoMahasiswa && ` - ${infoMahasiswa.name} (${infoMahasiswa.nim})`}
+          </p>
+        </div>
+        <Button variant="outline" asChild>
+          <a href="/akademik/mahasiswa/krs/cetak" target="_blank">
+            <Printer className="mr-2 h-4 w-4" />
+            Cetak KRS
+          </a>
+        </Button>
       </div>
 
       {/* Alert untuk KRS tertunda */}
@@ -368,15 +384,13 @@ export default function KRSMahasiswaPage() {
                 mataKuliahTersaring.map((mataKuliah) => (
                   <div
                     key={mataKuliah.id}
-                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                      mataKuliah.is_active 
-                        ? 'hover:bg-muted/50 border-border' 
-                        : 'bg-muted/30 border-muted cursor-not-allowed'
-                    } ${
-                      mataKuliahTerpilih.find(item => item.mata_kuliah_id === mataKuliah.id) 
-                        ? 'bg-primary/10 border-primary' 
+                    className={`p - 4 border rounded - lg cursor - pointer transition - colors ${mataKuliah.is_active
+                      ? 'hover:bg-muted/50 border-border'
+                      : 'bg-muted/30 border-muted cursor-not-allowed'
+                      } ${mataKuliahTerpilih.find(item => item.mata_kuliah_id === mataKuliah.id)
+                        ? 'bg-primary/10 border-primary'
                         : ''
-                    }`}
+                      } `}
                     onClick={() => mataKuliah.is_active && tambahMataKuliah(mataKuliah)}
                   >
                     <div className="flex items-start justify-between">
@@ -448,34 +462,34 @@ export default function KRSMahasiswaPage() {
                     </Button>
                   </div>
                 ))}
-                
+
                 <div className="border-t pt-4 space-y-3">
                   <div className="flex justify-between text-sm">
                     <span>Total SKS:</span>
                     <span className="font-medium">{dapatkanTotalSKS()}</span>
                   </div>
-                  
+
                   {dapatkanTotalSKS() > 24 && (
                     <div className="flex items-center gap-2 text-sm text-red-600">
                       <AlertCircle className="h-4 w-4" />
                       <span>Maksimal 24 SKS per semester</span>
                     </div>
                   )}
-                  
+
                   {dapatkanTotalSKS() < 12 && (
                     <div className="flex items-center gap-2 text-sm text-amber-600">
                       <AlertCircle className="h-4 w-4" />
                       <span>Minimal 12 SKS untuk semester aktif</span>
                     </div>
                   )}
-                  
-                  <Button 
-                    className="w-full" 
+
+                  <Button
+                    className="w-full bg-[#0ea5e9] hover:bg-[#0ea5e9]/90 text-white font-bold"
                     onClick={ajukanKRS}
                     disabled={
-                      sedangMengajukan || 
-                      dapatkanTotalSKS() > 24 || 
-                      dapatkanTotalSKS() < 12 || 
+                      sedangMengajukan ||
+                      dapatkanTotalSKS() > 24 ||
+                      dapatkanTotalSKS() < 12 ||
                       mataKuliahTerpilih.length === 0 ||
                       memilikiPengajuanTertunda
                     }
@@ -531,7 +545,7 @@ export default function KRSMahasiswaPage() {
                       <Badge variant="outline">{pengajuan.total_sks} SKS</Badge>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
                     {pengajuan.mata_kuliah.map((mk, index) => (
                       <div key={index} className="text-sm p-2 bg-muted/30 rounded flex justify-between">
@@ -542,7 +556,7 @@ export default function KRSMahasiswaPage() {
                       </div>
                     ))}
                   </div>
-                  
+
                   {pengajuan.catatan && (
                     <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm">
                       <strong>Catatan dari akademik:</strong> {pengajuan.catatan}

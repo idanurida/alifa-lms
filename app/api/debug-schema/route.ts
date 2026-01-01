@@ -19,7 +19,7 @@ export async function GET() {
 
         return NextResponse.json({
             krs_submissions: krsCols,
-            existing_tables: tables.map(t => t.table_name)
+            existing_tables: tables.map((t: any) => t.table_name)
         });
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 500 });

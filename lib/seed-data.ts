@@ -1,5 +1,30 @@
 // lib/seed-data.ts
-import { sql } from './db';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+// Local safe sql helper for seeding avoids prepared statements
+async function sql(strings: TemplateStringsArray, ...values: any[]) {
+  const query = strings.reduce((acc, part, i) => {
+    let valueStr = '';
+    if (i < values.length) {
+      const value = values[i];
+      if (value === null || value === undefined) {
+        valueStr = 'NULL';
+      } else if (typeof value === 'string') {
+        valueStr = `'${value.replace(/'/g, "''")}'`;
+      } else if (typeof value === 'object' && !(value instanceof Date)) {
+        valueStr = `'${JSON.stringify(value)}'`;
+      } else if (value instanceof Date) {
+        valueStr = `'${value.toISOString()}'`;
+      } else {
+        valueStr = String(value);
+      }
+    }
+    return acc + part + valueStr;
+  }, '');
+  return prisma.$executeRawUnsafe(query);
+}
 
 export async function seedSampleData() {
   console.log('🌱 Seeding sample data for ALIFA Institute...');
@@ -127,4 +152,12 @@ export async function seedSampleData() {
     console.error('❌ Sample data seeding error:', error);
     throw error;
   }
+}
+
+// Execute if run directly
+if (require.main === module) {
+  seedSampleData().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
 }

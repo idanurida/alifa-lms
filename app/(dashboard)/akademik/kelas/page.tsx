@@ -41,7 +41,7 @@ export default async function KelasPage() {
       const [count] = await sql`SELECT COUNT(*) as count FROM student_enrollments WHERE class_id = ${kelas.id}`;
       return {
         ...kelas,
-        enrolled_students: parseInt(count.count),
+        enrolled_students: count ? parseInt(count.count) : 0,
         scheduleText: `${kelas.schedule.day}, ${kelas.schedule.time}, ${kelas.schedule.room}`
       };
     }));

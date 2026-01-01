@@ -54,7 +54,7 @@ export default async function DosenPage() {
 
       console.log('✅ Data fetched:', result.length, 'records');
 
-      data = result.map(row => ({
+      data = result.map((row: any) => ({
         id: row.id,
         user_id: row.user_id,
         nidn: row.nidn,
@@ -166,7 +166,7 @@ export default async function DosenPage() {
       <div className="p-6 text-center">
         <h1 className="text-2xl font-bold text-red-600">Error</h1>
         <p className="text-muted-foreground">Terjadi kesalahan saat memuat halaman.</p>
-        <pre className="mt-4 text-sm text-left bg-gray-100 p-4 rounded">
+        <pre className="mt-4 text-sm text-left bg-slate-100 dark:bg-slate-800 p-4 rounded">
           {error instanceof Error ? error.message : 'Unknown error'}
         </pre>
       </div>

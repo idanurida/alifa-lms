@@ -154,15 +154,15 @@ export default function DashboardLayout({
     else timeGreet = 'Selamat Malam';
 
     const roleMap: Record<UserRole, string> = {
-      super_admin: 'Super Admin',
-      staff_akademik: 'Staff Akademik',
-      staff_keuangan: 'Staff Keuangan',
+      super_admin: 'Admin Utama',
+      staff_akademik: 'Staf Akademik',
+      staff_keuangan: 'Staf Keuangan',
       dosen: 'Dosen',
       mahasiswa: 'Mahasiswa',
     };
 
     const roleName = roleMap[role] || 'Pengguna';
-    return `${timeGreet}, ${user.name || 'Pengguna'} (${roleName})`;
+    return `${timeGreet}, ${user.name || 'Pengguna'} • ${roleName}`;
   };
 
   return (
@@ -186,7 +186,7 @@ export default function DashboardLayout({
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:z-50 md:border-r bg-card text-foreground border-border">
+      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:z-50 border-r bg-white dark:bg-[#0f172a] text-slate-900 dark:text-white border-slate-200 dark:border-white/5 shadow-2xl transition-colors duration-300">
         <SidebarContent
           user={user}
           role={role}
@@ -196,54 +196,51 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 md:ml-64">
-        <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">
+      <div className="flex-1 md:ml-64 bg-slate-50 dark:bg-[#0f172a]/50">
+        <header className="sticky top-0 z-40 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-xl transition-colors duration-300">
           <div className="flex h-16 items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-3">
               {!['/', '/dashboard', '/akademik', '/keuangan', '/superadmin', '/pengaturan'].includes(pathname) && (
                 <button
                   onClick={() => window.history.back()}
-                  className="flex items-center gap-1 text-sm px-2 py-1 rounded-md hover:bg-muted transition-colors"
+                  className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-slate-300 transition-all font-medium"
                 >
                   <ChevronLeft size={16} />
                   <span className="hidden sm:inline">Kembali</span>
                 </button>
               )}
-              <h1 className="font-semibold tracking-tight hidden md:block text-foreground">
-                ALIFA Institute LMS
+              <h1 className="font-bold tracking-tight hidden md:block text-slate-800 dark:text-white">
+                ALIFA <span className="text-[#0ea5e9]">Institute</span>
               </h1>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <ModeToggle />
-              <div className="flex items-center gap-2 text-sm">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-muted text-foreground">
+              <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 transition-colors duration-300">
+                <Avatar className="h-7 w-7 border-2 border-[#0ea5e9]/20">
+                  <AvatarFallback className="bg-[#0ea5e9] text-white text-[10px] font-bold">
                     {user.name?.charAt(0).toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden md:inline text-foreground">{user.name}</span>
+                <div className="flex flex-col items-start leading-none">
+                  <span className="hidden md:inline text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">{user.name}</span>
+                  <span className="hidden md:inline text-[9px] font-bold text-[#0ea5e9] uppercase tracking-widest mt-0.5">{role.replace('_', ' ')}</span>
+                </div>
               </div>
-              <Badge variant="outline" className="hidden md:inline text-foreground">
-                {role}
-              </Badge>
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full text-foreground"
+                className="rounded-full text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors"
                 onClick={() => signOut({ callbackUrl: '/' })}
+                title="Keluar"
               >
-                <LogOut size={16} />
+                <LogOut size={18} />
               </Button>
             </div>
           </div>
         </header>
 
         <main className="p-4 md:p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-medium text-foreground">{getGreeting()}</h2>
-            <p className="text-sm text-muted-foreground">Selamat datang di dashboard Anda.</p>
-          </div>
           {children}
         </main>
       </div>
@@ -261,20 +258,39 @@ function SidebarContent({ user, role, navItems, greeting, setSidebarOpen }: {
 }) {
   const pathname = usePathname();
 
+  const roleLabels: Record<string, string> = {
+    super_admin: 'Admin Utama',
+    staff_akademik: 'Staf Akademik',
+    staff_keuangan: 'Staf Keuangan',
+    dosen: 'Dosen',
+    mahasiswa: 'Mahasiswa',
+  };
+
   return (
-    <div className="flex flex-col h-full bg-card text-foreground border-border">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-full bg-supabase-green flex items-center justify-center">
-            <GraduationCap className="text-white" size={16} />
+    <div className="flex flex-col h-full">
+      <div className="p-6">
+        <Link href="/" className="flex items-center gap-3 mb-8 group">
+          <div className="w-10 h-10 rounded-2xl bg-[#0ea5e9]/10 flex items-center justify-center transition-all group-hover:scale-110 shadow-lg shadow-[#0ea5e9]/5">
+            <GraduationCap className="text-[#0ea5e9]" size={22} />
           </div>
-          <span className="font-medium text-foreground">ALIFA LMS</span>
+          <div className="flex flex-col">
+            <span className="font-bold text-lg tracking-tighter leading-none text-slate-900 dark:text-white transition-colors duration-300">ALIFA</span>
+            <span className="text-[10px] font-bold text-[#0ea5e9] tracking-[0.2em] uppercase mt-1">LMS Portal</span>
+          </div>
+        </Link>
+
+        <div className="space-y-1 px-1">
+          <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors duration-300">{greeting.split(',')[0]}</p>
+          <p className="text-sm font-bold text-slate-800 dark:text-white truncate max-w-[180px] transition-colors duration-300">{user.name}</p>
+          <div className="pt-2">
+            <Badge className="bg-[#0ea5e9]/10 hover:bg-[#0ea5e9]/20 text-[#0ea5e9] border-[#0ea5e9]/20 text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5">
+              {roleLabels[role] || role}
+            </Badge>
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">{greeting}</p>
-        <Badge variant="outline" className="mt-1 text-foreground">{role}</Badge>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.href === '/' ?
@@ -286,18 +302,38 @@ function SidebarContent({ user, role, navItems, greeting, setSidebarOpen }: {
               key={item.href}
               href={item.href}
               onClick={() => setSidebarOpen?.(false)}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${isActive ? 'bg-muted font-medium text-primary' : 'hover:bg-muted/50 text-foreground'
-                }`}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm transition-all duration-300 group",
+                isActive
+                  ? "bg-[#0ea5e9] text-white font-bold shadow-lg shadow-[#0ea5e9]/20"
+                  : "text-slate-500 dark:text-slate-400 hover:text-[#0ea5e9] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
+              )}
             >
-              <Icon size={16} className={isActive ? 'text-primary' : 'text-foreground'} />
-              {item.name}
+              <Icon size={18} className={cn(
+                "transition-transform group-hover:scale-110",
+                isActive ? "text-white" : "text-slate-400 dark:text-slate-500 group-hover:text-[#0ea5e9]"
+              )} />
+              <span className="tracking-tight">{item.name}</span>
+              {isActive && (
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_white]" />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-border text-xs text-muted-foreground">
-        © 2025 Alifa Institute
+      <div className="p-6 mt-auto">
+        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 transition-colors duration-300">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-1">Institusi</p>
+          <p className="text-xs font-bold text-slate-700 dark:text-slate-300 transition-colors duration-300">ALIFA Institute</p>
+          <div className="mt-4 flex items-center justify-between">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 transition-colors">© 2025</span>
+            <div className="flex gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[9px] font-bold text-emerald-500 uppercase">Sistem Aktif</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

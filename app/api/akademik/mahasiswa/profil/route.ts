@@ -23,8 +23,8 @@ export async function GET(request: NextRequest) {
         s.total_credits,
         sp.name as program_studi
       FROM students s
-      LEFT JOIN study_programs sp ON s.study_program_id = sp.id
-      WHERE s.user_id = ${session.user.id}
+      LEFT JOIN study_programs sp ON s.study_program_num_id = sp.id
+      WHERE s.user_id = ${parseInt(session.user.id)}
     `;
 
     if (!mahasiswa || mahasiswa.length === 0) {

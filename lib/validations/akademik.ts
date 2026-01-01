@@ -15,8 +15,11 @@ export const mataKuliahSchema = z.object({
   code: z.string().min(1, { message: 'Kode mata kuliah wajib diisi' }),
   name: z.string().min(1, { message: 'Nama mata kuliah wajib diisi' }),
   credits: z.number().int().positive({ message: 'Jumlah SKS harus lebih dari 0' }),
+  theory_credits: z.number().int().min(0).optional(),
+  practical_credits: z.number().int().min(0).optional(),
   curriculum_id: z.number().int().positive({ message: 'Kurikulum wajib dipilih' }),
   semester: z.number().int().min(1).max(8, { message: 'Semester harus antara 1-8' }),
+  prerequisites: z.string().optional().nullable(),
   description: z.string().optional(),
   is_active: z.boolean().optional(),
 });

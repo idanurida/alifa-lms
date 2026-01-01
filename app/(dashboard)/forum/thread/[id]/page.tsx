@@ -27,27 +27,30 @@ export default async function ForumThreadPage({ params }: { params: Promise<{ id
       SELECT 
         ft.id, ft.user_id, ft.title, ft.is_pinned, ft.is_locked,
         ft.view_count, ft.created_at,
-        p.name as user_name, u.role as user_role,
-        ft.category as category_name
-      FROM forum_threads ft
-      JOIN users u ON ft.user_id = u.id
-      LEFT JOIN profiles p ON u.id = p.user_id
+        fc.name as category_name, fc.slug as category_slug,
+        COALESCE(s.name, l.name, u.username) as user_name, u.role as user_role
+      FROM public.forum_threads ft
+      JOIN public.forum_categories fc ON ft.category_id = fc.id
+      JOIN public.users u ON ft.user_id = u.id
+      LEFT JOIN public.students s ON u.id = s.user_id
+      LEFT JOIN public.lecturers l ON u.id = l.user_id
       WHERE ft.id = ${threadId}
     `;
     thread = threadResult;
     if (!thread) notFound();
 
     // Update view count
-    await sql`UPDATE forum_threads SET view_count = view_count + 1 WHERE id = ${threadId}`;
+    await sql`UPDATE public.forum_threads SET view_count = view_count + 1 WHERE id = ${threadId}`;
 
     // Ambil semua post dalam thread ini
     posts = await sql`
       SELECT 
         fp.id, fp.thread_id, fp.user_id, fp.content, fp.is_first_post, fp.created_at, fp.updated_at,
-        p.name as user_name, u.role as user_role
-      FROM forum_posts fp
-      JOIN users u ON fp.user_id = u.id
-      LEFT JOIN profiles p ON u.id = p.user_id
+        COALESCE(s.name, l.name, u.username) as user_name, u.role as user_role
+      FROM public.forum_posts fp
+      JOIN public.users u ON fp.user_id = u.id
+      LEFT JOIN public.students s ON u.id = s.user_id
+      LEFT JOIN public.lecturers l ON u.id = l.user_id
       WHERE fp.thread_id = ${threadId}
       ORDER BY fp.created_at ASC
     `;
@@ -72,30 +75,21 @@ export default async function ForumThreadPage({ params }: { params: Promise<{ id
     }
 
     // Cek apakah thread terkunci
-    const [threadCheck] = await sql`SELECT is_locked FROM forum_threads WHERE id = ${threadId}`;
+    const [threadCheck] = await sql`SELECT is_locked FROM public.forum_threads WHERE id = ${threadId}`;
     if (threadCheck.is_locked) {
       // Handle error: thread locked
       return;
     }
 
     try {
-      const [lecturer] = await sql`SELECT id FROM lecturers WHERE user_id = ${currentSession.user.id}`;
-      const [student] = await sql`SELECT id FROM students WHERE user_id = ${currentSession.user.id}`;
-      const userId = lecturer?.id || student?.id; // Ambil id dari lecturer atau student
-
-      if (!userId) {
-        // Handle error: user profile not found
-        return;
-      }
+      // Gunakan user.id langsung dari session karena schema forum_posts.user_id mereferensikan users.id (Int)
+      const userId = parseInt(currentSession.user.id);
 
       await sql`
-        INSERT INTO forum_posts (thread_id, user_id, content, is_first_post)
+        INSERT INTO public.forum_posts (thread_id, user_id, content, is_first_post)
         VALUES (${threadId}, ${userId}, ${content}, false)
       `;
 
-      // Redirect ke thread yang sama setelah submit
-      // Karena ini server action, redirect harus dilakukan di client atau dengan Response
-      // Misalnya, Anda bisa setelah action selesai, lalu refresh halaman
     } catch (error) {
       console.error('Failed to submit post:', error);
       // Handle error
@@ -121,7 +115,7 @@ export default async function ForumThreadPage({ params }: { params: Promise<{ id
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                {thread.is_pinned && <Pin className="text-supabase-green" size={18} />}
+                {thread.is_pinned && <Pin className="text-primary" size={18} />}
                 {thread.is_locked && <Lock className="text-destructive" size={18} />}
                 {thread.title}
               </CardTitle>

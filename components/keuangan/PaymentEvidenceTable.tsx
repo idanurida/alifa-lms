@@ -85,7 +85,7 @@ export default function PaymentEvidenceTable({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
-        return <Badge variant="default" className="bg-green-500">
+        return <Badge variant="default" className="bg-sky-500">
           <CheckCircle size={12} className="mr-1" /> Terverifikasi
         </Badge>;
       case 'rejected':
@@ -248,7 +248,7 @@ export default function PaymentEvidenceTable({
                               onClick={() => handleVerify(payment.id)}
                               disabled={loadingId === payment.id}
                               title="Verifikasi Pembayaran"
-                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                              className="text-sky-600 hover:text-sky-700 hover:bg-sky-50"
                             >
                               <CheckCircle className="h-4 w-4" />
                             </Button>

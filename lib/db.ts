@@ -1,57 +1,59 @@
 // lib/db.ts
-import { neon } from '@neondatabase/serverless';
+import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
-// Debug information
-console.log('🔧 Database configuration loading...');
+console.log('🔧 Database configuration using Prisma Client...');
 
-// Get connection string dengan validasi
-const getConnectionString = (): string => {
-  const connectionString = process.env.DATABASE_URL;
-  
-  if (!connectionString) {
-    const errorMessage = `
-🚨 DATABASE_URL environment variable is required!
+// Wrapper function to handle both tagged template literals and regular function calls
+export async function sql(strings: any, ...values: any[]) {
+  try {
+    if (typeof strings === 'string') {
+      // Called as a regular function: sql(query, params)
+      const params = (values.length === 1 && Array.isArray(values[0])) ? values[0] : values;
+      return await prisma.$queryRawUnsafe(strings, ...params);
+    }
 
-Please check:
-1. File .env.local exists in root directory
-2. DATABASE_URL is defined in .env.local
-3. Server has been restarted after adding DATABASE_URL
+    // Called as a tagged template: sql`SELECT...`
+    // Ensure we pass the arguments in a way Prisma Client expects
+    if (strings && Array.isArray(strings) && 'raw' in strings) {
+      return await (prisma.$queryRaw as any)(strings, ...values);
+    }
 
-Example .env.local content:
-DATABASE_URL=postgresql://username:password@localhost:5432/alifa_lms
-NEXTAUTH_SECRET=your-secret-key
-NEXTAUTH_URL=http://localhost:3000
-`;
-    console.error(errorMessage);
-    throw new Error('DATABASE_URL environment variable is required');
+    // Fallback/Safety check
+    return await prisma.$queryRawUnsafe(strings as string, ...values);
+  } catch (error: any) {
+    // Safe error logging
+    const errorMessage = error?.message || 'Unknown database error';
+
+    // Log the query causing the error safely
+    if (process.env.NODE_ENV !== 'production' || typeof strings === 'string') {
+      console.error('❌ Database Query Error:', errorMessage);
+      console.error('   Query:', typeof strings === 'string' ? strings : (strings as any)?.raw || 'Template Literal Query');
+      if (Array.isArray(values) && values.length > 0) {
+        console.error('   Values:', JSON.stringify(values));
+      }
+    } else {
+      console.error('❌ Database Query Error:', errorMessage);
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        console.error('   Query Info:', {
+          type: typeof strings,
+          isTemplate: (strings && Array.isArray(strings) && 'raw' in strings),
+          valuesCount: values?.length || 0
+        });
+      } catch (logError) {
+        console.error('   Failed to log query info');
+      }
+    }
+    throw error;
   }
+}
 
-  // Validasi format connection string
-  if (!connectionString.startsWith('postgresql://') && !connectionString.startsWith('postgres://')) {
-    console.error('❌ Invalid DATABASE_URL format. Should start with postgresql:// or postgres://');
-    console.error('Current DATABASE_URL:', connectionString.substring(0, 50) + '...');
-    throw new Error('Invalid DATABASE_URL format');
-  }
-
-  console.log('✅ DATABASE_URL is set and valid');
-  return connectionString;
-};
-
-const connectionString = getConnectionString();
-
-// PERBAIKAN: Tambah configuration untuk handle connection timeout
-export const sql = neon(connectionString, {
-  // Tambah configuration untuk prevent timeout
-  fetchOptions: {
-    // Timeout untuk fetch request (10 detik)
-    timeout: 10000,
-  },
-});
-
-// PERBAIKAN: Export function untuk test connection
 export async function testConnection() {
   try {
-    const result = await sql`SELECT 1 as test`;
+    await prisma.$queryRaw`SELECT 1`;
     console.log('✅ Database connection test successful');
     return true;
   } catch (error) {
@@ -60,13 +62,6 @@ export async function testConnection() {
   }
 }
 
-// PERBAIKAN: Export function dengan error handling
 export async function queryWithErrorHandling(query: TemplateStringsArray, ...params: any[]) {
-  try {
-    const result = await sql(query, ...params);
-    return result;
-  } catch (error) {
-    console.error('Database query error:', error);
-    throw error;
-  }
+  return await sql(query, ...params);
 }

@@ -34,7 +34,7 @@ export default async function LaporanDashboardPage() {
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-muted">
-                      <report.icon className="h-5 w-5 text-supabase-green" />
+                      <report.icon className="h-5 w-5 text-primary" />
                     </div>
                     <CardTitle className="text-base">{report.title}</CardTitle>
                   </div>

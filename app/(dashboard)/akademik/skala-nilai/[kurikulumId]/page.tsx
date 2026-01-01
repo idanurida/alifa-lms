@@ -143,7 +143,7 @@ export default async function SkalaNilaiPage({ params }: { params: Promise<{ kur
           {gradeScales.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <div className="mb-4">
-                <FileText className="h-12 w-12 mx-auto text-gray-300" />
+                <FileText className="h-12 w-12 mx-auto text-slate-300 dark:text-slate-400" />
               </div>
               <p className="text-lg font-medium mb-2">Belum ada skala nilai</p>
               <p className="text-sm mb-4">

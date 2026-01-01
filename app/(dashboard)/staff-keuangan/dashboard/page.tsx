@@ -81,7 +81,7 @@ export default function StaffKeuanganDashboard() {
 
             <Link href="/keuangan/bukti-transfer" className="text-left p-4 border rounded-lg hover:bg-muted transition-colors block">
               <div className="flex items-center gap-3 mb-2">
-                <FileText className="h-5 w-5 text-green-600" />
+                <FileText className="h-5 w-5 text-sky-600" />
                 <span className="font-medium">Bukti Transfer</span>
               </div>
               <p className="text-sm text-muted-foreground">Daftar bukti transfer</p>
@@ -89,7 +89,7 @@ export default function StaffKeuanganDashboard() {
 
             <Link href="/keuangan/verifikasi" className="text-left p-4 border rounded-lg hover:bg-muted transition-colors block">
               <div className="flex items-center gap-3 mb-2">
-                <CheckCircle className="h-5 w-5 text-purple-600" />
+                <CheckCircle className="h-5 w-5 text-sky-600" />
                 <span className="font-medium">Verifikasi</span>
               </div>
               <p className="text-sm text-muted-foreground">Antrian verifikasi</p>
@@ -105,7 +105,7 @@ export default function StaffKeuanganDashboard() {
 
             <Link href="/pengaturan" className="text-left p-4 border rounded-lg hover:bg-muted transition-colors block">
               <div className="flex items-center gap-3 mb-2">
-                <Settings className="h-5 w-5 text-gray-600" />
+                <Settings className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                 <span className="font-medium">Pengaturan</span>
               </div>
               <p className="text-sm text-muted-foreground">Profil dan keamanan akun</p>
@@ -133,7 +133,7 @@ export default function StaffKeuanganDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="font-medium">{payment.amount}</div>
-                    <div className="text-sm text-green-600">{payment.status}</div>
+                    <div className="text-sm text-sky-600">{payment.status}</div>
                   </div>
                 </div>
               ))}
@@ -151,15 +151,15 @@ export default function StaffKeuanganDashboard() {
                 <span>Lunas</span>
                 <span className="font-medium">1,024 (89%)</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: '89%' }}></div>
+              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                <div className="bg-sky-600 h-2 rounded-full" style={{ width: '89%' }}></div>
               </div>
               
               <div className="flex justify-between">
                 <span>DP</span>
                 <span className="font-medium">78 (7%)</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                 <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '7%' }}></div>
               </div>
               
@@ -167,7 +167,7 @@ export default function StaffKeuanganDashboard() {
                 <span>Belum Bayar</span>
                 <span className="font-medium">42 (4%)</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                 <div className="bg-red-600 h-2 rounded-full" style={{ width: '4%' }}></div>
               </div>
             </div>

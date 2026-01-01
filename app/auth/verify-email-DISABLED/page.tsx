@@ -29,8 +29,8 @@ export default function VerifyEmailPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 rounded-full bg-supabase-green/10 flex items-center justify-center mb-4">
-            <MailCheck className="text-supabase-green" size={32} />
+          <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <MailCheck className="text-primary" size={32} />
           </div>
           <CardTitle>Verifikasi Email</CardTitle>
           <CardDescription>

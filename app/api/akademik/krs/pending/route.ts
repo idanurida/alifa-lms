@@ -28,9 +28,9 @@ export async function GET(request: NextRequest) {
         m.name as nama,
         m.nim,
         p.name as program_studi
-      FROM krs_submissions krs
-      JOIN students m ON krs.mahasiswa_id = m.id
-      LEFT JOIN study_programs p ON m.study_program_id = p.id::uuid
+      FROM public.krs_submissions krs
+      JOIN public.students m ON krs.mahasiswa_id = m.id
+      LEFT JOIN public.study_programs p ON m.study_program_num_id = p.id
       WHERE krs.status = 'pending'
       ORDER BY krs.submitted_at DESC
     `;

@@ -5,14 +5,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { 
-  GraduationCap, 
-  Users, 
-  Coins, 
-  Building, 
-  User, 
-  Menu, 
-  ChevronLeft, 
+import {
+  GraduationCap,
+  Users,
+  Coins,
+  Building,
+  User,
+  Menu,
+  ChevronLeft,
   LogOut,
   Home,
   BookOpen,
@@ -43,133 +43,129 @@ export function DashboardShell({ user, role, greeting, children }: DashboardShel
   const navItems = getNavItems(role);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background font-sans selection:bg-primary/20">
       {/* Mobile Sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetTrigger asChild className="md:hidden fixed top-4 left-4 z-50">
-          <Button variant="outline" size="icon" className="rounded-full">
+          <Button variant="outline" size="icon" className="rounded-full premium-glass">
             <Menu size={16} />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-72 p-0 premium-glass border-r-0">
           <SidebarContent user={user} role={role} navItems={navItems} setSidebarOpen={setSidebarOpen} />
         </SheetContent>
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:z-50 md:border-r">
+      <aside className="hidden md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 md:z-50 border-r premium-glass">
         <SidebarContent user={user} role={role} navItems={navItems} />
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 md:ml-64">
-        <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">
-          <div className="flex h-16 items-center justify-between px-4 md:px-6">
-            {/* Mobile: back button */}
-            <div className="flex items-center gap-3">
-              {!pathname.includes('/dashboard') && !pathname.includes('/akademik') && !pathname.includes('/keuangan') && !pathname.includes('/superadmin') && !pathname.includes('/pengaturan') && (
+      <div className="flex-1 md:ml-72 bg-gradient-to-br from-background via-background to-primary/5 min-h-screen">
+        <header className="sticky top-0 z-40 border-b premium-glass backdrop-blur-xl">
+          <div className="flex h-20 items-center justify-between px-6 md:px-8">
+            <div className="flex items-center gap-4">
+              {!pathname.includes('/dashboard') && pathname !== '/' && (
                 <button
                   onClick={() => window.history.back()}
-                  className="flex items-center gap-1 text-sm px-2 py-1 rounded-md hover:bg-muted transition-colors"
+                  className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-primary transition-all bg-muted/30 px-3 py-1.5 rounded-full"
                 >
-                  <ChevronLeft size={16} />
-                  <span className="hidden sm:inline">Kembali</span>
+                  <ChevronLeft size={14} />
+                  <span>Kembali</span>
                 </button>
               )}
-              {/* Logo Header - Diperbesar 3x, tanpa teks alt */}
-              <div className="hidden md:flex items-center gap-2">
-                <div className="w-12 h-12 relative"> {/* Ukuran 3x lipat dari 40px */}
-                  <img
-                    src="/images/logo-alifa-white.png" // Pastikan path ini benar
-                    alt="" // Tidak ada teks alt
-                    className="w-full h-full object-contain" // Pastikan gambar mengisi kontainer dan tetap proporsional
-                  />
+              <div className="hidden md:flex items-center gap-3">
+                <div className="w-10 h-10 relative bg-primary/10 rounded-xl flex items-center justify-center p-1.5 border border-primary/20">
+                  <img src="/images/logo-alifa-white.png" alt="" className="w-full h-full object-contain" />
                 </div>
-                <h1 className="font-semibold tracking-tight hidden md:block">
-                  Alifa Institute LMS
-                </h1>
+                <div>
+                  <h1 className="font-bold text-lg tracking-tight leading-tight">Alifa Institute</h1>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest opacity-60">Learning Management System</p>
+                </div>
               </div>
             </div>
 
-            {/* User Profile */}
-            <div className="flex items-center gap-3">
-              <ModeToggle /> {/* Tambahkan ModeToggle di sini */}
-              <div className="flex items-center gap-2 text-sm">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-muted">
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:flex items-center gap-3 mr-2 px-3 py-1.5 bg-muted/40 rounded-full border border-border/50">
+                <ModeToggle />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-bold leading-none">{user.name}</p>
+                  <p className="text-[10px] text-primary font-bold uppercase tracking-tighter mt-1">{role.replace('_', ' ')}</p>
+                </div>
+                <Avatar className="h-10 w-10 border-2 border-primary/20 shadow-sm ring-2 ring-background ring-offset-0">
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold">
                     {user.name?.charAt(0).toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden md:inline">{user.name}</span>
               </div>
-              <Badge variant="outline" className="hidden md:inline">
-                {role}
-              </Badge>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <LogOut size={16} />
+
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-destructive/10 hover:text-destructive group transition-all duration-300">
+                <LogOut size={18} className="group-hover:rotate-12 transition-transform" />
               </Button>
             </div>
           </div>
         </header>
 
-        <main className="p-4 md:p-6">
+        <main className="p-6 md:p-10 max-w-[1600px] mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4"
           >
-            <h2 className="text-lg font-medium">{greeting}</h2>
+            <div>
+              <p className="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-2">{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">{greeting}</h2>
+            </div>
           </motion.div>
-          {children}
+
+          <div className="relative">
+            {children}
+          </div>
         </main>
 
-        {/* Footer */}
-        <footer className="px-4 py-6 border-t">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              {/* Logo Footer - Diperbesar 3x, tanpa teks alt */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-12 h-12 relative"> {/* Ukuran 3x lipat dari 40px */}
-                  <img
-                    src="/images/logo-alifa-white.png" // Pastikan path ini benar
-                    alt="" // Tidak ada teks alt
-                    className="w-full h-full object-contain" // Pastikan gambar mengisi kontainer dan tetap proporsional
-                  />
+        <footer className="px-8 pb-10 pt-20">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 p-8 premium-glass rounded-3xl border-dashed">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 relative">
+                  <img src="/images/logo-alifa-white.png" alt="" className="w-full h-full object-contain" />
                 </div>
-                <span className="font-medium">Alifa Institute</span>
+                <span className="font-bold text-xl tracking-tight">Alifa Institute</span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Sistem Pembelajaran Terpadu untuk Perguruan Tinggi Modern.
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Elevating education through modern technology and integrated learning management solutions.
               </p>
             </div>
             <div>
-              <h3 className="font-medium mb-4">Tautan</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/tentang" className="hover:text-primary">Tentang Kami</Link></li>
-                <li><Link href="/akademik" className="hover:text-primary">Akademik</Link></li>
-                <li><Link href="/keuangan" className="hover:text-primary">Keuangan</Link></li>
-                <li><Link href="/kontak" className="hover:text-primary">Kontak</Link></li>
+              <h3 className="font-bold text-sm uppercase tracking-widest text-primary mb-6">Quick Links</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link href="/akademik" className="hover:text-primary transition-colors flex items-center gap-2"><span>→</span> Akademik</Link></li>
+                <li><Link href="/keuangan" className="hover:text-primary transition-colors flex items-center gap-2"><span>→</span> Keuangan</Link></li>
+                <li><Link href="/forum" className="hover:text-primary transition-colors flex items-center gap-2"><span>→</span> Forum Diskusi</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-medium mb-4">Dukungan</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/bantuan" className="hover:text-primary">Pusat Bantuan</Link></li>
-                <li><Link href="/faq" className="hover:text-primary">FAQ</Link></li>
-                <li><Link href="/pengaturan" className="hover:text-primary">Panduan Pengguna</Link></li>
+              <h3 className="font-bold text-sm uppercase tracking-widest text-primary mb-6">Support</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li><Link href="/faq" className="hover:text-primary transition-colors flex items-center gap-2"><span>→</span> FAQ</Link></li>
+                <li><Link href="/bantuan" className="hover:text-primary transition-colors flex items-center gap-2"><span>→</span> Pusat Bantuan</Link></li>
               </ul>
             </div>
-            <div>
-              <h3 className="font-medium mb-4">Kontak</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>📍 Jl. Merdeka No. 123, Jakarta</li>
-                <li>📞 (021) 12345678</li>
-                <li>✉️ info@alifa.ac.id</li>
+            <div className="bg-primary/5 p-6 rounded-2xl border border-primary/10">
+              <h3 className="font-bold text-sm uppercase tracking-widest text-primary mb-4">Official Contact</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2"><span>📍</span> <span>Jl. Merdeka No. 123, Jakarta</span></li>
+                <li className="flex items-center gap-2"><span>✉️</span> <span>info@alifa.ac.id</span></li>
               </ul>
             </div>
           </div>
-          <div className="max-w-7xl mx-auto mt-8 pt-8 text-center text-sm text-muted-foreground border-t border-white/10">
-            <p>© 2025 Alifa Institute. Hak Cipta Dilindungi.</p>
+          <div className="max-w-7xl mx-auto mt-10 text-center text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold opacity-40">
+            <p>© 2025 Alifa Institute. Reserved Proprietary System.</p>
           </div>
         </footer>
       </div>
@@ -178,7 +174,7 @@ export function DashboardShell({ user, role, greeting, children }: DashboardShel
 }
 
 function SidebarContent({ user, role, navItems, setSidebarOpen }: any) {
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const pathname = usePathname();
   const IconMap: Record<string, any> = {
     home: Home,
     akademik: GraduationCap,
@@ -193,24 +189,32 @@ function SidebarContent({ user, role, navItems, setSidebarOpen }: any) {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-4 border-b">
-        {/* Logo Sidebar - Diperbesar 3x, tanpa teks alt */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-10 h-10 relative"> {/* Ukuran 3x lipat dari 40px/3 */}
-            <img
-              src="/images/logo-alifa-white.png" // Pastikan path ini benar
-              alt="" // Tidak ada teks alt
-              className="w-full h-full object-contain" // Pastikan gambar mengisi kontainer dan tetap proporsional
-            />
+    <div className="flex flex-col h-full bg-slate-950/5">
+      <div className="p-8 border-b border-border/40">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-12 h-12 relative p-2 bg-primary/10 rounded-2xl border border-primary/20">
+            <img src="/images/logo-alifa-white.png" alt="" className="w-full h-full object-contain" />
           </div>
-          <span className="font-medium">Alifa LMS</span>
+          <div>
+            <span className="font-extrabold text-xl tracking-tighter leading-none block">ALIFA</span>
+            <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em]">Institute</span>
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">{user.name}</p>
-        <Badge variant="outline" className="mt-1">{role}</Badge>
+
+        <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+            {user.name?.charAt(0).toUpperCase()}
+          </div>
+          <div className="overflow-hidden">
+            <p className="text-xs font-bold truncate leading-none mb-1">{user.name}</p>
+            <Badge variant="outline" className="text-[8px] h-4 py-0 border-primary/30 text-primary-foreground bg-primary/80">
+              {role.replace('_', ' ')}
+            </Badge>
+          </div>
+        </div>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-6 space-y-2 overflow-y-auto">
         {navItems.map((item: any) => {
           const Icon = IconMap[item.icon] || Home;
           const isActive = item.href === '/' ?
@@ -222,19 +226,31 @@ function SidebarContent({ user, role, navItems, setSidebarOpen }: any) {
               key={item.href}
               href={item.href}
               onClick={() => setSidebarOpen?.(false)}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
-                isActive ? 'bg-muted font-medium' : 'hover:bg-muted/50'
-              }`}
+              className={isActive ? 'premium-sidebar-link-active' : 'premium-sidebar-link'}
             >
-              <Icon size={16} />
-              {item.name}
+              <Icon size={18} className={isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'} />
+              <span className="text-sm tracking-tight">{item.name}</span>
+              {isActive && (
+                <motion.div
+                  layoutId="active-nav-pill"
+                  className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"
+                />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t text-xs text-muted-foreground">
-        © 2025 Alifa Institute
+      <div className="p-8 mt-auto group cursor-pointer hover:bg-primary/5 transition-colors border-t border-border/40">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-muted rounded-lg group-hover:bg-primary/10 transition-colors">
+            <Settings size={16} className="text-muted-foreground group-hover:text-primary transition-colors" />
+          </div>
+          <div>
+            <p className="text-xs font-bold leading-none">System Settings</p>
+            <p className="text-[10px] text-muted-foreground tracking-tight">v2.4.0-premium</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -249,7 +265,7 @@ function getNavItems(role: UserRole) {
     case 'super_admin':
       return [
         ...baseItems,
-        { name: 'Manajemen Pengguna', href: '/superadmin', icon: 'pengguna' },
+        { name: 'Manajemen Pengguna', href: '/superadmin/users', icon: 'pengguna' },
         { name: 'Manajemen Akademik', href: '/akademik', icon: 'akademik' },
         { name: 'Keuangan', href: '/keuangan', icon: 'keuangan' },
         { name: 'Pengaturan', href: '/pengaturan', icon: 'pengaturan' },

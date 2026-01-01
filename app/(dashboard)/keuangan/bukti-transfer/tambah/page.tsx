@@ -33,7 +33,12 @@ export default async function TambahBuktiTransferPage() {
   const handleSubmit = async (formData: FormData) => {
     'use server' // Ini adalah Server Action
 
-    const studentId = (await sql`SELECT id FROM students WHERE user_id = ${session.user.id}`)[0].id;
+    const studentResult = await sql`SELECT id FROM students WHERE user_id = ${parseInt(session.user.id as string)}`;
+    if (!studentResult || studentResult.length === 0) {
+      toast.error('Data mahasiswa tidak ditemukan.');
+      return;
+    }
+    const studentId = studentResult[0].id;
     const academicPeriodId = parseInt(formData.get('academic_period_id') as string);
     const amount = parseFloat(formData.get('amount') as string);
     const transferDate = formData.get('transfer_date') as string;

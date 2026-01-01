@@ -27,29 +27,28 @@ export default async function KelasDosenPage() {
   try {
     // PERBAIKAN: Query yang sesuai dengan struktur database sebenarnya
     const result = await sql`
-      SELECT 
-        c.id,
-        c.class_code,
-        c.class_code as class_name,
-        co.name as course_name,
-        co.code as course_code,
-        co.credits as credits,
-        c.schedule->>'day' as schedule_day,
-        c.schedule->>'time' as schedule_time,
-        c.schedule->>'room' as room,
-        COUNT(DISTINCT se.student_id) as total_mahasiswa,
-        c.current_students,
-        c.max_students
+    SELECT
+    c.id,
+      c.class_code,
+      c.class_code as class_name,
+      co.name as course_name,
+      co.code as course_code,
+      co.credits as credits,
+      c.schedule ->> 'day' as schedule_day,
+      c.schedule ->> 'time' as schedule_time,
+      c.schedule ->> 'room' as room,
+      COUNT(DISTINCT se.student_id) as total_mahasiswa,
+      c.max_students
       FROM classes c
       JOIN courses co ON c.course_id = co.id
       LEFT JOIN student_enrollments se ON c.id = se.class_id AND se.status = 'active'
-      WHERE c.lecturer_id = (SELECT id FROM lecturers WHERE user_id = ${session.user.id})
+      WHERE c.lecturer_id = (SELECT id FROM lecturers WHERE user_id = ${parseInt(session.user.id as string)})
         AND c.is_active = true
-      GROUP BY c.id, c.class_code, co.name, co.code, co.credits, c.schedule, c.current_students, c.max_students
+      GROUP BY c.id, c.class_code, co.name, co.code, co.credits, c.schedule, c.max_students
       ORDER BY c.class_code
-    `;
+      `;
 
-    kelasDiajar = result.map(row => ({
+    kelasDiajar = result.map((row: any) => ({
       id: row.id,
       class_code: row.class_code,
       class_name: row.class_name || row.class_code,
@@ -64,7 +63,7 @@ export default async function KelasDosenPage() {
 
   } catch (error) {
     console.error('Gagal memuat data kelas:', error);
-    
+
     // Fallback data untuk development
     kelasDiajar = [
       {
@@ -81,7 +80,7 @@ export default async function KelasDosenPage() {
       },
       {
         id: 2,
-        class_code: 'MT201-B', 
+        class_code: 'MT201-B',
         class_name: 'Kalkulus Lanjut B',
         course_name: 'Kalkulus Lanjut',
         course_code: 'MT201',
@@ -117,7 +116,7 @@ export default async function KelasDosenPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -131,7 +130,7 @@ export default async function KelasDosenPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -145,7 +144,7 @@ export default async function KelasDosenPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -207,16 +206,16 @@ export default async function KelasDosenPage() {
                         <span>{kelas.total_mahasiswa} mahasiswa</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex flex-wrap gap-2">
                       <Button size="sm" asChild className="flex-1">
-                        <Link href={`/akademik/dosen/kelas/${kelas.id}`}>
+                        <Link href={`/ akademik / dosen / kelas / ${kelas.id} `}>
                           <Eye className="h-4 w-4 mr-1" />
                           Detail
                         </Link>
                       </Button>
                       <Button size="sm" variant="outline" asChild className="flex-1">
-                        <Link href={`/akademik/dosen/penilaian?kelas=${kelas.id}`}>
+                        <Link href={`/ akademik / dosen / penilaian ? kelas = ${kelas.id} `}>
                           <BarChart3 className="h-4 w-4 mr-1" />
                           Nilai
                         </Link>

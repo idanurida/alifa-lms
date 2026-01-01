@@ -7,7 +7,7 @@ import { sql } from '@/lib/db';
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session || !['staff_akademik', 'super_admin'].includes(session.user.role as string)) {
       return NextResponse.json({ error: 'Tidak diizinkan' }, { status: 401 });
     }
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Update status KRS
     const result = await sql`
-      UPDATE krs_submissions 
+      UPDATE public.krs_submissions 
       SET 
         status = ${status},
         approved_at = NOW(),
@@ -39,16 +39,16 @@ export async function POST(request: NextRequest) {
 
     console.log(`✅ KRS ${krs_id} berhasil di${status}`);
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: result[0],
       message: `KRS berhasil ${status === 'approved' ? 'disetujui' : 'ditolak'}`
     });
 
   } catch (error) {
     console.error('❌ Error approve KRS:', error);
-    return NextResponse.json({ 
-      error: 'Gagal memproses KRS' 
+    return NextResponse.json({
+      error: 'Gagal memproses KRS'
     }, { status: 500 });
   }
 }

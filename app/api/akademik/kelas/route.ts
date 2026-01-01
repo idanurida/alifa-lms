@@ -1,10 +1,10 @@
-// app/api/akademik/kelas/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { z } from 'zod';
 import { kelasSchema } from '@/lib/validations/akademik';
+import { prisma } from '@/lib/prisma';
+import { sql } from '@/lib/db';
 
 export async function GET(req: NextRequest) {
   try {
@@ -19,6 +19,8 @@ export async function GET(req: NextRequest) {
     const lecturerId = searchParams.get('lecturer_id');
     const courseId = searchParams.get('course_id');
 
+    // Kita tetap pakai sql mentah untuk GET jika query join sangat kompleks, 
+    // tapi POST/PUT sebaiknya pakai Prisma untuk keamanan transaksional.
     let query = `
       SELECT 
         cl.id, cl.course_id, cl.academic_period_id, cl.class_code, cl.lecturer_id, cl.schedule, cl.max_students, cl.is_active, cl.created_at,
@@ -40,17 +42,17 @@ export async function GET(req: NextRequest) {
 
     if (academicPeriodId) {
       query += ` AND cl.academic_period_id = $${params.length + 1}`;
-      params.push(academicPeriodId);
+      params.push(parseInt(academicPeriodId));
     }
 
     if (lecturerId) {
       query += ` AND cl.lecturer_id = $${params.length + 1}`;
-      params.push(lecturerId);
+      params.push(parseInt(lecturerId));
     }
 
     if (courseId) {
       query += ` AND cl.course_id = $${params.length + 1}`;
-      params.push(courseId);
+      params.push(parseInt(courseId));
     }
 
     query += ` ORDER BY cl.class_code, cl.course_id`;
@@ -59,12 +61,12 @@ export async function GET(req: NextRequest) {
 
     // Tambahkan jumlah mahasiswa yang terdaftar ke setiap kelas
     const resultWithEnrollmentCount = await Promise.all(result.map(async (kelas: any) => {
-      const [enrollmentCount] = await sql`
-        SELECT COUNT(*) as count FROM student_enrollments WHERE class_id = ${kelas.id}
-      `;
+      const enrollmentCount = await prisma.studentEnrollment.count({
+        where: { class_id: kelas.id }
+      });
       return {
         ...kelas,
-        enrolled_students: parseInt(enrollmentCount.count),
+        enrolled_students: enrollmentCount,
         scheduleText: `${kelas.schedule.day}, ${kelas.schedule.time}, ${kelas.schedule.room}`
       };
     }));
@@ -87,34 +89,40 @@ export async function POST(req: NextRequest) {
     const validatedData = kelasSchema.parse(body);
 
     // Cek apakah kelas dengan kombinasi yang sama sudah ada
-    const [existing] = await sql`
-      SELECT id FROM classes 
-      WHERE course_id = ${validatedData.course_id} 
-        AND academic_period_id = ${validatedData.academic_period_id}
-        AND class_code = ${validatedData.class_code}
-    `;
+    const existing = await prisma.class.findUnique({
+      where: {
+        course_id_academic_period_id_class_code: {
+          course_id: validatedData.course_id,
+          academic_period_id: validatedData.academic_period_id,
+          class_code: validatedData.class_code
+        }
+      }
+    });
 
     if (existing) {
       return NextResponse.json({ error: 'Kelas dengan kombinasi mata kuliah, periode, dan kode kelas sudah ada' }, { status: 400 });
     }
 
-    const [newClass] = await sql`
-      INSERT INTO classes (
-        course_id, academic_period_id, class_code, lecturer_id, schedule, max_students, is_active
-      ) 
-      VALUES (
-        ${validatedData.course_id}, ${validatedData.academic_period_id}, 
-        ${validatedData.class_code}, ${validatedData.lecturer_id}, 
-        ${JSON.stringify(validatedData.schedule)}, 
-        ${validatedData.max_students}, 
-        ${validatedData.is_active ?? true}
-      )
-      RETURNING *
-    `;
+    const newClass = await prisma.class.create({
+      data: {
+        course_id: validatedData.course_id,
+        academic_period_id: validatedData.academic_period_id,
+        class_code: validatedData.class_code,
+        lecturer_id: validatedData.lecturer_id,
+        schedule: validatedData.schedule as any,
+        max_students: validatedData.max_students,
+        is_active: validatedData.is_active ?? true
+      },
+      include: {
+        course: { select: { name: true, code: true } },
+        academic_period: { select: { name: true } },
+        lecturer: { select: { name: true } }
+      }
+    });
 
-    return NextResponse.json({ 
-      success: true, 
-       newClass,
+    return NextResponse.json({
+      success: true,
+      data: newClass,
       message: 'Kelas berhasil ditambahkan'
     });
   } catch (error) {
@@ -173,9 +181,9 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Kelas tidak ditemukan' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-       updatedClass,
+    return NextResponse.json({
+      success: true,
+      updatedClass,
       message: 'Kelas berhasil diperbarui'
     });
   } catch (error) {
@@ -216,7 +224,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Kelas tidak ditemukan' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'Kelas berhasil dihapus'
     });

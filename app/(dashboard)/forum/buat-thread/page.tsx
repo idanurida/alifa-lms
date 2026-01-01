@@ -21,8 +21,8 @@ export default async function BuatThreadPage({ searchParams }: { searchParams: P
 
   let categories: any[] = [];
   try {
-    // Use function call syntax for consistency
-    const result = await sql('SELECT id, name FROM categories WHERE is_active = true ORDER BY name');
+    // Use forum_categories instead of categories
+    const result = await sql('SELECT id, name FROM public.forum_categories WHERE is_active = true ORDER BY name');
     categories = result;
   } catch (error: any) {
     console.error('Failed to fetch categories:', error);
@@ -51,36 +51,29 @@ export default async function BuatThreadPage({ searchParams }: { searchParams: P
     }
 
     // Validasi apakah kategori aktif
-    const [category] = await sql`SELECT is_active FROM categories WHERE id = ${categoryId}`;
+    const [category] = await sql`SELECT is_active FROM public.forum_categories WHERE id = ${categoryId}`;
     if (!category || !category.is_active) {
       // Handle error: category not found or inactive
       return;
     }
 
     try {
-      // Dapatkan lecturer_id atau student_id dari user session
-      const [lecturer] = await sql`SELECT id FROM lecturers WHERE user_id = ${currentSession.user.id}`;
-      const [student] = await sql`SELECT id FROM students WHERE user_id = ${currentSession.user.id}`;
-      const userId = lecturer?.id || student?.id;
-
-      if (!userId) {
-        // Handle error: user profile not found
-        return;
-      }
+      // Gunakan user.id langsung dari session karena schema forum_threads.user_id mereferensikan users.id (Int)
+      const userId = parseInt(currentSession.user.id);
 
       // Generate slug dari title
-      const slug = title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+      const slug = title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-') + '-' + Date.now();
 
       // Buat thread baru
       const [newThread] = await sql`
-        INSERT INTO forum_threads (category_id, user_id, title, slug, is_pinned, is_locked, view_count)
+        INSERT INTO public.forum_threads (category_id, user_id, title, slug, is_pinned, is_locked, view_count)
         VALUES (${categoryId}, ${userId}, ${title}, ${slug}, false, false, 0)
         RETURNING id
       `;
 
       // Buat post pertama (first post)
       await sql`
-        INSERT INTO forum_posts (thread_id, user_id, content, is_first_post)
+        INSERT INTO public.forum_posts (thread_id, user_id, content, is_first_post)
         VALUES (${newThread.id}, ${userId}, ${content}, true)
       `;
 

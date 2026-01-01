@@ -20,40 +20,51 @@ export default async function ForumDashboardPage() {
   let recentThreads: any[] = [];
 
   try {
-    // PERBAIKAN: Query yang benar untuk categories
+    // PERBAIKAN: Query yang benar untuk forum_categories
     categories = await sql`
       SELECT 
         id,
         name,
         description,
         is_active
-      FROM categories 
+      FROM public.forum_categories 
       WHERE is_active = true
       ORDER BY name
       LIMIT 6
     `;
 
-    // PERBAIKAN: Query yang benar untuk course_announcements
+    // PERBAIKAN: Query yang benar untuk forum_threads & posts
     recentThreads = await sql`
       SELECT 
-        ca.id,
-        ca.title,
-        ca.content,
-        ca.created_at,
-        p.name as author_name,
-        c.name as category_name,
-        0 as reply_count
-      FROM course_announcements ca
-      LEFT JOIN profiles p ON ca.author_id = p.user_id
-      JOIN courses c ON ca.course_id = c.id
-      ORDER BY ca.created_at DESC
+        ft.id,
+        ft.title,
+        fp.content,
+        ft.created_at,
+        fc.name as category_name,
+        COALESCE(s.name, l.name, u.username) as author_name,
+        (SELECT COUNT(*) FROM public.forum_posts WHERE thread_id = ft.id) - 1 as reply_count
+      FROM public.forum_threads ft
+      JOIN public.forum_categories fc ON ft.category_id = fc.id
+      JOIN public.forum_posts fp ON ft.id = fp.thread_id AND fp.is_first_post = true
+      JOIN public.users u ON ft.user_id = u.id
+      LEFT JOIN public.students s ON u.id = s.user_id
+      LEFT JOIN public.lecturers l ON u.id = l.user_id
+      ORDER BY ft.created_at DESC
       LIMIT 5
     `;
 
-    // Tambahkan thread_count dummy ke categories
+    // Tambahkan thread_count asli dari database ke categories
+    const counts = await sql`
+      SELECT category_id, COUNT(*) as count 
+      FROM public.forum_threads 
+      GROUP BY category_id
+    `;
+
+    const countMap = Object.fromEntries(counts.map((c: any) => [c.category_id, Number(c.count)]));
+
     categories = categories.map(cat => ({
       ...cat,
-      thread_count: Math.floor(Math.random() * 20) + 5
+      thread_count: countMap[cat.id] || 0
     }));
 
   } catch (error) {

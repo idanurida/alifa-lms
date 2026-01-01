@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 
     const result = await sql(query, params);
 
-    return NextResponse.json({  result });
+    return NextResponse.json({ result });
   } catch (error) {
     console.error('GET Mata Kuliah Error:', error);
     return NextResponse.json({ error: 'Failed to fetch mata kuliah' }, { status: 500 });
@@ -75,20 +75,24 @@ export async function POST(req: NextRequest) {
 
     const [newCourse] = await sql`
       INSERT INTO courses (
-        code, name, credits, curriculum_id, semester, description, is_active
+        code, name, credits, theory_credits, practical_credits, 
+        curriculum_id, semester, prerequisites, description, is_active
       ) 
       VALUES (
         ${validatedData.code}, ${validatedData.name}, 
-        ${validatedData.credits}, ${validatedData.curriculum_id}, 
-        ${validatedData.semester}, ${validatedData.description || null}, 
+        ${validatedData.credits}, ${validatedData.theory_credits || 0}, 
+        ${validatedData.practical_credits || 0}, 
+        ${validatedData.curriculum_id}, ${validatedData.semester}, 
+        ${validatedData.prerequisites || null}, 
+        ${validatedData.description || null}, 
         ${validatedData.is_active ?? true}
       )
       RETURNING *
     `;
 
-    return NextResponse.json({ 
-      success: true, 
-       newCourse,
+    return NextResponse.json({
+      success: true,
+      newCourse,
       message: 'Mata kuliah berhasil ditambahkan'
     });
   } catch (error) {
@@ -120,8 +124,11 @@ export async function PUT(req: NextRequest) {
       code: z.string().optional(),
       name: z.string().optional(),
       credits: z.number().int().positive().optional(),
+      theory_credits: z.number().int().min(0).optional(),
+      practical_credits: z.number().int().min(0).optional(),
       curriculum_id: z.number().int().positive().optional(),
       semester: z.number().int().min(1).max(8).optional(),
+      prerequisites: z.string().optional().nullable(),
       description: z.string().optional(),
       is_active: z.boolean().optional(),
     });
@@ -144,8 +151,11 @@ export async function PUT(req: NextRequest) {
         code = COALESCE(${validatedData.code}, code),
         name = COALESCE(${validatedData.name}, name),
         credits = COALESCE(${validatedData.credits}, credits),
+        theory_credits = COALESCE(${validatedData.theory_credits}, theory_credits),
+        practical_credits = COALESCE(${validatedData.practical_credits}, practical_credits),
         curriculum_id = COALESCE(${validatedData.curriculum_id}, curriculum_id),
         semester = COALESCE(${validatedData.semester}, semester),
+        prerequisites = COALESCE(${validatedData.prerequisites}, prerequisites),
         description = COALESCE(${validatedData.description}, description),
         is_active = COALESCE(${validatedData.is_active}, is_active)
       WHERE id = ${parseInt(id)}
@@ -156,9 +166,9 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Mata kuliah tidak ditemukan' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-       updatedCourse,
+    return NextResponse.json({
+      success: true,
+      updatedCourse,
       message: 'Mata kuliah berhasil diperbarui'
     });
   } catch (error) {
@@ -199,7 +209,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Mata kuliah tidak ditemukan' }, { status: 404 });
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'Mata kuliah berhasil dihapus'
     });

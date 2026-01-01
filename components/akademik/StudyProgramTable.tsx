@@ -52,7 +52,7 @@ export default function StudyProgramTable({ programs }: StudyProgramTableProps) 
                 <TableCell>{program.name}</TableCell>
                 <TableCell>{program.faculty}</TableCell>
                 <TableCell>
-                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${program.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${program.is_active ? 'bg-sky-100 text-sky-800' : 'bg-red-100 text-red-800'
                     }`}>
                     {program.is_active ? 'Aktif' : 'Non-Aktif'}
                   </span>

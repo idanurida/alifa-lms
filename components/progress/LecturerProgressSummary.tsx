@@ -79,7 +79,7 @@ export default function LecturerProgressSummary({ progress }: LecturerProgressSu
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{avgSyllabus.toFixed(1)}%</div>
-          <div className="w-full bg-gray-200 rounded-full h-2 mt-2"><div className="bg-blue-600 h-2 rounded-full" style={{width: `${avgSyllabus}%`}}></div></div>
+          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 mt-2"><div className="bg-blue-600 h-2 rounded-full" style={{width: `${avgSyllabus}%`}}></div></div>
         </CardContent>
       </Card>
 
@@ -90,7 +90,7 @@ export default function LecturerProgressSummary({ progress }: LecturerProgressSu
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{avgMaterials.toFixed(1)}%</div>
-          <div className="w-full bg-gray-200 rounded-full h-2 mt-2"><div className="bg-green-600 h-2 rounded-full" style={{width: `${avgMaterials}%`}}></div></div>
+          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 mt-2"><div className="bg-sky-600 h-2 rounded-full" style={{width: `${avgMaterials}%`}}></div></div>
         </CardContent>
       </Card>
 
@@ -101,7 +101,7 @@ export default function LecturerProgressSummary({ progress }: LecturerProgressSu
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{avgGrades.toFixed(1)}%</div>
-          <div className="w-full bg-gray-200 rounded-full h-2 mt-2"><div className="bg-purple-600 h-2 rounded-full" style={{width: `${avgGrades}%`}}></div></div>
+          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 mt-2"><div className="bg-sky-600 h-2 rounded-full" style={{width: `${avgGrades}%`}}></div></div>
         </CardContent>
       </Card>
 
@@ -122,23 +122,23 @@ export default function LecturerProgressSummary({ progress }: LecturerProgressSu
                   <div className="grid grid-cols-5 gap-2 text-xs">
                     <div>
                       <p className="text-muted-foreground">Silabus</p>
-                      <div className="w-full bg-gray-200 rounded-full h-1"><div className="bg-blue-600 h-1 rounded-full" style={{width: `${cls.completion_status.syllabus}%`}}></div></div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1"><div className="bg-blue-600 h-1 rounded-full" style={{width: `${cls.completion_status.syllabus}%`}}></div></div>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Materi</p>
-                      <div className="w-full bg-gray-200 rounded-full h-1"><div className="bg-green-600 h-1 rounded-full" style={{width: `${cls.completion_status.materials}%`}}></div></div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1"><div className="bg-sky-600 h-1 rounded-full" style={{width: `${cls.completion_status.materials}%`}}></div></div>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Penilaian</p>
-                      <div className="w-full bg-gray-200 rounded-full h-1"><div className="bg-yellow-600 h-1 rounded-full" style={{width: `${cls.completion_status.evaluation}%`}}></div></div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1"><div className="bg-yellow-600 h-1 rounded-full" style={{width: `${cls.completion_status.evaluation}%`}}></div></div>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Presensi</p>
-                      <div className="w-full bg-gray-200 rounded-full h-1"><div className="bg-orange-600 h-1 rounded-full" style={{width: `${cls.completion_status.attendance}%`}}></div></div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1"><div className="bg-orange-600 h-1 rounded-full" style={{width: `${cls.completion_status.attendance}%`}}></div></div>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Nilai</p>
-                      <div className="w-full bg-gray-200 rounded-full h-1"><div className="bg-purple-600 h-1 rounded-full" style={{width: `${cls.completion_status.grades}%`}}></div></div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1"><div className="bg-sky-600 h-1 rounded-full" style={{width: `${cls.completion_status.grades}%`}}></div></div>
                     </div>
                   </div>
                 </div>

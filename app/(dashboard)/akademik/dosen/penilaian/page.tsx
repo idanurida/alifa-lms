@@ -223,9 +223,9 @@ export default function PenilaianDosenPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Lulus</p>
-                    <p className="text-2xl font-bold text-green-600">{statistik.lulus}</p>
+                    <p className="text-2xl font-bold text-sky-600">{statistik.lulus}</p>
                   </div>
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <CheckCircle className="h-8 w-8 text-sky-600" />
                 </div>
               </CardContent>
             </Card>
@@ -259,9 +259,9 @@ export default function PenilaianDosenPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Tertinggi</p>
-                    <p className="text-2xl font-bold text-green-600">{statistik.tertinggi}</p>
+                    <p className="text-2xl font-bold text-sky-600">{statistik.tertinggi}</p>
                   </div>
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <CheckCircle className="h-8 w-8 text-sky-600" />
                 </div>
               </CardContent>
             </Card>

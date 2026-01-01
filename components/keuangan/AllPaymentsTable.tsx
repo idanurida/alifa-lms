@@ -69,7 +69,7 @@ export default function AllPaymentsTable({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
-        return <Badge variant="default" className="bg-green-500">Terverifikasi</Badge>;
+        return <Badge variant="default" className="bg-sky-500">Terverifikasi</Badge>;
       case 'rejected':
         return <Badge variant="destructive">Ditolak</Badge>;
       case 'pending':

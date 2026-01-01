@@ -32,32 +32,32 @@ import { Navbar } from '@/components/layout/Navbar';
 export default function HomePage() {
   const featureItems = [
     {
-      icon: <GraduationCap className="text-supabase-green" size={24} />,
+      icon: <GraduationCap className="text-primary" size={24} />,
       title: "Manajemen Perkuliahan",
       description: "Jadwal, KRS, penugasan dosen, dan progress akademik real-time."
     },
     {
-      icon: <MessageCircle className="text-supabase-green" size={24} />,
+      icon: <MessageCircle className="text-primary" size={24} />,
       title: "Forum Diskusi",
       description: "Diskusi kelas, tanya-jawab lintas prodi, dan kolaborasi dosen-mahasiswa."
     },
     {
-      icon: <BarChart3 className="text-supabase-green" size={24} />,
+      icon: <BarChart3 className="text-primary" size={24} />,
       title: "Progress Tracking",
       description: "Pantau perkembangan belajar & mengajar dalam satu dashboard."
     },
     {
-      icon: <Coins className="text-supabase-green" size={24} />,
+      icon: <Coins className="text-primary" size={24} />,
       title: "Keuangan & Pembayaran",
       description: "Upload bukti transfer, verifikasi otomatis, dan laporan keuangan."
     },
     {
-      icon: <Calendar className="text-supabase-green" size={24} />,
+      icon: <Calendar className="text-primary" size={24} />,
       title: "Kalender Akademik",
       description: "Jadwal UTS, UAS, libur nasional, dan peristiwa penting lainnya."
     },
     {
-      icon: <FileText className="text-supabase-green" size={24} />,
+      icon: <FileText className="text-primary" size={24} />,
       title: "Laporan & Statistik",
       description: "Generate laporan akademik dan keuangan secara instan."
     }
@@ -88,7 +88,7 @@ export default function HomePage() {
             </div>
           </div> */}
 
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-supabase-green to-purple-500 bg-clip-text text-transparent text-lg">
+          <h1 className="text-4xl md:text-5xl font-bold text-primary text-left">
             Sistem Pembelajaran Terpadu
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -272,7 +272,7 @@ export default function HomePage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="py-20 bg-gradient-to-r from-supabase-green to-purple-500 text-white"
+        className="py-20 bg-gradient-to-r from-primary to-sky-500 text-white"
       >
         <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
           <h2 className="text-3xl font-bold text-lg">Bergabunglah dengan Kami!</h2> {/* Perbesar font heading */}
@@ -281,7 +281,7 @@ export default function HomePage() {
             Daftar sekarang dan mulai perjalanan akademik Anda bersama kami.
           </p>
           <div className="pt-4">
-            <Button asChild size="lg" variant="secondary" className="text-supabase-green">
+            <Button asChild size="lg" variant="secondary" className="text-primary">
               <Link href="/login">
                 Masuk Sekarang
               </Link>

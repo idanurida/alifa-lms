@@ -27,7 +27,7 @@ export default async function ProgramStudiPage() {
     // 1. QUERY SQL Study Programs
     const result: any[] = await sql`
         SELECT 
-            id, name, code, faculty, is_active, created_at 
+            id, name, code, faculty, degree_level, is_active, created_at 
         FROM study_programs 
         ORDER BY code ASC
     `;
@@ -38,6 +38,7 @@ export default async function ProgramStudiPage() {
       ...sp,
       id: Number(sp.id), // FIX: Memastikan ID adalah number sesuai types/akademik.ts
       is_active: Boolean(sp.is_active), // Memastikan is_active adalah boolean
+      degree_level: sp.degree_level, // Add degree_level mapping
       // Mengkonversi objek Date dari DB ke string
       created_at: sp.created_at ? new Date(sp.created_at).toISOString() : new Date().toISOString(),
     })) as StudyProgram[]; // Assertion agar TypeScript tahu tipe objek sudah StudyProgram

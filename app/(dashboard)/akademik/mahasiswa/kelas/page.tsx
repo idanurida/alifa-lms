@@ -35,9 +35,11 @@ export default async function KelasMahasiswaPage() {
 
   try {
     if (userRole === 'mahasiswa') {
-      // Ambil data mahasiswa berdasarkan user_id
+      // Ambil data mahasiswa berdasarkan user_id (Parse Int untuk keamanan)
+      // Pastikan userId dikonversi ke integer karena di database user_id biasanya INT
+      const userIdInt = parseInt(userId.toString());
       const hasilMahasiswa = await sql`
-        SELECT id, name as nama, nim FROM students WHERE user_id = ${userId}
+        SELECT id, name as nama, nim FROM students WHERE user_id = ${userIdInt}
       `;
 
       if (!hasilMahasiswa || hasilMahasiswa.length === 0) {

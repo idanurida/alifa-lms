@@ -5,12 +5,22 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 import { CreditCard, FileText, Users, Calendar } from 'lucide-react';
-import Link from 'next/link'; // IMPORT LINK
+import Link from 'next/link';
+import { StatsCard, ModuleCard, QuickAction, DashboardHeading } from '@/components/dashboard/DashboardComponents';
 
 export default async function KeuanganDashboardPage() {
   const session = await getServerSession(authOptions);
   if (!session || !['super_admin', 'staff_keuangan'].includes(session.user.role as string)) {
-    return <div>Unauthorized</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center p-8 rounded-3xl bg-red-500/5 border-2 border-red-500/10">
+          <h2 className="text-2xl font-bold text-red-600 uppercase tracking-tighter">Akses Ditolak</h2>
+          <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-xs">
+            Anda tidak memiliki otorisasi untuk mengakses data keuangan.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   let summaryData = {
@@ -44,178 +54,123 @@ export default async function KeuanganDashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard Keuangan</h1>
-        <p className="text-muted-foreground">
-          Kelola pembayaran, verifikasi, dan laporan keuangan.
-        </p>
-      </div>
+    <div className="space-y-8">
+      <DashboardHeading
+        title="Dashboard Keuangan"
+        subtitle="Kelola pembayaran, verifikasi bukti transfer, dan pantau laporan keuangan secara real-time melalui ekosistem Alifa Institute."
+        badge={session.user.role.replace('_', ' ')}
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="glass-effect dark:glass-effect-dark">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Menunggu Verifikasi</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summaryData.totalPending}</div>
-            <p className="text-xs text-muted-foreground">Bukti transfer</p>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-effect dark:glass-effect-dark">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Terverifikasi</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summaryData.totalVerified}</div>
-            <p className="text-xs text-muted-foreground">Pembayaran</p>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-effect dark:glass-effect-dark">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Ditolak</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summaryData.totalRejected}</div>
-            <p className="text-xs text-muted-foreground">Bukti transfer</p>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-effect dark:glass-effect-dark">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Invoice</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summaryData.totalInvoices}</div>
-            <p className="text-xs text-muted-foreground">Tagihan</p>
-          </CardContent>
-        </Card>
+        <StatsCard
+          title="Menunggu Verifikasi"
+          value={summaryData.totalPending}
+          description="Bukti transfer baru"
+          icon={FileText}
+          variant={summaryData.totalPending > 0 ? "warning" : "default"}
+          href="/keuangan/bukti-transfer"
+        />
+        <StatsCard
+          title="Terverifikasi"
+          value={summaryData.totalVerified}
+          description="Pembayaran berhasil"
+          icon={CreditCard}
+        />
+        <StatsCard
+          title="Ditolak"
+          value={summaryData.totalRejected}
+          description="Bukti transfer bermasalah"
+          icon={FileText}
+          variant={summaryData.totalRejected > 0 ? "danger" : "default"}
+        />
+        <StatsCard
+          title="Total Tagihan"
+          value={summaryData.totalInvoices}
+          description="Invoice terbit"
+          icon={CreditCard}
+        />
       </div>
 
       {/* Quick Links */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Modul Keuangan</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Bukti Transfer Card */}
-          <Link href="/keuangan/bukti-transfer">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer glass-effect dark:glass-effect-dark group">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-muted group-hover:bg-supabase-green/20 transition-colors">
-                    <FileText className="h-5 w-5 text-supabase-green" />
-                  </div>
-                  <CardTitle className="text-base group-hover:text-supabase-green transition-colors">
-                    Bukti Transfer
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Daftar bukti transfer mahasiswa</p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Verifikasi Card */}
-          <Link href="/keuangan/verifikasi">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer glass-effect dark:glass-effect-dark group">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-muted group-hover:bg-supabase-green/20 transition-colors">
-                    <CreditCard className="h-5 w-5 text-supabase-green" />
-                  </div>
-                  <CardTitle className="text-base group-hover:text-supabase-green transition-colors">
-                    Verifikasi
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Antrian verifikasi pembayaran</p>
-                {summaryData.totalPending > 0 && (
-                  <Badge variant="destructive" className="mt-2">
-                    {summaryData.totalPending} menunggu
-                  </Badge>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Laporan Card */}
-          <Link href="/keuangan/laporan">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer glass-effect dark:glass-effect-dark group">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-muted group-hover:bg-supabase-green/20 transition-colors">
-                    <FileText className="h-5 w-5 text-supabase-green" />
-                  </div>
-                  <CardTitle className="text-base group-hover:text-supabase-green transition-colors">
-                    Laporan
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Laporan keuangan dan pembayaran</p>
-              </CardContent>
-            </Card>
-          </Link>
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-2xl font-bold tracking-tighter text-slate-800 dark:text-white">Ekosistem Keuangan</h3>
+          <div className="px-4 py-1.5 bg-[#0ea5e9]/10 border border-[#0ea5e9]/20 rounded-full text-[#0ea5e9] font-bold text-[10px] tracking-[0.2em] uppercase">
+            Modul Keamanan Tinggi
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ModuleCard
+            title="Bukti Transfer"
+            description="Manajemen arsip bukti transfer dari mahasiswa"
+            icon={FileText}
+            href="/keuangan/bukti-transfer"
+          />
+          <ModuleCard
+            title="Sistem Verifikasi"
+            description="Antrian cerdas untuk validasi pembayaran"
+            icon={CreditCard}
+            href="/keuangan/verifikasi"
+          />
+          <ModuleCard
+            title="Laporan Konsolidasi"
+            description="Laporan analitik keuangan dan pembayaran"
+            icon={FileText}
+            href="/keuangan/laporan"
+          />
         </div>
       </div>
 
-      {/* Recent Activity atau Quick Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="glass-effect dark:glass-effect-dark">
-          <CardHeader>
-            <CardTitle>Status Pembayaran</CardTitle>
+      {/* Analytics & Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card className="premium-glass bg-white dark:bg-slate-900/40 border-2 border-slate-200/50 dark:border-white/5 rounded-3xl shadow-xl overflow-hidden">
+          <CardHeader className="border-b border-slate-100 dark:border-white/5 pb-6">
+            <CardTitle className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Status Pembayaran</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Menunggu Verifikasi</span>
-                <Badge variant="secondary">{summaryData.totalPending}</Badge>
+            <div className="space-y-6">
+              <div className="flex justify-between items-center p-5 rounded-2xl bg-yellow-500/10 border-2 border-yellow-500/20 shadow-sm">
+                <span className="text-sm font-bold uppercase tracking-widest text-yellow-700 dark:text-yellow-400">Menunggu Verifikasi</span>
+                <div className="px-4 py-1.5 bg-yellow-500 text-white rounded-full font-bold text-xs shadow-lg shadow-yellow-500/20">
+                  {summaryData.totalPending}
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Terverifikasi</span>
-                <Badge variant="default" className="bg-green-500">{summaryData.totalVerified}</Badge>
+              <div className="flex justify-between items-center p-5 rounded-2xl bg-[#0ea5e9]/10 border-2 border-[#0ea5e9]/20 shadow-sm">
+                <span className="text-sm font-bold uppercase tracking-widest text-[#0ea5e9] dark:text-sky-300">Terverifikasi</span>
+                <div className="px-4 py-1.5 bg-[#0ea5e9] text-white rounded-full font-bold text-xs shadow-lg shadow-[#0ea5e9]/20">
+                  {summaryData.totalVerified}
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Ditolak</span>
-                <Badge variant="destructive">{summaryData.totalRejected}</Badge>
+              <div className="flex justify-between items-center p-5 rounded-2xl bg-red-500/10 border-2 border-red-500/20 shadow-sm">
+                <span className="text-sm font-bold uppercase tracking-widest text-red-700 dark:text-red-400">Ditolak</span>
+                <div className="px-4 py-1.5 bg-red-500 text-white rounded-full font-bold text-xs shadow-lg shadow-red-500/20">
+                  {summaryData.totalRejected}
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="glass-effect dark:glass-effect-dark">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+        <Card className="premium-glass bg-white dark:bg-slate-900/40 border-2 border-slate-200/50 dark:border-white/5 rounded-3xl shadow-xl overflow-hidden">
+          <CardHeader className="border-b border-slate-100 dark:border-white/5 pb-6">
+            <CardTitle className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Aksi Cepat</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <Link 
-                href="/keuangan/verifikasi" 
-                className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-              >
-                <CreditCard className="h-4 w-4" />
-                <span className="text-sm">Verifikasi Pembayaran</span>
-                {summaryData.totalPending > 0 && (
-                  <Badge variant="destructive" className="ml-auto">
-                    {summaryData.totalPending} baru
-                  </Badge>
-                )}
-              </Link>
-              <Link 
-                href="/keuangan/bukti-transfer" 
-                className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-              >
-                <FileText className="h-4 w-4" />
-                <span className="text-sm">Lihat Semua Bukti Transfer</span>
-              </Link>
+            <div className="space-y-4">
+              <QuickAction
+                title="Verifikasi Sekarang"
+                description={`Terdapat ${summaryData.totalPending} pembayaran yang perlu diperiksa`}
+                icon={CreditCard}
+                href="/keuangan/verifikasi"
+                variant={summaryData.totalPending > 0 ? "warning" : "default"}
+              />
+              <QuickAction
+                title="Arsip Transfer"
+                description="Lihat seluruh riwayat bukti transfer mahasiswa"
+                icon={FileText}
+                href="/keuangan/bukti-transfer"
+              />
             </div>
           </CardContent>
         </Card>
@@ -223,3 +178,4 @@ export default async function KeuanganDashboardPage() {
     </div>
   );
 }
+

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     // Dapatkan ID mahasiswa (menggunakan table students)
     const hasilMahasiswa = await sql`
-      SELECT id FROM students WHERE user_id = ${session.user.id}::integer
+      SELECT id FROM public.students WHERE user_id = ${session.user.id}::integer
     `;
 
     if (!hasilMahasiswa || hasilMahasiswa.length === 0) {
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         status, 
         submitted_at, 
         notes as catatan
-      FROM krs_submissions 
+      FROM public.krs_submissions 
       WHERE mahasiswa_id = ${mahasiswaId}
       ORDER BY submitted_at DESC
     `;
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     // Dapatkan ID mahasiswa
     const hasilMahasiswa = await sql`
-      SELECT id FROM students WHERE user_id = ${session.user.id}::integer
+      SELECT id FROM public.students WHERE user_id = ${session.user.id}::integer
     `;
 
     if (!hasilMahasiswa || hasilMahasiswa.length === 0) {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     // Cek apakah sudah ada pengajuan untuk semester ini
     const existingSubmission = await sql`
-      SELECT id FROM krs_submissions 
+      SELECT id FROM public.krs_submissions 
       WHERE mahasiswa_id = ${mahasiswaId} AND semester = ${semester} AND status = 'pending'
     `;
 
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     // Insert pengajuan KRS (kolom courses dan total_credits sesuai DB)
     const hasil = await sql`
-      INSERT INTO krs_submissions 
+      INSERT INTO public.krs_submissions 
         (mahasiswa_id, semester, courses, total_credits, status)
       VALUES 
         (${mahasiswaId}, ${semester}, ${JSON.stringify(mata_kuliah)}, ${totalSKS}, 'pending')

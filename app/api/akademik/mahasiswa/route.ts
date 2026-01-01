@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
         s.status,
         s.created_at as tanggal_daftar
       FROM students s
-      LEFT JOIN study_programs sp ON s.study_program_id = sp.id
+      LEFT JOIN study_programs sp ON s.study_program_num_id = sp.id
       ORDER BY s.name
     `;
 

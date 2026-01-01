@@ -1,96 +1,127 @@
-﻿@tailwind base;
-@tailwind components;
-@tailwind utilities;
+﻿@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 158 64% 52%;  /* Supabase green: #3ECF8E */
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 210 40% 96%;
+    --primary: 199 89% 48%;
+    /* Sky 500: #0ea5e9 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96%;
+    --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
+    --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 158 64% 52%;  /* Supabase green */
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --ring: 199 89% 48%;
+    --radius: 0.75rem;
+
+    /* Font Variable */
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+
+    /* Premium Design Tokens */
+    --glass-background: 0 0% 100% / 0.7;
+    --glass-border: 214.3 31.8% 91.4% / 0.4;
+    --card-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222.2 84% 3.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 158 64% 52%;  /* Tetap hijau Supabase di dark mode */
+    --primary: 199 89% 48%;
+    /* Konsisten Sky 500 */
     --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217.2 32.6% 12.5%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --muted: 217.2 32.6% 12.5%;
+    --muted-foreground: 215 20.2% 75%;
+    /* Meningkatkan kontras dari 65.1% */
+    --accent: 217.2 32.6% 12.5%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 158 64% 52%;  /* Tetap hijau Supabase */
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --ring: 199 89% 48%;
+
+    /* Premium Dark Tokens */
+    --glass-background: 222.2 84% 7% / 0.8;
+    /* Sedikit lebih terang untuk kontras */
+    --glass-border: 217.2 32.6% 30% / 0.4;
+    --card-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border selection:bg-primary/30 selection:text-foreground;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased transition-colors duration-300 font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply tracking-tight font-bold text-slate-900 dark:text-white leading-tight;
   }
 }
 
-/* Custom Supabase styles */
 @layer components {
-  .glass-effect {
-    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-sm;
+  .premium-glass {
+    @apply bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-xl;
   }
-  
-  .glass-effect-dark {
-    @apply bg-gray-900/80 backdrop-blur-sm border border-gray-700/20 shadow-sm;
+
+  .premium-card {
+    @apply bg-card text-card-foreground rounded-xl border border-border shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden;
   }
-  
-  .supabase-card {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200;
+
+  .premium-gradient-bg {
+    @apply bg-gradient-to-br from-primary/10 via-background to-secondary/10;
   }
-  
-  .supabase-button {
-    @apply bg-supabase-green text-white hover:bg-supabase-green/90 transition-colors duration-200 font-medium;
+
+  .premium-sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 group relative;
   }
-  
-  .gradient-text {
-    @apply bg-supabase-gradient-light bg-clip-text text-transparent;
+
+  .premium-sidebar-link-active {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-primary bg-primary/10 font-medium transition-all duration-200;
   }
-  
-  .supabase-navbar {
-    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50;
+
+  .premium-badge {
+    @apply px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border;
+  }
+
+  /* Custom Scrollbar for Premium Look */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
   }
 }

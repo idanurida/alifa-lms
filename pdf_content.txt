@@ -1,0 +1,334 @@
+SEBARAN MATA KULIAH PER PRODI STIES ALIFA
+KURIKULUM KKNI 2019
+EKONOMI SYARIAH (ESY)
+Semester I
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 I 19STIES01 Bahasa Arab Ekonomi 2 0 2
+2 I 19STIES02 Bahasa Indonesia 2 0 2
+3 I 19STIES03 Bahasa Inggris Ekonomi 2 0 2
+4 I 19STIES04 Pengantar Studi Al-Quran dan Al-Hadits 2 0 2
+5 I 19STIES05 Pendidikan Pancasila dan Kewarganegaraan 2 0 2
+6 I 19STIES06 Pengantar Ekonomi Islam 2 0 2
+7 I 19STIES12 Sejarah Peradaban Islam 2 0 2
+8 I 19STIES15 Pengantar Statistik Ekonomi 2 0 2
+9 I 19STIES16 Pengantar Akuntasi 2 0 2
+10 I 19STIES17 Pengantar Manajemen 2 0 2
+11 I 19STIES18 Pengantar Bisnis 2 0 2
+12 I 19STIES19 Pengantar Perpajakan 2 0 2
+Total SKS 24 0 24
+Semester 2
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 II 19STIES07 Fiqh Muamalah 2 0 2
+2 II 19STIES08 Tafsir Ayat-ayat Ekonomi 2 0 2 19STIES04
+3 II 19STIES09 Hadist Ekonomi 2 0 2 19STIES04
+4 II 19STIES10 Akhlak dan Tasawuf 2 0 2
+5 II 19STIES11 Tauhid/Ilmu Kalam 2 0 2
+6 II 19STIES13 Filsafat Ekonomi Islam 2 0 2
+8 II 19STIES20 Matematika Ekonomi dan Bisnis 2 0 2
+7 II 19STIES25 Qiroatul Qur'an 0 1 1
+9 II 19PBS16 Ekonomi Makro Islam** 2 0 2 19STIES06
+10 II 19PBS18 Ekonomi Mikro Islam** 2 0 2 19STIES06
+11 II 19ESY01 Manajemen Keuangan 3 0 3
+12 II 19ESY12 Manajemen Pemasaran 2 0 2
+Total SKS 23 1 24
+Semester 3
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 III 19STIES22 Tahsinul Qiroah 0 1 1
+2 III 19STIES23 Hukum Bisnis 2 0 2
+3 III 19ESY02 Ekonomi Perencanaan dan Pembangunan 3 0 3
+4 III 19ESY03 Ekonomi Moneter 3 0 3
+5 III 19ESY04 Ekonomi Publik 3 0 3
+6 III 19ESY05 Aplikasi Komputer Bidang Ekonomi 3 0 3
+7 III 19PBS04 Etika Bisnis Islam & Anti Korupsi** 2 0 2
+8 III 19ESY09 Bank dan Lembaga Keuangan 3 0 3
+9 III 19MBS03 Statistik Ekonomi dan Bisnis** 2 0 2 19STIES15
+10 III 19ESY23 e-Budgeting 2 0 2 19ESY05
+Total SKS 23 1 24
+
+-- 1 of 6 --
+
+Semester 4
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 IV 19STIES21 Metode Penelitian 2 0 2 19ESY03
+2 IV 19STIES27 Praktik Pengamalan Ibadah (PPI) 0 1 1
+3 IV 19ESY06 Perekonomian Indonesia 3 0 3
+4 IV 19ESY07 Ekonomi Regional 3 0 3
+5 IV 19ESY10 Ekonomi Pertanian 2 0 2
+6 IV 19ESY13 Ekonomi Sumber Daya Alam 3 0 3
+7 IV 19ESY11 Akuntansi Sektor Publik 3 0 3
+8 IV 19ESY16 Pengembangan Ekonomi Sosial & Publik Islam 3 0 3
+9 IV 19ESY22 Ekonomi Internasional 2 0 2
+10 IV 19PBS17 e-Busines** 2 0 2
+Total SKS 23 1 24
+Semester 5
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 V 19ESY15 Analisis Ekonomi Publik 3 0 3
+2 V 19STIES26 International Economy and Trade 2 0 2 19ESY22
+3 V 19ESY14 Metodologi Penelitian Ekonomi 2 0 2 19STIES21
+4 V 19MBS22 Manajemen Strategik** 3 0 3 19STIES17
+5 V 19MBS24 Manajemen Risiko** 3 0 3 19STIES17
+6 V 19ESY18 Manajemen Pembangunan Kota dan Daerah 2 0 2
+7 V 19ESY21 Manajemen Belanja Daerah 2 0 2
+8 V 19MBS20 Manajemen dan Bisnis Wisata Halal** 3 0 3
+9 V 19ESY08 Perbandingan Sistem Ekonomi 2 0 2
+10 V
+Total SKS 21 0 22
+Semester 6
+No Sem. Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 VI 19STIES24 Kewirausahaan 2 1 3
+2 VI 19ESY17 Seminar International Ekonomi 0 2 2
+3 VI 19STIES29 Kuliah Kerja Nyata (KKN) 0 4 4 100 sks lulus
+4 VI 19STIES31* Praktik Manajemen Perhotelan Syariah* 0 4 4 * Minimal
+mengambil 3
+mata kuliah
+pilihan
+5 VI 19STIES32* Praktik Barista* 0 4 4
+6 VI 19STIES33* Praktik Bartender* 0 4 4
+7 VI 19STIES34* Praktik Pastry* 0 4 4
+8 VI 19STIES35* Praktik Mekanisme Jual Beli Saham Syariah 0 4 4
+Total SKS 2 20 21
+Semester 7
+No Sem. Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 VII 19STIES28 Penguatan Kompetensi Lulusan (PKL) 0 4 4 100 sks lulus
+2 VII 19STIES30 Skripsi 0 6 6 19ESY14
+Total SKS 0 10 10
+TOTAL LULUS
+Semester 1 = 24 SKS
+Semester 2 = 24 SKS
+Semester 3 = 24 SKS
+Semester 4 = 24 SKS
+Semester 5 = 22 SKS
+Semester 6 = 21 SKS
+Semester 7 = 10 SKS
+149 SKS
+
+-- 2 of 6 --
+
+MANAJEMEN BISNIS SYARIAH (MBS)
+Semester I
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 I 19STIES01 Bahasa Arab Ekonomi 2 0 2
+2 I 19STIES02 Bahasa Indonesia 2 0 2
+3 I 19STIES03 Bahasa Inggris Ekonomi 2 0 2
+4 I 19STIES04 Pengantar Studi Al-Quran dan Al-Hadits 2 0 2
+5 I 19STIES05 Pendidikan Pancasila dan Kewarganegaraan 2 0 2
+6 I 19STIES06 Pengantar Ekonomi Islam 2 0 2
+7 I 19STIES12 Sejarah Peradaban Islam 2 0 2
+8 I 19STIES16 Pengantar Akuntasi 2 0 2
+9 I 19STIES17 Pengantar Manajemen 2 0 2
+10 I 19STIES18 Pengantar Bisnis 2 0 2
+11 I 19STIES19 Pengantar Perpajakan 2 0 2
+12 I 19STIES15 Pengantar Statistik Ekonomi 2 0 2
+Total SKS 24 0 24
+Semester 2
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 II 19MBS01 Akuntansi I 2 0 2
+2 II 19MBS03 Statistik Ekonomi dan Bisnis 2 0 2 19STIES15
+3 II 19STIES08 Tafsir Ayat-ayat Ekonomi 2 0 2 19STIES04
+4 II 19STIES09 Hadist Ekonomi 2 0 2 19STIES04
+5 II 19STIES10 Akhlak dan Tasawuf 2 0 2
+6 II 19STIES11 Tauhid/Ilmu Kalam 2 0 2
+8 II 19STIES07 Fiqh Muamalah 2 0 2
+7 II 19STIES13 Filsafat Ekonomi Islam 2 0 2
+9 II 19STIES20 Matematika Ekonomi dan Bisnis 2 0 2
+10 II 19STIES25 Qiroatul Qur'an 0 1 1
+11 II 19PBS18 Ekonomi Mikro Islam** 2 0 2 19STIES06
+12 II 19PBS16 Ekonomi Makro Islam** 2 0 2 19STIES06
+Total SKS 22 1 23
+Semester 3
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 III 19STIES22 Tahsinul Qiroah 0 1 1
+2 III 19STIES23 Hukum Bisnis 2 0 2
+3 III 19PBS04 Etika Bisnis Islam & Anti Korupsi** 2 0 2
+4 III 19MBS05 Manajemen Syariah 2 0 2
+5 III 19MBS07 Ekonomi Manajerial 2 0 2
+6 III 19MBS08 Manajemen Sumber Daya Insani 2 0 2
+7 III 19MBS10 Manajemen Pemasaran Syariah 3 0 2
+8 III 19MBS11 Manajemen Keuangan 3 0 2
+9 III 19MBS13 Manajemen Operasi 3 0 2
+10 III 19MBS12 Perilaku Organisasional 2 0 2
+11 III 19MBS14 Perpajakan 2 0 2 19STIES19
+Total SKS 23 1 24
+Semester 4
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 IV 19STIES21 Metode Penelitian 2 0 2 19ESY03
+2 IV 19STIES27 Praktik Pengamalan Ibadah (PPI) 0 1 1
+3 IV 19MBS02 Akuntansi II 2 0 2
+4 IV 19MBS15 Manajemen Zakat, Infak dan Wakaf 2 0 2
+5 IV 19MBS16 Bank dan Lembaga Keuangan Syariah 2 0 2
+
+-- 3 of 6 --
+
+6 IV 19MBS18 Manajemen Keuangan Syariah 3 0 3
+7 IV 19MBS19 Sistem Informasi Manajemen 3 0 3
+8 IV 19MBS21 Komunikasi Bisnis 2 0 3
+9 IV 19MBS22 Manajemen Strategik 3 0 3
+10 IV 19MBS24 Manajemen Risiko 3 0 3
+Total SKS 22 1 23
+Semester 5
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 V 19STIES26 International Economy and Trade 2 0 2 19ESY22
+2 V 19MBS31 Metode Penelitian Manajemen Bisnis 2 0 2 19STIES21
+3 V 19MBS17 Akuntansi Manajemen 3 0 3
+4 V 19MBS20 Manajemen dan Bisnis Wisata Halal 3 0 3
+5 V 19MBS29 Manajemen UMKM dan Koperasi 2 0 2
+6 V 19MBS23 Penganggaran 3 0 3
+7 V 19MBS26 Pemasaran Jasa 2 0 2
+8 V 19MBS27 Pemasaran Retail 2 0 2
+9 V 19MBS28 Periklanan 2 0 2
+10 V 19MBS30 Pasar Modal Syariah 2 0 2
+Total SKS 23 0 23
+Semester 6
+No Sem. Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 VI 19STIES24 Kewirausahaan 2 1 3
+2 VI 19MBS25 Studi Kelayakan Bisnis Wisata Syariah 1 1 2
+3 VI 19STIES29 Kuliah Kerja Nyata (KKN) 0 4 4 100 sks lulus
+4 VI 19STIES31* Praktik Manajemen Perhotelan Syariah* 0 4 4 * Minimal
+mengambil 3
+mata kuliah
+pilihan
+5 VI 19STIES32* Praktik Barista* 0 4 4
+6 VI 19STIES33* Praktik Bartender* 0 4 4
+7 VI 19STIES34* Praktik Pastry* 0 4 4
+8 VI 19STIES35* Praktik Mekanisme Jual Beli Saham Syariah 0 4 4
+Total SKS 3 18 21
+Semester 7
+No Sem. Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 VII 19STIES28 Penguatan Kompetensi Lulusan (PKL) 0 4 4 100 sks lulus
+2 VII 19STIES30 Skripsi 0 6 6 19ESY14
+Total SKS 0 10 10
+TOTAL LULUS
+Semester 1 = 24 SKS
+Semester 2 = 24 SKS
+Semester 3 = 23 SKS
+Semester 4 = 23 SKS
+Semester 5 = 24 SKS
+Semester 6 = 21 SKS
+Semester 7 = 10 SKS
+149 SKS
+
+-- 4 of 6 --
+
+PERBANKAN SYARIAH (PS)
+Semester I
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 I 19STIES01 Bahasa Arab Ekonomi 2 0 2
+2 I 19STIES02 Bahasa Indonesia 2 0 2
+3 I 19STIES03 Bahasa Inggris Ekonomi 2 0 2
+4 I 19STIES04 Pengantar Studi Al-Quran dan Al-Hadits 2 0 2
+5 I 19STIES05 Pendidikan Pancasila dan Kewarganegaraan 2 0 2
+6 I 19STIES06 Pengantar Ekonomi Islam 2 0 2
+7 I 19STIES12 Sejarah Peradaban Islam 2 0 2
+8 I 19STIES16 Pengantar Akuntasi 2 0 2
+9 I 19STIES17 Pengantar Manajemen 2 0 2
+10 I 19STIES18 Pengantar Bisnis 2 0 2
+11 I 19STIES19 Pengantar Perpajakan 2 0 2
+12 I 19STIES15 Pengantar Statistik Ekonomi 2 0 2
+Total SKS 24 0 24
+Semester 2
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 II 19STIES08 Tafsir Ayat-ayat Ekonomi 2 0 2 19STIES04
+2 II 19STIES09 Hadist Ekonomi 2 0 2 19STIES04
+3 II 19STIES10 Akhlak dan Tasawuf 2 0 2
+4 II 19STIES11 Tauhid/Ilmu Kalam 2 0 2
+5 II 19STIES07 Fiqh Muamalah 2 0 2
+6 II 19STIES13 Filsafat Ekonomi Islam 2 0 2
+8 II 19STIES15 Pengantar Statistik Ekonomi 2 0 2
+7 II 19STIES25 Qiroatul Qur'an 0 1 1
+9 II 19PBS16 Ekonomi Makro Islam** 2 0 2 19STIES06
+10 II 19PBS18 Ekonomi Mikro Islam** 2 0 2 19STIES06
+11 II 19MBS01 Akuntansi I** 2 0 2
+Total SKS 22 1 23
+Semester 3
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 III 19STIES22 Tahsinul Qiroah 0 1 1
+2 III 19STIES23 Hukum Bisnis 2 0 2
+III 19PBS02 Manajemen Dana Bank Syariah 3 0 3
+III 19PBS03 Ekonometrika 3 0 3
+3 III 19PBS05 Akad Bisnis dan perbankan 2 0 2
+4 III 19PBS07 Manajemen Keuangan Syariah 3 0 3
+5 III 19PBS12 Sistem Informasi Manajemen 2 0 2
+6 III 19MBS02 Akuntansi II** 2 0 2
+7 III 19MBS03 Statistik Ekonomi dan Bisnis** 2 0 2 19STIES15
+8 III 19PBS04 Etika Bisnis Islam & Anti Korupsi 2 0 2
+9 III 19ESY23 e-Budgeting** 2 0 2
+Total SKS 23 1 24
+Semester 4
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 IV 19STIES21 Metode Penelitian 2 0 2 19ESY03
+2 IV 19STIES27 Praktik Pengamalan Ibadah (PPI) 0 1 1
+3 IV 19PBS09 Lembaga dan Instrumen Keuangan Syariah 3 0 3
+4 IV 19PBS11 Manajemen Pemasaran Bank Syariah 3 0 3
+5 IV 19PBS01 Moneter Policy 3 0 3
+6 IV 19MBS24 Manajemen Risiko** 3 0 3
+
+-- 5 of 6 --
+
+7 IV 19PBS06 Pasar Modal Syariah 2 0 2
+8 IV 19PBS08 Manajemen Pembiayaan Bank Syariah 3 0 3
+9 IV 19PBS17 e-Busines 2 0 2
+10 IV 19PBS21 Perpajakan 2 0 2
+Total SKS 23 1 24
+Semester 5
+No Sem Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 V 19STIES26 International Economy and Trade 2 0 2 19ESY22
+2 V 19PBS14 Metode Penelitian Perbankan 2 0 2
+3 V 19PBS13 Operasional Bank Syariah + Praktik 3 0 3
+4 V 19MBS20 Manajemen dan Bisnis Wisata Halal** 3 0 3
+5 V 19MBS22 Manajemen Strategik** 3 0 3
+6 V 19PBS22 Asset Liability Management 3 0 3
+7 V 19PBS19 Akuntansi Perbankan Syariah+ Praktik 4 0 4
+8 V 19PBS20 Analisis Laporan Keuangan Bank Syariah 3 0 3
+Total SKS 23 0 23
+Semester 6
+No Sem. Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 VI 19STIES24 Kewirausahaan 2 1 3
+2 VI 19PBS15 Studi Kelayakan Pendirian Bank Syariah 1 1 2
+3 VI 19STIES29 Kuliah Kerja Nyata (KKN) 0 4 4 100 sks lulus
+4 VI 19STIES31* Praktik Manajemen Perhotelan Syariah* 0 4 4 * Minimal
+mengambil 3
+mata kuliah
+pilihan
+5 VI 19STIES32* Praktik Barista* 0 4 4
+6 VI 19STIES33* Praktik Bartender* 0 4 4
+7 VI 19STIES34* Praktik Pastry* 0 4 4
+8 VI 19STIES35* Praktik Mekanisme Jual Beli Saham Syariah 0 4 4
+Total SKS 3 18 21
+Semester 7
+No Sem. Kode Mata Kuliah SKS Prasyarat
+Teori Praktik Total
+1 VII 19STIES28 Penguatan Kompetensi Lulusan (PKL) 0 4 4 100 sks lulus
+2 VII 19STIES30 Skripsi 0 6 6 19ESY14
+Total SKS 0 10 10
+TOTAL LULUS
+Semester 1 = 24 SKS
+Semester 2 = 23 SKS
+Semester 3 = 24 SKS
+Semester 4 = 24 SKS
+Semester 5 = 23 SKS
+Semester 6 = 21 SKS
+Semester 7 = 10 SKS
+149 SKS
+
+-- 6 of 6 --
+

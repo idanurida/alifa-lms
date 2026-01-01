@@ -14,7 +14,7 @@ interface AnimatedCTAProps {
 
 export function AnimatedCTA({ title, subtitle, ctaText, ctaLink }: AnimatedCTAProps) {
   return (
-    <section className="py-16 bg-supabase-green/10">
+    <section className="py-16 bg-primary/10">
       <div className="max-w-7xl mx-auto px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -29,7 +29,7 @@ export function AnimatedCTA({ title, subtitle, ctaText, ctaLink }: AnimatedCTAPr
           <Link href={ctaLink}>
             <Button 
               size="lg" 
-              className="bg-supabase-green hover:bg-supabase-green/90"
+              className="bg-primary hover:bg-primary/90"
             >
               {ctaText}
             </Button>

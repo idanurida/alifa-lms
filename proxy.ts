@@ -149,7 +149,9 @@ const roleAccessMap: Record<string, string[]> = {
   ],
 };
 
-export async function middleware(req: NextRequest) {
+const cookieName = process.env.SESSION_NAME || 'next-auth.session-token';
+
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Cek apakah path adalah publik (termasuk root '/')
@@ -175,7 +177,8 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === 'production'
+      secureCookie: process.env.NODE_ENV === 'production',
+      cookieName: cookieName
     });
 
     if (token && token.role === 'dosen') {
@@ -189,7 +192,8 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === 'production'
+      secureCookie: process.env.NODE_ENV === 'production',
+      cookieName: cookieName
     });
 
     if (token) {
@@ -231,7 +235,8 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === 'production'
+      secureCookie: process.env.NODE_ENV === 'production',
+      cookieName: cookieName
     });
 
     if (token && token.role === 'staff_akademik') {
@@ -250,7 +255,8 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === 'production'
+      secureCookie: process.env.NODE_ENV === 'production',
+      cookieName: cookieName
     });
 
     if (!token) {
