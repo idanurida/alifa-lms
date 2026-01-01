@@ -1,7 +1,6 @@
 'use client';
 
-// app/auth/activate/page.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,20 @@ import { claimAccount } from '@/app/actions/auth-actions';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
-export default function ActivatePage() {
+// Loading fallback
+function ActivateLoading() {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                <p className="mt-2 text-sm text-blue-200/50">Memuat...</p>
+            </div>
+        </div>
+    );
+}
+
+// Wrapper component yang menggunakan useSearchParams
+function ActivateContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const idParam = searchParams.get('id') || '';
@@ -273,5 +285,13 @@ export default function ActivatePage() {
                 </div>
             </motion.div>
         </div>
+    );
+}
+
+export default function ActivatePage() {
+    return (
+        <Suspense fallback={<ActivateLoading />}>
+            <ActivateContent />
+        </Suspense>
     );
 }
