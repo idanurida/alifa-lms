@@ -357,19 +357,38 @@ export function LandingPageContent({ dbStats }: LandingPageContentProps) {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-slate-200 dark:border-white/10 py-12">
+            <footer className="border-t border-slate-200 dark:border-white/10 py-12 bg-slate-50 dark:bg-[#0f172a]/50">
                 <div className="max-w-6xl mx-auto px-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="flex items-center gap-3">
-                            <Image
-                                src="/images/logo-alifa-white.png"
-                                alt="ALIFA Logo"
-                                width={40}
-                                height={40}
-                                className="object-contain"
-                            />
+                    <div className="grid md:grid-cols-2 gap-10 mb-12 text-center md:text-left">
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">College Address</h3>
+                            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm mx-auto md:mx-0">
+                                Jl. Ahmad Yani No.83, Gading Rejo, <br />
+                                Kec. Gading Rejo, Kabupaten Pringsewu, <br />
+                                Lampung, Indonesia. Kode Pos 35366
+                            </p>
                         </div>
 
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Contact Us</h3>
+                            <div className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
+                                <p className="flex items-center justify-center md:justify-start gap-2">
+                                    <span className="font-semibold w-12">WA</span> : (+62) 811 79 1114
+                                </p>
+                                <p className="flex items-center justify-center md:justify-start gap-2">
+                                    <span className="font-semibold w-12">Tlp</span> : (+62) 812 2000 2401
+                                </p>
+                                <p className="flex items-center justify-center md:justify-start gap-2">
+                                    <span className="font-semibold w-12">Email</span> : admin@alifa.ac.id
+                                </p>
+                                <p className="flex items-center justify-center md:justify-start gap-2">
+                                    <span className="font-semibold w-12">Email</span> : sties.akbid.alifa@gmail.com
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-8 border-t border-slate-200 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
                             <Link href="#" className="hover:text-[#0ea5e9] transition-colors">Privasi</Link>
                             <Link href="#" className="hover:text-[#0ea5e9] transition-colors">Ketentuan</Link>
@@ -377,7 +396,7 @@ export function LandingPageContent({ dbStats }: LandingPageContentProps) {
                         </div>
 
                         <p className="text-sm text-slate-500 dark:text-slate-500">
-                            © 2025 ALIFA Institute
+                            © 2025 SYNTHESIS ACADEMY
                         </p>
                     </div>
                 </div>

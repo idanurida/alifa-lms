@@ -118,7 +118,7 @@ export default async function DetailMahasiswaPage({ params }: { params: Promise<
     enrollmentData = enrollments.map(en => ({
       id: en.id,
       status: en.status,
-      final_score: en.final_score,
+      final_score: en.final_score ? Number(en.final_score) : null,
       final_grade: en.final_grade,
       course_code: en.class.course.code,
       course_name: en.class.course.name,

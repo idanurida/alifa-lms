@@ -26,7 +26,7 @@ const ROLES = [
 const DEMO_ACCOUNTS = {
   mahasiswa: { email: 'mahasiswa@kampus.ac.id', password: 'password123' },
   dosen: { email: 'dosen@kampus.ac.id', password: 'password123' },
-  staff_akademik: { email: 'admin@kampus.ac.id', password: 'password123' },
+  staff_akademik: { email: 'akademik@kampus.ac.id', password: 'password123' },
   staff_keuangan: { email: 'finance@kampus.ac.id', password: 'password123' },
   super_admin: { email: 'superadmin@alifa.ac.id', password: 'password123' },
 };
@@ -85,17 +85,14 @@ function LoginContent() {
       <div className="w-full max-w-md">
         {/* Logo & Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-[#0ea5e9]/10 flex items-center justify-center">
-              <Image
-                src="/images/logo-alifa-white.png"
-                alt="ALIFA Logo"
-                width={36}
-                height={36}
-                className="object-contain"
-              />
-            </div>
-            <span className="font-bold text-2xl">ALIFA</span>
+          <Link href="/" className="inline-flex items-center mb-6">
+            <Image
+              src="/images/logo-alifa-white.png"
+              alt="ALIFA Logo"
+              width={120}
+              height={120}
+              className="object-contain"
+            />
           </Link>
           <h1 className="text-2xl font-bold mb-2 dark:text-white">Selamat Datang</h1>
           <p className="text-slate-600 dark:text-slate-400">Masukkan email dan password untuk masuk</p>
@@ -116,11 +113,10 @@ function LoginContent() {
                       key={role.id}
                       type="button"
                       onClick={() => handleRoleSelect(role.id)}
-                      className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${
-                        isSelected
-                          ? 'bg-[#0ea5e9]/10 border-[#0ea5e9]/50'
-                          : 'bg-transparent border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/20'
-                      }`}
+                      className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${isSelected
+                        ? 'bg-[#0ea5e9]/10 border-[#0ea5e9]/50'
+                        : 'bg-transparent border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/20'
+                        }`}
                       title={role.label}
                     >
                       <Icon size={18} className={isSelected ? 'text-[#0ea5e9]' : 'text-slate-400 dark:text-slate-500'} />

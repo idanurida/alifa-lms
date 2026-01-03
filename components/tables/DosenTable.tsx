@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, Mail, Phone, GraduationCap } from 'lucide-react';
 
+import { useRouter } from 'next/navigation';
+
 interface Dosen {
   id: number;
   user_id: number | null;
@@ -26,6 +28,7 @@ interface DosenTableProps {
 
 export default function DosenTable({ data, onEdit, onDelete }: DosenTableProps) {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="rounded-md border">
@@ -100,14 +103,26 @@ export default function DosenTable({ data, onEdit, onDelete }: DosenTableProps) 
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onEdit?.(dosen.id)}
+                    onClick={() => {
+                      if (onEdit) {
+                        onEdit(dosen.id);
+                      } else {
+                        router.push(`/akademik/dosen/edit/${dosen.id}`);
+                      }
+                    }}
                   >
                     <Edit size={14} />
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onDelete?.(dosen.id)}
+                    onClick={() => {
+                      if (onDelete) {
+                        onDelete(dosen.id);
+                      } else {
+                        console.log('Delete lecturer:', dosen.id);
+                      }
+                    }}
                   >
                     <Trash2 size={14} />
                   </Button>
