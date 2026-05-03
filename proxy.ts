@@ -7,7 +7,7 @@ const PUBLIC = ['/login', '/api/auth', '/_next', '/images', '/favicon.ico',
   '/home', '/public', '/api/setup'];
 
 const PROTECTED = ['/akademik', '/keuangan', '/superadmin', '/laporan',
-  '/pengaturan', '/forum', '/mahasiswa', '/dosen', '/staff-keuangan'];
+  '/pengaturan', '/forum', '/chat', '/mahasiswa', '/dosen', '/staff-keuangan'];
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
