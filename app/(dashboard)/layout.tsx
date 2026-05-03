@@ -103,14 +103,6 @@ export default function DashboardLayout({
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Debug session
-  useEffect(() => {
-    console.log('=== DASHBOARD LAYOUT SESSION ===');
-    console.log('Status:', status);
-    console.log('Session:', session);
-    console.log('User Role:', session?.user?.role);
-  }, [session, status]);
-
   // Tampilkan loading jika session sedang dicek
   if (status === 'loading') {
     return (
@@ -125,14 +117,12 @@ export default function DashboardLayout({
 
   // Jika tidak login, redirect ke login
   if (status === 'unauthenticated' || !session) {
-    console.log('No session, redirecting to login');
     router.push('/login');
     return null;
   }
 
   // Pastikan session.user dan role ada
   if (!session.user || !session.user.role) {
-    console.log('Session user or role missing');
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div>Error: Session data incomplete</div>

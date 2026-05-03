@@ -35,7 +35,7 @@ async function main() {
                 continue;
             }
 
-            const hashedPassword = await bcrypt.hash('password123', 10);
+            const hashedPassword = await bcrypt.hash('alifa123', 10);
             await prisma.user.create({
                 data: {
                     email: userData.email,
@@ -52,7 +52,7 @@ async function main() {
     }
 
     console.log('\nDone! System users created/updated.');
-    console.log('\nLogin credentials (password: password123):');
+    console.log('\nLogin accounts:');
     console.log('  Super Admin: superadmin@alifa.ac.id');
     console.log('  Staff Akademik: admin@kampus.ac.id');
     console.log('  Staff Keuangan: finance@kampus.ac.id');

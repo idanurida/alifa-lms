@@ -52,8 +52,6 @@ export default async function DosenPage() {
         ORDER BY l.name
       `;
 
-      console.log('✅ Data fetched:', result.length, 'records');
-
       data = result.map((row: any) => ({
         id: row.id,
         user_id: row.user_id,

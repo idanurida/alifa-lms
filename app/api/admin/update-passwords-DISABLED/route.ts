@@ -17,7 +17,7 @@ async function updatePasswords() {
     console.log('🔐 Updating passwords for all users...');
 
     // Hash password yang sama untuk semua user
-    const hashedPassword = await bcrypt.hash('password123', 12);
+    const hashedPassword = await bcrypt.hash('alifa123', 12);
 
     // Untuk Neon, kita perlu menjalankan query satu per satu
     // Pertama, ambil semua user aktif
@@ -48,7 +48,7 @@ async function updatePasswords() {
 
     return NextResponse.json({
       success: true,
-      message: 'All passwords updated to: password123',
+      message: 'All passwords updated to: alifa123',
       updatedUsers: updatedUsers,
       totalUpdated: updatedUsers.length
     });

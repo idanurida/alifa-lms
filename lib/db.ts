@@ -1,67 +1,56 @@
 // lib/db.ts
+// Database query wrapper — gunakan Prisma typed SQL dengan aman
+// Semua query menggunakan parameterized placeholder ($1, $2, ...) untuk cegah SQL injection
 import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
 
-console.log('🔧 Database configuration using Prisma Client...');
-
-// Wrapper function to handle both tagged template literals and regular function calls
-export async function sql(strings: any, ...values: any[]) {
+/**
+ * Execute parameterized SQL query.
+ * 
+ * Dua cara pemanggilan:
+ * 1. Tagged template (recommended):  await sql`SELECT * FROM users WHERE id = ${id}`
+ * 2. Parameterized string:           await sql('SELECT * FROM users WHERE id = $1', [id])
+ * 
+ * AVOID string concatenation — selalu gunakan parameter placeholder!
+ */
+export async function sql<T = unknown>(
+  strings: TemplateStringsArray | string,
+  ...values: unknown[]
+): Promise<T[]> {
   try {
+    // Tagged template literal: sql`SELECT * FROM users WHERE id = ${id}`
+    if (Array.isArray(strings) && 'raw' in strings) {
+      return (await prisma.$queryRaw(strings, ...values)) as T[];
+    }
+
+    // Parameterized string query: sql('SELECT * FROM users WHERE id = $1', [id])
     if (typeof strings === 'string') {
-      // Called as a regular function: sql(query, params)
       const params = (values.length === 1 && Array.isArray(values[0])) ? values[0] : values;
-      return await prisma.$queryRawUnsafe(strings, ...params);
-    }
 
-    // Called as a tagged template: sql`SELECT...`
-    // Ensure we pass the arguments in a way Prisma Client expects
-    if (strings && Array.isArray(strings) && 'raw' in strings) {
-      return await (prisma.$queryRaw as any)(strings, ...values);
-    }
-
-    // Fallback/Safety check
-    return await prisma.$queryRawUnsafe(strings as string, ...values);
-  } catch (error: any) {
-    // Safe error logging
-    const errorMessage = error?.message || 'Unknown database error';
-
-    // Log the query causing the error safely
-    if (process.env.NODE_ENV !== 'production' || typeof strings === 'string') {
-      console.error('❌ Database Query Error:', errorMessage);
-      console.error('   Query:', typeof strings === 'string' ? strings : (strings as any)?.raw || 'Template Literal Query');
-      if (Array.isArray(values) && values.length > 0) {
-        console.error('   Values:', JSON.stringify(values));
+      // Validasi: pastikan jumlah $N placeholder cocok dengan params
+      const placeholderCount = (strings.match(/\$\d+/g) || []).length;
+      if (placeholderCount !== params.length) {
+        throw new Error(
+          `Query placeholder mismatch: ${placeholderCount} placeholders but ${params.length} params provided`
+        );
       }
-    } else {
-      console.error('❌ Database Query Error:', errorMessage);
+
+      return (await prisma.$queryRawUnsafe(strings, ...params)) as T[];
     }
 
+    throw new Error('Invalid query format: must be tagged template or parameterized string');
+  } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
-      try {
-        console.error('   Query Info:', {
-          type: typeof strings,
-          isTemplate: (strings && Array.isArray(strings) && 'raw' in strings),
-          valuesCount: values?.length || 0
-        });
-      } catch (logError) {
-        console.error('   Failed to log query info');
-      }
+      console.error('Database Query Error:', (error as Error)?.message);
     }
     throw error;
   }
 }
 
-export async function testConnection() {
+export async function testConnection(): Promise<boolean> {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    console.log('✅ Database connection test successful');
     return true;
-  } catch (error) {
-    console.error('❌ Database connection test failed:', error);
+  } catch {
     return false;
   }
-}
-
-export async function queryWithErrorHandling(query: TemplateStringsArray, ...params: any[]) {
-  return await sql(query, ...params);
 }

@@ -247,6 +247,15 @@ test-results/
 # yarn.lock         # Uncomment if using yarn
 # pnpm-lock.yaml    # Uncomment if using pnpm
 
+# Diagnostic scripts (jangan commit)
+check-*.ts
+diag-*.ts
+fix-*.ts
+list-*.ts
+proxy.ts
+seed-courses.ts
+prisma.config.ts
+
 # Build outputs from other frameworks
 /.svelte-kit
 /build

@@ -26,11 +26,12 @@ export async function GET(req: NextRequest) {
       SELECT 
         ft.id, ft.user_id, ft.title, ft.slug, ft.is_pinned, ft.is_locked,
         ft.view_count, ft.created_at,
-        p.name as user_name,
-        ft.category as category_name,
-        (SELECT COUNT(*) FROM forum_posts fp WHERE fp.thread_id = ft.id) - 1 as reply_count -- Exclude first post
+        u.username as user_name,
+        fc.name as category_name,
+        (SELECT COUNT(*) FROM forum_posts fp WHERE fp.thread_id = ft.id) - 1 as reply_count
       FROM forum_threads ft
-      LEFT JOIN profiles p ON ft.user_id = p.user_id
+      LEFT JOIN users u ON ft.user_id = u.id
+      LEFT JOIN forum_categories fc ON ft.category_id = fc.id
       WHERE 1=1
     `;
     const params: any[] = [];
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
 
     // Cek apakah kategori ada dan aktif
     const [category] = await sql`
-      SELECT name, is_active FROM categories WHERE id = ${validatedData.category_id}
+      SELECT id, name, is_active FROM forum_categories WHERE id = ${validatedData.category_id}
     `;
     if (!category || !category.is_active) {
       return NextResponse.json({ error: 'Kategori forum tidak ditemukan atau tidak aktif' }, { status: 400 });
@@ -80,10 +81,10 @@ export async function POST(req: NextRequest) {
 
     const [newThread] = await sql`
       INSERT INTO forum_threads (
-        category, user_id, title, slug, is_pinned, is_locked, view_count
+        category_id, user_id, title, slug, is_pinned, is_locked, view_count
       )
       VALUES (
-        ${category.name}, ${session.user.id}, 
+        ${validatedData.category_id}, ${session.user.id}, 
         ${validatedData.title}, ${slug}, 
         ${validatedData.is_pinned ?? false}, ${validatedData.is_locked ?? false}, 
         0

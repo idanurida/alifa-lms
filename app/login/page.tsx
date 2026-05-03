@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { signIn } from 'next-auth/react';
@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { GraduationCap, Mail, Lock, ArrowRight, User, Users, Coins, Building, Sun, Moon } from 'lucide-react';
+import { GraduationCap, Mail, Lock, ArrowRight, User, Users, Coins, Building } from 'lucide-react';
+import { ModeToggle } from '@/components/layout/ModeToggle';
 import Link from 'next/link';
 
 // Role options
@@ -22,21 +23,13 @@ const ROLES = [
   { id: 'super_admin', label: 'Super Admin', icon: Building, color: 'text-sky-400' },
 ];
 
-// Demo credentials
-const DEMO_ACCOUNTS = {
-  mahasiswa: { email: 'mahasiswa@kampus.ac.id', password: 'password123' },
-  dosen: { email: 'dosen@kampus.ac.id', password: 'password123' },
-  staff_akademik: { email: 'akademik@kampus.ac.id', password: 'password123' },
-  staff_keuangan: { email: 'finance@kampus.ac.id', password: 'password123' },
-  super_admin: { email: 'superadmin@alifa.ac.id', password: 'password123' },
-};
-
 function LoginContent() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<string>('mahasiswa');
-  const [formData, setFormData] = useState(DEMO_ACCOUNTS['mahasiswa']);
+  const [selectedRole, setSelectedRole] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -49,16 +42,21 @@ function LoginContent() {
 
   const handleRoleSelect = (roleId: string) => {
     setSelectedRole(roleId);
-    setFormData(DEMO_ACCOUNTS[roleId as keyof typeof DEMO_ACCOUNTS]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    if (!email || !password) {
+      toast.error('Email dan password wajib diisi');
+      setLoading(false);
+      return;
+    }
+
     const result = await signIn('credentials', {
-      email: formData.email,
-      password: formData.password,
+      email,
+      password,
       redirect: false,
     });
 
@@ -66,14 +64,7 @@ function LoginContent() {
       toast.error('Email atau password salah');
     } else {
       // Redirect based on role
-      const redirectPaths: Record<string, string> = {
-        mahasiswa: '/mahasiswa/dashboard',
-        dosen: '/dosen/dashboard',
-        staff_akademik: '/akademik',
-        staff_keuangan: '/keuangan',
-        super_admin: '/super-admin/dashboard',
-      };
-      router.push(redirectPaths[selectedRole] || '/');
+      router.push('/');
       router.refresh();
     }
 
@@ -84,7 +75,11 @@ function LoginContent() {
     <div className="min-h-screen bg-slate-50 dark:bg-[#0f172a] flex items-center justify-center p-6 transition-colors">
       <div className="w-full max-w-md">
         {/* Logo & Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 relative">
+          {/* Dark Mode Toggle */}
+          <div className="absolute right-0 top-0">
+            <ModeToggle />
+          </div>
           <Link href="/" className="inline-flex items-center mb-6">
             <Image
               src="/images/logo-alifa-white.png"
@@ -137,8 +132,8 @@ function LoginContent() {
                   <Input
                     id="email"
                     type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 bg-slate-50 dark:bg-[#0f172a]/50 border-slate-200 dark:border-white/10 h-11 dark:text-white"
                     placeholder="Masukkan email Anda"
                     required
@@ -153,8 +148,8 @@ function LoginContent() {
                   <Input
                     id="password"
                     type="password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 bg-slate-50 dark:bg-[#0f172a]/50 border-slate-200 dark:border-white/10 h-11 dark:text-white"
                     placeholder="Masukkan password Anda"
                     required
@@ -170,17 +165,15 @@ function LoginContent() {
                 {loading ? 'Sedang Masuk...' : 'Masuk'}
                 {!loading && <ArrowRight size={18} className="ml-2" />}
               </Button>
+
+              <div className="text-center">
+                <Link href="/auth/forgot-password" className="text-xs text-slate-500 hover:text-[#0ea5e9] transition-colors">
+                  Lupa password?
+                </Link>
+              </div>
             </form>
 
-            {/* Demo Notice */}
-            <div className="p-3 rounded-lg bg-[#0ea5e9]/5 border border-[#0ea5e9]/10">
-              <p className="text-xs text-[#0ea5e9] text-center">
-                Mode Demo: Klik ikon peran untuk otomatis isi kredensial
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-500 text-center mt-1">
-                Password untuk semua akun: <code className="text-slate-600 dark:text-slate-400">password123</code>
-              </p>
-            </div>
+
           </CardContent>
         </Card>
 

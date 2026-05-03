@@ -40,66 +40,37 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log('🔐 === AUTH DEBUG START ===');
-        console.log('📧 Email received:', credentials?.email);
-
         if (!credentials?.email || !credentials?.password) {
-          console.error('Email atau password tidak diberikan');
           return null;
         }
-
-        // Backdoor telah dihapus
 
         try {
           const user = await prisma.user.findUnique({
             where: { email: credentials.email }
           });
 
-          console.log('📊 Database result:', user);
-
-          if (!user) {
-            console.error('User tidak ditemukan di database');
-            return null;
-          }
-          console.log('👤 User found:', {
-            id: user.id,
-            email: user.email,
-            role: user.role,
-            is_active: user.is_active
-          });
-
-          if (!user.password_hash) {
-            console.error('Password hash kosong di database');
-            return null;
-          }
-
-          if (!user.is_active) {
-            console.error('Akun tidak aktif');
+          if (!user || !user.password_hash || !user.is_active) {
             return null;
           }
 
           const isValid = await bcrypt.compare(credentials.password, user.password_hash);
-          console.log('✅ Password validation result:', isValid);
 
           if (!isValid) {
-            console.error('Password tidak match');
             return null;
           }
 
-          console.log('🎉 Authentication successful!');
-
-          // Update last_login dengan error handling
+          // Update last_login
           try {
             await prisma.user.update({
               where: { id: user.id },
               data: { last_login: new Date() }
             });
-          } catch (error) {
-            console.warn('⚠️ Failed to update last_login:', error);
+          } catch {
+            // Silently fail — not critical
           }
 
-          // Ambil data profil tambahan dengan error handling
-          let profileData: any = {};
+          // Ambil data profil tambahan
+          let profileData: { name?: string; nim?: string; nidn?: string; expertise?: string } = {};
           try {
             if (user.role === 'mahasiswa') {
               const student = await prisma.student.findFirst({
@@ -107,27 +78,24 @@ export const authOptions: NextAuthOptions = {
                 select: { name: true, nim: true }
               });
               if (student) {
-                profileData = { ...profileData, ...student };
+                profileData = student;
               }
             } else if (user.role === 'dosen') {
               const lecturer = await prisma.lecturer.findFirst({
                 where: { user_id: user.id },
                 select: { name: true, email: true, nidn: true, expertise: true }
               });
-              console.log('📊 Lecturer data:', lecturer);
               if (lecturer) {
-                profileData = { ...profileData, ...lecturer };
+                profileData = lecturer;
               }
             } else {
               profileData = { name: user.username };
             }
-          } catch (profileError) {
-            console.warn('⚠️ Failed to fetch profile data:', profileError);
+          } catch {
             profileData = { name: user.username };
           }
 
-          // Return user object
-          const userObject = {
+          return {
             id: user.id.toString(),
             email: user.email,
             username: user.username,
@@ -140,11 +108,7 @@ export const authOptions: NextAuthOptions = {
             }),
           };
 
-          console.log('🚀 Returning user object:', userObject);
-          return userObject;
-
-        } catch (error) {
-          console.error('💥 Auth error:', error);
+        } catch {
           return null;
         }
       }
@@ -157,7 +121,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log('🔄 JWT callback - Received User:', JSON.stringify(user, null, 2));
         token.id = user.id;
         token.role = user.role;
         token.name = user.name;
@@ -170,7 +133,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log('🔄 Session callback - Token content:', JSON.stringify(token, null, 2));
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;

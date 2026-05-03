@@ -20,7 +20,5 @@ export default async function DashboardRootPage() {
   };
 
   const redirectPath = redirectPaths[role as keyof typeof redirectPaths] || '/login';
-  
-  console.log(`Redirecting ${role} user to: ${redirectPath}`);
   redirect(redirectPath);
 }

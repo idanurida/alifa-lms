@@ -165,22 +165,22 @@ export default async function SuperAdminDashboardPage() {
           <CardContent>
             <div className="space-y-4">
               <QuickAction
-                title="Backup Engine"
-                description="Cadangkan data seluruh sistem ke penyimpanan eksternal."
-                icon={Database}
-                href="/superadmin/backup"
-              />
-              <QuickAction
                 title="System Configuration"
                 description="Ubah variabel lingkungan dan pengaturan global LMS."
                 icon={Settings}
                 href="/superadmin/pengaturan-sistem"
               />
               <QuickAction
-                title="Audit Intelligence"
-                description="Pantau log aktivitas mencurigakan dan performa server."
-                icon={Activity}
-                href="/superadmin/audit-log"
+                title="Manajemen Pengguna"
+                description="Kelola semua akun dan role pengguna sistem."
+                icon={Users}
+                href="/superadmin/users"
+              />
+              <QuickAction
+                title="Keuangan"
+                description="Pantau dan verifikasi transaksi pembayaran."
+                icon={CreditCard}
+                href="/keuangan"
               />
             </div>
           </CardContent>

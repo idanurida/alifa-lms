@@ -4,8 +4,16 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { checkRateLimit, getClientIP } from '@/lib/api/rate-limit-middleware';
 
 export async function POST(req: NextRequest) {
+  // Rate limiting
+  const clientIp = getClientIP(req);
+  const rateLimitResult = checkRateLimit(clientIp, 'auth');
+  if (rateLimitResult) {
+    return rateLimitResult.response;
+  }
+
   try {
     const session = await getServerSession(authOptions);
     
@@ -52,7 +60,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Password updated successfully' });
     
   } catch (error) {
-    console.error('Change password error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

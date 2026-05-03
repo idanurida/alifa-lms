@@ -1,6 +1,7 @@
 // app/(dashboard)/dosen/dashboard/page.tsx
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { sql } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import {
   BookOpen,
@@ -44,28 +45,73 @@ export default async function DosenDashboardPage() {
 
   const user = session.user;
 
-  // Data default untuk development
+  // Fetch data dosen dari database
   let dashboardData = {
-    totalAssignedClasses: 3,
-    totalEnrolledStudents: 85,
-    pendingGrades: 12,
-    pendingAttendances: 5,
-    upcomingDeadlines: 2,
-    recentActivities: [
-      {
-        type: 'grading',
-        class_code: 'CS101-A',
-        detail: 'Tugas 1 - Pemrograman Dasar',
-        activity_date: new Date().toISOString()
-      },
-      {
-        type: 'attendance',
-        class_code: 'MT201-B',
-        detail: 'Meeting #8 - Kalkulus',
-        activity_date: new Date().toISOString()
-      }
-    ]
+    totalAssignedClasses: 0,
+    totalEnrolledStudents: 0,
+    pendingGrades: 0,
+    pendingAttendances: 0,
+    upcomingDeadlines: 0,
+    lecturerName: user.name || 'Dosen',
+    recentActivities: [] as { type: string; class_code: string; detail: string }[]
   };
+
+  try {
+    const lecturerId = parseInt(user.id);
+    
+    // Cari data dosen
+    const [lecturer] = await sql`
+      SELECT id, name, nidn, expertise FROM lecturers WHERE user_id = ${lecturerId}
+    `;
+
+    if (lecturer) {
+      dashboardData.lecturerName = lecturer.name || user.name || 'Dosen';
+
+      // Hitung kelas yang diajar
+      const [classCount] = await sql`
+        SELECT COUNT(*) as count FROM classes WHERE lecturer_id = ${lecturer.id} AND is_active = true
+      `;
+      dashboardData.totalAssignedClasses = parseInt(classCount?.count || '0');
+
+      // Hitung total mahasiswa di kelas dosen
+      const [studentCount] = await sql`
+        SELECT COUNT(DISTINCT se.student_id) as count
+        FROM student_enrollments se
+        JOIN classes c ON se.class_id = c.id
+        WHERE c.lecturer_id = ${lecturer.id} AND se.status = 'active'
+      `;
+      dashboardData.totalEnrolledStudents = parseInt(studentCount?.count || '0');
+
+      // Hitung penilaian yang belum dinilai
+      const [gradeCount] = await sql`
+        SELECT COUNT(*) as count
+        FROM student_enrollments se
+        JOIN classes c ON se.class_id = c.id
+        WHERE c.lecturer_id = ${lecturer.id} 
+          AND se.final_score IS NULL 
+          AND se.status = 'active'
+      `;
+      dashboardData.pendingGrades = parseInt(gradeCount?.count || '0');
+
+      // Kelas terbaru untuk activity feed
+      const recentClasses = await sql`
+        SELECT c.class_code, co.name as course_name, c.created_at
+        FROM classes c
+        JOIN courses co ON c.course_id = co.id
+        WHERE c.lecturer_id = ${lecturer.id}
+        ORDER BY c.created_at DESC
+        LIMIT 5
+      `;
+
+      dashboardData.recentActivities = (recentClasses || []).map((cls: any) => ({
+        type: 'class',
+        class_code: cls.class_code || '-',
+        detail: cls.course_name || 'Mata Kuliah'
+      }));
+    }
+  } catch (error) {
+    // Fallback ke data kosong — dashboard tetap bisa dirender
+  }
 
   const getGreeting = () => {
     const time = new Date().getHours();

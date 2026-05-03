@@ -40,7 +40,7 @@ export async function claimAccount(formData: z.infer<typeof claimSchema>) {
 
             // Create User
             const [newUser] = await sql`
-        INSERT INTO users (username, email, password, role, is_active)
+        INSERT INTO users (username, email, password_hash, role, is_active)
         VALUES (${username}, ${email}, ${hashedPassword}, 'mahasiswa', true)
         RETURNING id
       `;
@@ -48,12 +48,6 @@ export async function claimAccount(formData: z.infer<typeof claimSchema>) {
             // Link to Student
             await sql`
         UPDATE students SET user_id = ${newUser.id} WHERE id = ${student.id}
-      `;
-
-            // Create Profile
-            await sql`
-        INSERT INTO profiles (user_id, name)
-        VALUES (${newUser.id}, ${student.name})
       `;
 
             return { success: true, message: 'Akun mahasiswa berhasil diaktivasi' };
@@ -74,7 +68,7 @@ export async function claimAccount(formData: z.infer<typeof claimSchema>) {
 
             // Create User
             const [newUser] = await sql`
-        INSERT INTO users (username, email, password, role, is_active)
+        INSERT INTO users (username, email, password_hash, role, is_active)
         VALUES (${username}, ${email}, ${hashedPassword}, 'dosen', true)
         RETURNING id
       `;
@@ -82,12 +76,6 @@ export async function claimAccount(formData: z.infer<typeof claimSchema>) {
             // Link to Lecturer
             await sql`
         UPDATE lecturers SET user_id = ${newUser.id} WHERE id = ${lecturer.id}
-      `;
-
-            // Create Profile
-            await sql`
-        INSERT INTO profiles (user_id, name)
-        VALUES (${newUser.id}, ${lecturer.name})
       `;
 
             return { success: true, message: 'Akun dosen berhasil diaktivasi' };

@@ -14,16 +14,11 @@ export default async function NilaiPage() {
     return <div>Unauthorized</div>;
   }
 
-  console.log('🔍 [NilaiPage] Session User:', JSON.stringify(session.user, null, 2));
-
   const userId = parseInt(session.user.id);
-  console.log(`🔍 [NilaiPage] Searching for student with user_id: ${userId}`);
 
   const student = await prisma.student.findFirst({
     where: { user_id: userId }
   });
-
-  console.log('🎓 [NilaiPage] Student found:', student);
 
   if (!student) {
     return (

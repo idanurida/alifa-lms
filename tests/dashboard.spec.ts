@@ -5,7 +5,7 @@ test.describe('Dashboard Mahasiswa', () => {
         await page.goto('/login');
         await page.click('button[title="Mahasiswa"]');
         await page.fill('#email', 'mahasiswa@kampus.ac.id');
-        await page.fill('#password', 'password123');
+        await page.fill('#password', 'alifa123');
         await page.click('button[type="submit"]');
 
         await page.waitForLoadState('networkidle');
@@ -34,7 +34,7 @@ test.describe('Dashboard Mahasiswa', () => {
         await page.goto('/login');
         await page.click('button[title="Mahasiswa"]');
         await page.fill('#email', 'mahasiswa@kampus.ac.id');
-        await page.fill('#password', 'password123');
+        await page.fill('#password', 'alifa123');
         await page.click('button[type="submit"]');
 
         await page.waitForLoadState('networkidle');

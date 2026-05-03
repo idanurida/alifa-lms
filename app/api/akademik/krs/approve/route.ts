@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Data tidak lengkap' }, { status: 400 });
     }
 
-    console.log(`🔄 Memproses KRS ${krs_id} dengan status: ${status}`);
+    logger.info('KRS-Approval', `Processing KRS ${krs_id} with status: ${status}`);
 
     // Update status KRS
     const result = await sql`
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'KRS tidak ditemukan' }, { status: 404 });
     }
 
-    console.log(`✅ KRS ${krs_id} berhasil di${status}`);
+    logger.info('KRS-Approval', `KRS ${krs_id} processed successfully`);
 
     return NextResponse.json({
       success: true,
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('❌ Error approve KRS:', error);
+    logger.error('KRS-Approval', 'Failed to process KRS', error);
     return NextResponse.json({
       error: 'Gagal memproses KRS'
     }, { status: 500 });

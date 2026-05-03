@@ -15,12 +15,11 @@ const getDirectUrl = (): string | undefined => {
       if (apiKey) {
         const decoded = JSON.parse(Buffer.from(apiKey, 'base64').toString());
         if (decoded.databaseUrl) {
-          console.log('🔄 [Prisma] Swapping proxy URL with direct connection string');
           return decoded.databaseUrl;
         }
       }
-    } catch (e) {
-      console.warn('⚠️ [Prisma] Failed to parse proxy URL:', e);
+    } catch {
+      // Failed to parse proxy URL — use as-is
     }
   }
   return undefined;
