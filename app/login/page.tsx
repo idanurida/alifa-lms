@@ -63,16 +63,8 @@ function LoginContent() {
     if (result?.error) {
       toast.error('Email atau password salah');
     } else {
-      // Redirect berdasarkan role yang dipilih
-      const redirectPaths: Record<string, string> = {
-        mahasiswa: '/mahasiswa/dashboard',
-        dosen: '/dosen/dashboard',
-        staff_akademik: '/akademik',
-        staff_keuangan: '/keuangan',
-        super_admin: '/superadmin',
-      };
-      router.push(redirectPaths[selectedRole] || '/');
-      router.refresh();
+      // Redirect ke root — proxy akan arahkan ke dashboard sesuai role
+      window.location.href = '/';
     }
 
     setLoading(false);
