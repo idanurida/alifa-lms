@@ -128,6 +128,7 @@ export default async function SuperAdminUsersPage() {
                     <TableHead>Status</TableHead>
                     <TableHead>Terakhir Login</TableHead>
                     <TableHead>Terdaftar</TableHead>
+                    <TableHead className="text-right">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -146,6 +147,9 @@ export default async function SuperAdminUsersPage() {
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {new Date(u.created_at).toLocaleDateString('id-ID')}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <ResetPasswordButton userId={u.id} email={u.email} />
                       </TableCell>
                     </TableRow>
                   ))}
