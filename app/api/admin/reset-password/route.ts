@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     // Kirim email undangan
     const loginUrl = `${process.env.NEXTAUTH_URL || ''}/login`;
-    const emailSent = await sendEmail({
+    const { sent } = await sendEmail({
       to: user.email,
       subject: 'Akun ALIFA LMS Anda Sudah Siap!',
       html: invitationEmail(loginUrl, user.email, password, user.username),
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: emailSent ? 'Password direset & email terkirim' : 'Password direset (email gagal - SMTP belum di-set)',
+      message: sent ? 'Password direset & email terkirim' : 'Password direset (tersimpan di Log Email)',
       user: { email: user.email, username: user.username, role: user.role },
       newPassword: password,
     });

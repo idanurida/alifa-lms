@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // Kirim email reset password
     const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
-    const emailSent = await sendEmail({
+    const { sent } = await sendEmail({
       to: email,
       subject: 'Reset Password - ALIFA LMS',
       html: resetPasswordEmail(resetUrl),
@@ -57,10 +57,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: emailSent
-        ? 'Link reset password telah dikirim ke email Anda.'
-        : 'Link reset password berhasil dibuat (email tidak terkirim - SMTP belum dikonfigurasi).',
-      resetUrl: emailSent ? undefined : resetUrl, // Hanya tampilkan link kalau email gagal
+      message: sent
+        ? 'Link reset password telah dikirim ke email Anda. Cek inbox.'
+        : 'Link reset password berhasil dibuat. Silakan cek halaman Log Email superadmin.',
+      resetUrl: sent ? undefined : resetUrl,
       expiresIn: '1 jam',
     });
   } catch (error) {

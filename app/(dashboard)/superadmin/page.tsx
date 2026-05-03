@@ -13,7 +13,8 @@ import {
   Activity,
   ShieldCheck,
   Zap,
-  Lock
+  Lock,
+  Mail
 } from 'lucide-react';
 import {
   StatsCard,
@@ -175,6 +176,12 @@ export default async function SuperAdminDashboardPage() {
                 description="Kelola semua akun dan role pengguna sistem."
                 icon={Users}
                 href="/superadmin/users"
+              />
+              <QuickAction
+                title="Log Email"
+                description="Pantau semua email yang dikirim sistem."
+                icon={Mail}
+                href="/superadmin/email-log"
               />
               <QuickAction
                 title="Keuangan"
