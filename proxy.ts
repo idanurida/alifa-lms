@@ -1,70 +1,33 @@
-// proxy.ts — Route protection (Next.js 16 Edge Runtime)
-// CATATAN: Edge runtime tidak bisa decode JWT next-auth.
-// Strategi: cek keberadaan session cookie saja, bukan decode token.
-// Autentikasi detail diserahkan ke halaman (getServerSession di Node.js runtime).
+// proxy.ts — Minimal proxy (Next.js 16)
+// Auth handling delegated to each page via getServerSession (Node.js runtime)
+// Proxy hanya redirect unauthenticated users dari path dilindungi ke /login
 import { NextRequest, NextResponse } from 'next/server';
 
-// Path publik (tidak perlu login sama sekali)
-const PUBLIC_PREFIXES = [
-  '/login', '/api/auth', '/_next', '/images', '/favicon.ico',
-  '/home', '/public', '/api/setup', '/api/health', '/api/me',
-  '/redirect',
-];
+const PUBLIC = ['/login', '/api/auth', '/_next', '/images', '/favicon.ico',
+  '/home', '/public', '/api/setup', '/api/health', '/api/me', '/redirect'];
 
-function isPublic(pathname: string): boolean {
-  if (pathname === '/') return true;
-  return PUBLIC_PREFIXES.some(p => pathname.startsWith(p)) ||
-    /\.(ico|png|jpg|jpeg|svg|css|js|woff2?)$/i.test(pathname);
-}
-
-// Path yang wajib login (hanya cek cookie exists, bukan decode JWT)
-const PROTECTED_PREFIXES = [
-  '/akademik', '/keuangan', '/superadmin', '/laporan',
-  '/pengaturan', '/forum', '/mahasiswa', '/dosen', '/staff-keuangan',
-];
-
-function isProtected(pathname: string): boolean {
-  return PROTECTED_PREFIXES.some(p => pathname.startsWith(p));
-}
-
-/**
- * Cek apakah request memiliki session cookie (tanpa decode JWT).
- * Cookie name: __Secure-next-auth.session-token (production HTTPS)
- *              next-auth.session-token (development HTTP)
- */
-function hasSessionCookie(req: NextRequest): boolean {
-  // Cek via Next.js cookies API
-  const allCookies = req.cookies.getAll();
-  for (const c of allCookies) {
-    if (c.name.includes('session-token') || c.name.includes('next-auth')) {
-      return true;
-    }
-  }
-  // Fallback: cek raw cookie header
-  const cookieHeader = req.headers.get('cookie') || '';
-  return cookieHeader.includes('session-token') || cookieHeader.includes('next-auth');
-}
+const PROTECTED = ['/akademik', '/keuangan', '/superadmin', '/laporan',
+  '/pengaturan', '/forum', '/mahasiswa', '/dosen', '/staff-keuangan'];
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const cookie = req.headers.get('cookie') || '';
 
-  // 1. Path publik → lanjutkan
-  if (isPublic(pathname)) {
+  // Public paths (termasuk root /) → always allow
+  if (pathname === '/' || PUBLIC.some(p => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
-  // 2. Path dilindungi → cek cookie
-  if (isProtected(pathname)) {
-    if (!hasSessionCookie(req)) {
-      // Tidak ada cookie → redirect ke login
+  // Protected paths → redirect to login ONLY if no auth cookie at all
+  if (PROTECTED.some(p => pathname.startsWith(p))) {
+    if (!cookie) {
       const loginUrl = new URL('/login', req.url);
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);
     }
-    // Cookie ada → lanjutkan (halaman akan cek auth via getServerSession)
+    // Cookie exists → allow (auth checked by page itself)
   }
 
-  // 3. Path lainnya → lanjutkan
   return NextResponse.next();
 }
 
