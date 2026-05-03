@@ -28,7 +28,7 @@ const ROLE_HOME: Record<string, string> = {
 // Path publik (tidak perlu login)
 const PUBLIC_PREFIXES = [
   '/login', '/api/auth', '/_next', '/images', '/favicon.ico',
-  '/home', '/public',
+  '/home', '/public', '/api/setup',
 ];
 
 function isPublic(pathname: string): boolean {
