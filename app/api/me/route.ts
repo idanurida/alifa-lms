@@ -9,6 +9,7 @@ export async function GET(req: Request) {
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
+    secureCookie: process.env.NODE_ENV === 'production',
   });
 
   return NextResponse.json({
