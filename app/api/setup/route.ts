@@ -67,7 +67,7 @@ async function createTableIfNotExists() {
 
   for (const q of queries) {
     try {
-      await sql(q);
+      await prisma.$executeRawUnsafe(q);
     } catch (e) {
       // Table might already exist
     }
