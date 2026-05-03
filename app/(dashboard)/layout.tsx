@@ -43,7 +43,7 @@ type UserRole = 'super_admin' | 'staff_akademik' | 'staff_keuangan' | 'dosen' | 
 const navigationMap: Record<UserRole, NavItem[]> = {
   super_admin: [
     { name: 'Beranda', href: '/superadmin', icon: Home },
-    { name: 'Manajemen Pengguna', href: '/superadmin/manajemen-pengguna', icon: Users },
+    { name: 'Manajemen Pengguna', href: '/superadmin/users', icon: Users },
     { name: 'Manajemen Akademik', href: '/akademik', icon: GraduationCap },
     { name: 'Keuangan', href: '/keuangan', icon: CreditCard },
     { name: 'Laporan', href: '/laporan', icon: BarChart3 },
