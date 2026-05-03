@@ -12,6 +12,7 @@ import Link from 'next/link';
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [resetUrl, setResetUrl] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -33,6 +34,7 @@ export default function ForgotPasswordPage() {
 
       if (data.success) {
         setSent(true);
+        if (data.resetUrl) setResetUrl(data.resetUrl);
       } else {
         setError(data.error || 'Gagal mengirim email reset');
       }
@@ -64,9 +66,16 @@ export default function ForgotPasswordPage() {
               <div className="text-center space-y-4">
                 <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Link reset password telah dikirim ke <strong>{email}</strong>.
-                  Silakan cek inbox (dan spam) Anda.
+                  Link reset password untuk <strong>{email}</strong>:
                 </p>
+                {resetUrl ? (
+                  <a href={resetUrl} className="block p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-sm break-all hover:underline">
+                    {resetUrl}
+                  </a>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Email tidak ditemukan dalam sistem.</p>
+                )}
+                <p className="text-xs text-muted-foreground">Link berlaku 1 jam. Klik link di atas untuk reset password.</p>
                 <Link href="/login">
                   <Button variant="outline" className="mt-4">
                     <ArrowLeft className="mr-2 h-4 w-4" />

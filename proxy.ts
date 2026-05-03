@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const PUBLIC = ['/login', '/api/auth', '/_next', '/images', '/favicon.ico',
-  '/home', '/public', '/api/setup'];
+  '/home', '/public', '/api/setup', '/auth'];
 
 const PROTECTED = ['/akademik', '/keuangan', '/superadmin', '/laporan',
   '/pengaturan', '/forum', '/chat', '/mahasiswa', '/dosen', '/staff-keuangan'];
