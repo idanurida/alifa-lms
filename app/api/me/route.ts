@@ -12,10 +12,19 @@ export async function GET(req: Request) {
     secureCookie: process.env.NODE_ENV === 'production',
   });
 
+  // Parse cookies manually for debug
+  const rawCookie = req.headers.get('cookie') || '';
+  const cookieNames = rawCookie.split(';').map(c => c.trim().split('=')[0]);
+  const sessionCookies = cookieNames.filter(c => c.includes('session') || c.includes('token') || c.includes('auth'));
+
   return NextResponse.json({
     hasToken: !!token,
     role: token?.role || null,
     name: token?.name || null,
-    cookieHeader: req.headers.get('cookie') ? 'present' : 'missing',
+    secretSet: !!process.env.NEXTAUTH_SECRET,
+    secretLength: process.env.NEXTAUTH_SECRET?.length || 0,
+    nodeEnv: process.env.NODE_ENV,
+    sessionCookies,
+    allCookieNames: cookieNames,
   });
 }
