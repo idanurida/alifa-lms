@@ -33,10 +33,16 @@ function isProtected(pathname: string): boolean {
  *              next-auth.session-token (development HTTP)
  */
 function hasSessionCookie(req: NextRequest): boolean {
-  const cookies = req.cookies;
-  // Cek kedua kemungkinan nama cookie
-  return cookies.has('__Secure-next-auth.session-token') ||
-         cookies.has('next-auth.session-token');
+  // Cek via Next.js cookies API
+  const allCookies = req.cookies.getAll();
+  for (const c of allCookies) {
+    if (c.name.includes('session-token') || c.name.includes('next-auth')) {
+      return true;
+    }
+  }
+  // Fallback: cek raw cookie header
+  const cookieHeader = req.headers.get('cookie') || '';
+  return cookieHeader.includes('session-token') || cookieHeader.includes('next-auth');
 }
 
 export function proxy(req: NextRequest) {
