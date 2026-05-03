@@ -63,8 +63,8 @@ function LoginContent() {
     if (result?.error) {
       toast.error('Email atau password salah');
     } else {
-      // Redirect ke root — proxy akan arahkan ke dashboard sesuai role
-      window.location.href = '/';
+      // Redirect ke halaman redirect (server-side, Node.js runtime)
+      window.location.href = '/redirect';
     }
 
     setLoading(false);

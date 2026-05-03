@@ -53,18 +53,9 @@ function hasAccess(role: string, pathname: string): boolean {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1. Root path → cek token dulu, redirect ke dashboard jika login
-  if (pathname === '/') {
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NODE_ENV === 'production',
-    });
-    if (token?.role) {
-      const home = ROLE_HOME[token.role as string] || '/akademik';
-      return NextResponse.redirect(new URL(home, req.url));
-    }
-    // Belum login → tampilkan landing page
+  // 1. Root path & /redirect → special handling
+  // /redirect adalah halaman Node.js runtime yang handle role-based redirect sendiri
+  if (pathname === '/' || pathname === '/redirect') {
     return NextResponse.next();
   }
 
