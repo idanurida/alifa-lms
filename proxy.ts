@@ -53,19 +53,34 @@ function hasAccess(role: string, pathname: string): boolean {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1. Path publik → lanjutkan
+  // 1. Root path → cek token dulu, redirect ke dashboard jika login
+  if (pathname === '/') {
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+      secureCookie: process.env.NODE_ENV === 'production',
+    });
+    if (token?.role) {
+      const home = ROLE_HOME[token.role as string] || '/akademik';
+      return NextResponse.redirect(new URL(home, req.url));
+    }
+    // Belum login → tampilkan landing page
+    return NextResponse.next();
+  }
+
+  // 2. Path publik (login, auth, static, api/setup, api/health) → lanjutkan
   if (isPublic(pathname)) {
     return NextResponse.next();
   }
 
-  // 2. Cek token JWT
+  // 3. Cek token JWT
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
     secureCookie: process.env.NODE_ENV === 'production',
   });
 
-  // 3. Tidak ada token → redirect ke login
+  // 4. Tidak ada token → redirect ke login
   if (!token) {
     const loginUrl = new URL('/login', req.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
@@ -74,22 +89,15 @@ export async function proxy(req: NextRequest) {
 
   const role = token.role as string;
 
-  // 4. Root path dengan token → redirect ke dashboard sesuai role
-  if (pathname === '/') {
-    const home = ROLE_HOME[role] || '/akademik';
-    return NextResponse.redirect(new URL(home, req.url));
-  }
-
   // 5. Path dilindungi → cek role
   if (isProtected(pathname)) {
     if (!hasAccess(role, pathname)) {
-      // Redirect ke home sesuai role jika tidak punya akses
       const home = ROLE_HOME[role] || '/akademik';
       return NextResponse.redirect(new URL(home, req.url));
     }
   }
 
-  // 6. Path lainnya (termasuk API) → lanjutkan
+  // 6. Path lainnya → lanjutkan
   return NextResponse.next();
 }
 
