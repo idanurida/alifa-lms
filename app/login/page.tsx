@@ -27,7 +27,7 @@ function LoginContent() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<string>('');
+  const [selectedRole, setSelectedRole] = useState<string>('mahasiswa');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -63,8 +63,15 @@ function LoginContent() {
     if (result?.error) {
       toast.error('Email atau password salah');
     } else {
-      // Redirect based on role
-      router.push('/');
+      // Redirect berdasarkan role yang dipilih
+      const redirectPaths: Record<string, string> = {
+        mahasiswa: '/mahasiswa/dashboard',
+        dosen: '/dosen/dashboard',
+        staff_akademik: '/akademik',
+        staff_keuangan: '/keuangan',
+        super_admin: '/superadmin',
+      };
+      router.push(redirectPaths[selectedRole] || '/');
       router.refresh();
     }
 
