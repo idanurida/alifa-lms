@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import crypto from 'crypto';
 import { z } from 'zod';
+import { sendEmail, resetPasswordEmail } from '@/lib/email';
 
 const schema = z.object({
   email: z.string().email('Email tidak valid'),
@@ -46,13 +47,20 @@ export async function POST(req: NextRequest) {
       VALUES (${user.id}, ${token}, ${expires})
     `;
 
-    // Di production: kirim email. Di development: return link langsung
+    // Kirim email reset password
     const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/reset-password?token=${token}`;
+    const emailSent = await sendEmail({
+      to: email,
+      subject: 'Reset Password - ALIFA LMS',
+      html: resetPasswordEmail(resetUrl),
+    });
 
     return NextResponse.json({
       success: true,
-      message: 'Link reset password berhasil dibuat.',
-      resetUrl, // HANYA untuk development — di production hapus ini
+      message: emailSent
+        ? 'Link reset password telah dikirim ke email Anda.'
+        : 'Link reset password berhasil dibuat (email tidak terkirim - SMTP belum dikonfigurasi).',
+      resetUrl: emailSent ? undefined : resetUrl, // Hanya tampilkan link kalau email gagal
       expiresIn: '1 jam',
     });
   } catch (error) {

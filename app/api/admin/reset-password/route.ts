@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth';
 import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { sendEmail, invitationEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,9 +36,17 @@ export async function POST(req: NextRequest) {
 
     await sql`UPDATE users SET password_hash = ${hash} WHERE id = ${user.id}`;
 
+    // Kirim email undangan
+    const loginUrl = `${process.env.NEXTAUTH_URL || ''}/login`;
+    const emailSent = await sendEmail({
+      to: user.email,
+      subject: 'Akun ALIFA LMS Anda Sudah Siap!',
+      html: invitationEmail(loginUrl, user.email, password, user.username),
+    });
+
     return NextResponse.json({
       success: true,
-      message: 'Password berhasil direset',
+      message: emailSent ? 'Password direset & email terkirim' : 'Password direset (email gagal - SMTP belum di-set)',
       user: { email: user.email, username: user.username, role: user.role },
       newPassword: password,
     });
